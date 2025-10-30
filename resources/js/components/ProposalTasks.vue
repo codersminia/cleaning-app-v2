@@ -8,20 +8,25 @@
     </div>
 
     <!-- Prospect Info Card -->
-    <div class="prospect-card p-4 mx-4 mb-3">
-      <h5 class="fw-bold text-dark mb-2">Prospect: Golf Castro Traders</h5>
+    <div class="prospect-card p-4 mx-4 mb-3" v-if="prospect">
+      <h5 class="fw-bold text-dark mb-2">Prospect: {{ prospect.company_name }}</h5>
       <p class="text-muted small mb-0">
-        Location: Culpa deserunt in accusamus adiuta officia qui nobis fuga Debitis impedit cum eos similique eius, Unit 547, Id incididunt aut ipsum adipisci fugiat dolore aut, 63035
+        Location: {{ prospect.address,prospect.unit_number,prospect.city,prospect.state,prospect.zip }}
+        <!-- Adjust based on your actual prospect object structure -->
       </p>
+    </div>
+    <div v-else class="prospect-card p-4 mx-4 mb-3 placeholder-glow">
+      <h5 class="placeholder w-50"></h5>
+      <p class="placeholder w-75"></p>
     </div>
 
     <!-- Progress Stepper -->
     <div class="stepper-container mx-4 mb-4">
-      <div 
-        v-for="(step, index) in steps" 
+      <div
+        v-for="(step, index) in steps"
         :key="index"
         class="stepper-step"
-        :class="{ 
+        :class="{
           'active': currentStep === index + 1,
           'first': index === 0,
           'last': index === steps.length - 1
@@ -41,7 +46,7 @@
         <h6 class="fw-bold text-dark mb-1">ADD AREAS & CLEANING</h6>
         <h6 class="fw-bold text-dark mb-3">TASKS BELOW BEFORE CONTINUING</h6>
         <div class="d-flex justify-content-center align-items-center gap-3">
-          <span class="badge-selected">{{ selectedAreas.length }} AREAS SELECTED</span>
+          <span class="badge-selected">{{ selectedAreasData.length }} AREAS SELECTED</span>
           <a href="#" class="text-info text-decoration-none small fw-semibold">
             Im done here next step →
           </a>
@@ -54,25 +59,25 @@
           <button class="btn-add-area">
             <i class="bi bi-grid-3x3-gap me-2"></i>ADD CUSTOM AREA
           </button>
-          
+
           <div class="text-center">
             <div class="building-icon-wrapper">
               <i class="bi bi-building"></i>
             </div>
             <h6 class="fw-bold mt-2 mb-0">Area Builder</h6>
           </div>
-          
+
           <div class="view-options">
-            <button 
-              @click="toggleView" 
+            <button
+              @click="toggleView"
               class="btn-view-toggle"
             >
               {{ isCardView ? 'Show List View' : 'Show Card View' }}
             </button>
             <div class="global-checkboxes">
               <label class="checkbox-label">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   v-model="globalCarpet"
                   class="form-check-input"
                 />
@@ -80,8 +85,8 @@
               </label>
               <span class="separator">|</span>
               <label class="checkbox-label">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   v-model="globalHardFloor"
                   class="form-check-input"
                 />
@@ -92,28 +97,31 @@
         </div>
 
         <!-- Area List -->
-        <div class="areas-list">
-          <div v-for="area in allAreas" :key="area" class="area-wrapper mb-3">
+        <div class="areas-list" v-if="allAreaTypes.length > 0">
+          <div v-for="areaType in allAreaTypes" :key="areaType.id" class="area-wrapper mb-3">
             <!-- Card View - Expanded Area Card -->
-            <div v-if="isCardView && selectedAreas.includes(area)" class="area-card-expanded">
+            <div
+              v-if="isCardView && isAreaSelected(areaType.id)"
+              class="area-card-expanded"
+            >
               <div class="area-header">
                 <div class="area-header-left">
                   <input
                     type="checkbox"
                     class="form-check-input me-3"
-                    :checked="true"
-                    @change="toggleArea(area)"
+                    :checked="isAreaSelected(areaType.id)"
+                    @change="toggleArea(areaType)"
                   />
                   <div class="area-info">
-                    <h6 class="area-title mb-0">{{ area }}</h6>
-                    <small class="area-subtitle">{{ getTaskCount(area) }} task selected</small>
+                    <h6 class="area-title mb-0">{{ areaType.name }}</h6>
+                    <small class="area-subtitle">{{ getTaskCount(areaType.id) }} task selected</small>
                   </div>
                 </div>
 
                 <div class="area-header-center">
                   <button class="action-btn">
                     <i class="bi bi-file-text"></i>
-                    <span>0 Notes</span>
+                    <span>{{ getAreaNotes(areaType.id) ? '1 Note' : '0 Notes' }}</span>
                   </button>
                   <button class="action-btn">
                     <i class="bi bi-files"></i>
@@ -124,17 +132,19 @@
                 <div class="area-header-right">
                   <div class="area-checkboxes">
                     <label class="area-checkbox-label">
-                      <input 
-                        type="checkbox" 
-                        v-model="areaCarpet[area]"
+                      <input
+                        type="checkbox"
+                        :checked="getAreaProp(areaType.id, 'carpet')"
+                        @change="updateAreaProp(areaType.id, 'carpet', $event.target.checked)"
                         class="form-check-input"
                       />
                       <span>Carpet</span>
                     </label>
                     <label class="area-checkbox-label">
-                      <input 
-                        type="checkbox" 
-                        v-model="areaHardFloor[area]"
+                      <input
+                        type="checkbox"
+                        :checked="getAreaProp(areaType.id, 'hardfloor')"
+                        @change="updateAreaProp(areaType.id, 'hardfloor', $event.target.checked)"
                         class="form-check-input"
                       />
                       <span>Hard Floor</span>
@@ -143,76 +153,100 @@
                   <div class="rooms-control">
                     <span class="rooms-label">Rooms</span>
                     <div class="counter-group">
-                      <button class="counter-btn" @click="decrementRooms(area)">−</button>
-                      <span class="counter-value">{{ rooms[area] || 1 }}</span>
-                      <button class="counter-btn" @click="incrementRooms(area)">+</button>
+                      <button class="counter-btn" @click="decrementRooms(areaType.id)">−</button>
+                      <span class="counter-value">{{ getAreaProp(areaType.id, 'rooms') }}</span>
+                      <button class="counter-btn" @click="incrementRooms(areaType.id)">+</button>
                     </div>
                   </div>
-                  <button 
+                  <button
                     class="btn-task-list"
-                    :class="{ 'active': expandedTasks[area] }"
-                    @click="toggleTaskList(area)"
+                    :class="{ 'active': expandedTasks[areaType.id] }"
+                    @click="toggleTaskList(areaType.id)"
                   >
-                    {{ expandedTasks[area] ? 'Close Task List' : 'Task List' }}
-                    <i :class="expandedTasks[area] ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
+                    {{ expandedTasks[areaType.id] ? 'Close Task List' : 'Task List' }}
+                    <i :class="expandedTasks[areaType.id] ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
                   </button>
                 </div>
               </div>
 
               <!-- Task List -->
-              <div v-if="expandedTasks[area]" class="task-list-container">
-                <!-- Added hours, mins, sqft2 fields at the top of task list -->
+              <div v-if="expandedTasks[areaType.id]" class="task-list-container">
                 <div class="task-metrics-header">
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-clock"></i>
                       <span>Hours</span>
                     </div>
-                    <input type="number" min="0" class="metric-value"></input>
+                    <input
+                        type="number"
+                        min="0"
+                        class="metric-value"
+                        :value="getAreaProp(areaType.id, 'hours')"
+                        @input="updateAreaProp(areaType.id, 'hours', $event.target.value)"
+                    />
                   </div>
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-clock"></i>
                       <span>Minutes</span>
                     </div>
-                    <input type="number" min="0" class="metric-value"></input>
+                    <input
+                        type="number"
+                        min="0"
+                        class="metric-value"
+                        :value="getAreaProp(areaType.id, 'minutes')"
+                        @input="updateAreaProp(areaType.id, 'minutes', $event.target.value)"
+                    />
                   </div>
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-building"></i>
                       <span>Square footage (ft2)</span>
                     </div>
-                    <input type="number" min="0" class="metric-value"></input>
+                    <input
+                        type="number"
+                        min="0"
+                        class="metric-value"
+                        :value="getAreaProp(areaType.id, 'sqft')"
+                        @input="updateAreaProp(areaType.id, 'sqft', $event.target.value)"
+                    />
                   </div>
                 </div>
 
-                <div 
-                  v-for="task in tasks[area]" 
+                <div
+                  v-for="task in getAvailableTasksForArea(areaType.id)"
                   :key="task.id"
                   class="task-item"
-                  :class="{ 'selected': task.selected }"
+                  :class="{ 'selected': isTaskSelected(areaType.id, task.id) }"
                 >
                   <div class="task-left">
                     <input
                       type="checkbox"
-                      v-model="task.selected"
+                      :checked="isTaskSelected(areaType.id, task.id)"
+                      @change="toggleAreaTask(areaType.id, task)"
                       class="form-check-input me-3"
                     />
-                    <div class="task-icon">
-                      <i :class="task.icon"></i>
-                    </div>
+                    <!-- <div class="task-icon">
+                      <i :class="task.icon || 'bi bi-check-circle'"></i>
+                    </div> -->
                     <div class="task-details">
-                      <h6 class="task-title mb-1">{{ task.title }}</h6>
+                      <h6 class="task-title mb-1">{{ task.name }}</h6>
                       <p class="task-description mb-0">{{ task.description }}</p>
                     </div>
                   </div>
                   <div class="task-right">
-                    <select v-model="task.frequency" class="form-select form-select-sm">
-                      <option>Daily</option>
-                      <option>Weekly</option>
-                      <option>1x Week</option>
-                      <option>Monthly</option>
-                      <option>Annual</option>
+                    <select
+                      class="form-select form-select-sm"
+                      :value="getTaskFrequencyId(areaType.id, task.id)"
+                      @change="updateTaskFrequency(areaType.id, task.id, $event.target.value)"
+                    >
+                      <option
+                        v-for="freq in allFrequencies"
+                        :key="freq.id"
+                        :value="freq.id"
+                      >
+                        {{ freq.label }}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -220,35 +254,37 @@
             </div>
 
             <!-- List View - Simple Row -->
-            <div 
+            <div
               v-else-if="!isCardView"
               class="area-card-list"
-              :class="{ 'selected': selectedAreas.includes(area) }"
+              :class="{ 'selected': isAreaSelected(areaType.id) }"
             >
               <div class="list-left">
                 <input
                   type="checkbox"
                   class="form-check-input"
-                  :checked="selectedAreas.includes(area)"
-                  @change="toggleArea(area)"
+                  :checked="isAreaSelected(areaType.id)"
+                  @change="toggleArea(areaType)"
                 />
-                <span class="list-label">{{ area }}</span>
+                <span class="list-label">{{ areaType.name }}</span>
               </div>
-              
-              <div v-if="selectedAreas.includes(area)" class="list-right">
+
+              <div v-if="isAreaSelected(areaType.id)" class="list-right">
                 <div class="area-checkboxes-inline">
                   <label class="area-checkbox-label-inline">
-                    <input 
-                      type="checkbox" 
-                      v-model="areaCarpet[area]"
+                    <input
+                      type="checkbox"
+                      :checked="getAreaProp(areaType.id, 'carpet')"
+                      @change="updateAreaProp(areaType.id, 'carpet', $event.target.checked)"
                       class="form-check-input"
                     />
                     <span>Carpet</span>
                   </label>
                   <label class="area-checkbox-label-inline">
-                    <input 
-                      type="checkbox" 
-                      v-model="areaHardFloor[area]"
+                    <input
+                      type="checkbox"
+                      :checked="getAreaProp(areaType.id, 'hardfloor')"
+                      @change="updateAreaProp(areaType.id, 'hardfloor', $event.target.checked)"
                       class="form-check-input"
                     />
                     <span>Hard Floor</span>
@@ -257,75 +293,99 @@
                 <div class="rooms-control-inline">
                   <span class="rooms-label">Rooms</span>
                   <div class="counter-group">
-                    <button class="counter-btn" @click="decrementRooms(area)">−</button>
-                    <span class="counter-value">{{ rooms[area] || 1 }}</span>
-                    <button class="counter-btn" @click="incrementRooms(area)">+</button>
+                    <button class="counter-btn" @click="decrementRooms(areaType.id)">−</button>
+                    <span class="counter-value">{{ getAreaProp(areaType.id, 'rooms') }}</span>
+                    <button class="counter-btn" @click="incrementRooms(areaType.id)">+</button>
                   </div>
                 </div>
-                <button 
+                <button
                   class="btn-task-list-inline"
-                  :class="{ 'active': expandedTasks[area] }"
-                  @click="toggleTaskList(area)"
+                  :class="{ 'active': expandedTasks[areaType.id] }"
+                  @click="toggleTaskList(areaType.id)"
                 >
                   Task List
-                  <i :class="expandedTasks[area] ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
+                  <i :class="expandedTasks[areaType.id] ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
                 </button>
               </div>
 
               <!-- Task List for List View -->
-              <div v-if="selectedAreas.includes(area) && expandedTasks[area]" class="task-list-container-inline">
-                <!-- Added hours, mins, sqft2 fields for list view -->
+              <div v-if="isAreaSelected(areaType.id) && expandedTasks[areaType.id]" class="task-list-container-inline">
                 <div class="task-metrics-header">
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-clock"></i>
                       <span>Hours</span>
                     </div>
-                    <div class="metric-value">{{ areaMetrics[area]?.hours || 0 }}</div>
+                    <input
+                        type="number"
+                        min="0"
+                        class="metric-value"
+                        :value="getAreaProp(areaType.id, 'hours')"
+                        @input="updateAreaProp(areaType.id, 'hours', $event.target.value)"
+                    />
                   </div>
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-clock"></i>
                       <span>Minutes</span>
                     </div>
-                    <div class="metric-value">{{ areaMetrics[area]?.mins || 0 }}</div>
+                    <input
+                        type="number"
+                        min="0"
+                        class="metric-value"
+                        :value="getAreaProp(areaType.id, 'minutes')"
+                        @input="updateAreaProp(areaType.id, 'minutes', $event.target.value)"
+                    />
                   </div>
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-building"></i>
                       <span>Square footage (ft2)</span>
                     </div>
-                    <div class="metric-value">{{ areaMetrics[area]?.sqft2 || 0 }}</div>
+                    <input
+                        type="number"
+                        min="0"
+                        class="metric-value"
+                        :value="getAreaProp(areaType.id, 'sqft')"
+                        @input="updateAreaProp(areaType.id, 'sqft', $event.target.value)"
+                    />
                   </div>
                 </div>
 
-                <div 
-                  v-for="task in tasks[area]" 
+                <div
+                  v-for="task in getAvailableTasksForArea(areaType.id)"
                   :key="task.id"
                   class="task-item"
-                  :class="{ 'selected': task.selected }"
+                  :class="{ 'selected': isTaskSelected(areaType.id, task.id) }"
                 >
                   <div class="task-left">
                     <input
                       type="checkbox"
-                      v-model="task.selected"
+                      :checked="isTaskSelected(areaType.id, task.id)"
+                      @change="toggleAreaTask(areaType.id, task)"
                       class="form-check-input me-3"
                     />
                     <div class="task-icon">
-                      <i :class="task.icon"></i>
+                      <i :class="task.icon || 'bi bi-check-circle'"></i>
                     </div>
                     <div class="task-details">
-                      <h6 class="task-title mb-1">{{ task.title }}</h6>
+                      <h6 class="task-title mb-1">{{ task.name }}</h6>
                       <p class="task-description mb-0">{{ task.description }}</p>
                     </div>
                   </div>
                   <div class="task-right">
-                    <select v-model="task.frequency" class="form-select form-select-sm">
-                      <option>Daily</option>
-                      <option>Weekly</option>
-                      <option>1x Week</option>
-                      <option>Monthly</option>
-                      <option>Annual</option>
+                    <select
+                      class="form-select form-select-sm"
+                      :value="getTaskFrequencyId(areaType.id, task.id)"
+                      @change="updateTaskFrequency(areaType.id, task.id, $event.target.value)"
+                    >
+                      <option
+                        v-for="freq in allFrequencies"
+                        :key="freq.id"
+                        :value="freq.id"
+                      >
+                        {{ freq.label }}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -333,16 +393,18 @@
             </div>
 
             <!-- Card View - Collapsed (Unselected) -->
-            <div 
-              v-else-if="isCardView && !selectedAreas.includes(area)"
+            <div
+              v-else-if="isCardView && !isAreaSelected(areaType.id)"
               class="area-card-collapsed"
-              @click="toggleArea(area)"
+              @click="toggleArea(areaType)"
             >
               <div class="collapsed-checkbox"></div>
-              <span class="collapsed-label">{{ area }}</span>
+              <span class="collapsed-label">{{ areaType.name }}</span>
             </div>
           </div>
         </div>
+        <div v-else class="text-center py-5 text-muted">Loading areas...</div>
+
 
         <!-- Bottom Links -->
         <div class="bottom-links mt-4 pt-3">
@@ -361,7 +423,7 @@
     <!-- Footer -->
     <div class="footer-section">
       <p class="footer-text mb-3">
-        Great! You've have <span class="highlight">{{ selectedAreas.length }} areas</span> 
+        Great! You've have <span class="highlight">{{ selectedAreasData.length }} areas</span>
         and selected <span class="highlight">{{ getTotalSelectedTasks() }} tasks</span>.
       </p>
       <button class="btn-projects">
@@ -372,244 +434,295 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue';
+import axios from 'axios'; // Ensure axios is installed and imported
 
-const currentStep = ref(1)
-const steps = ['Cleaning Tasks', 'Special Projects', 'Price Calculator', 'Finalize Proposal']
+const props = defineProps({
+  proposalId: {
+    type: Number,
+    required: true
+  }
+});
 
-const isCardView = ref(true)
-const globalCarpet = ref(false)
-const globalHardFloor = ref(false)
+const currentStep = ref(1);
+const steps = ['Cleaning Tasks', 'Special Projects', 'Price Calculator', 'Finalize Proposal'];
 
-const allAreas = [
-  'Break Room',
-  'Conference Room', 
-  'Enclosed Offices',
-  'Entrance Area',
-  'Escalator',
-  'Hallways',
-  'IT Room',
-  'Janitor\'s Closet',
-  'Lobbies',
-  'Locker/Shower Rooms',
-  'Open Space Offices',
-  'Outdoor Space',
-  'Parts Department',
-  'Quiet/Nursing Room',
-  'Receptionist Area',
-  'Restrooms',
-  'Service & Parts Reception',
-  'Service Bays',
-  'Service Department',
-  'Service Reception Drive-Up',
-  'Showroom',
-  'Stairwells',
-  'Storage',
-  'Training Rooms',
-  'Utility Room',
-  'Waiting Area'
-]
+const isCardView = ref(true);
+const globalCarpet = ref(false);
+const globalHardFloor = ref(false);
 
-const selectedAreas = ref(['Break Room'])
-const expandedTasks = reactive({})
-const rooms = reactive({ 'Break Room': 1 })
-const areaCarpet = reactive({ 'Break Room': false })
-const areaHardFloor = reactive({ 'Break Room': false })
+const prospect = ref(null);
+const allAreaTypes = ref([]); // Stores all possible area types from DB
+const allTasks = ref([]); // Stores all possible tasks from DB
+const allFrequencies = ref([]); // Stores all frequencies from DB
 
-const areaMetrics = reactive({
-  'Break Room': { hours: 0, mins: 0, sqft2: 0 }
-})
+// This will store the actual ProposalArea records from the backend
+const selectedAreasData = ref([]); // Array of objects, each representing a stored ProposalArea
 
-const tasks = reactive({
-  'Break Room': [
-    { 
-      id: 1, 
-      title: 'Air Vents & Fans', 
-      description: 'Remove dust from Ceiling fans, air returns and vents.', 
-      frequency: 'Monthly', 
-      selected: true,
-      icon: 'bi bi-fan'
-    },
-    { 
-      id: 2, 
-      title: 'Clean Blinds', 
-      description: 'Open blinds with moist free cleaning solution and microfiber cloths.', 
-      frequency: 'Annual', 
-      selected: false,
-      icon: 'bi bi-window'
-    },
-    { 
-      id: 3, 
-      title: 'Desk Dusting', 
-      description: 'Partner desk available surface area only to not disturb paperwork and personal property.', 
-      frequency: '1x Week', 
-      selected: true,
-      icon: 'bi bi-brush'
-    },
-    { 
-      id: 4, 
-      title: 'High Dusting', 
-      description: 'The following surfaces shall be dusted below 12 feet of height: ledges, architectural details, light fixtures and diffusers, exit signs, remove cobwebs and dust from ceilings.', 
-      frequency: 'Monthly', 
-      selected: false,
-      icon: 'bi bi-arrow-up-circle'
-    },
-    { 
-      id: 5, 
-      title: 'Interior of Drawers and Cabinets', 
-      description: 'Clean available surfaces and front area of drawers and cabinets.', 
-      frequency: 'Monthly', 
-      selected: true,
-      icon: 'bi bi-box'
-    },
-    { 
-      id: 6, 
-      title: 'Routine Dusting', 
-      description: 'Routine dusting shall be performed on an unobstructed horizontal surfaces between 3 and 8 ft of height. Personal items will not be moved.', 
-      frequency: '1x Week', 
-      selected: true,
-      icon: 'bi bi-wind'
-    },
-    { 
-      id: 7, 
-      title: 'Sealing', 
-      description: 'Wipe or vacuum couches, recliners, loveseats, benches and chairs.', 
-      frequency: '1x Week', 
-      selected: false,
-      icon: 'bi bi-house-door'
-    },
-    { 
-      id: 8, 
-      title: 'Spot Clean Glass', 
-      description: 'Spot clean interior windows, door glass and partition glass using microfiber cloths or paper towels leaving glass free of splash, smudges and streaks.', 
-      frequency: '1x Week', 
-      selected: true,
-      icon: 'bi bi-droplet'
-    },
-    { 
-      id: 9, 
-      title: 'Tables & Counters', 
-      description: 'Wipe tables and counters to remove all stains or smudges, box dishes to designated area, discard used trash.', 
-      frequency: '1x Week', 
-      selected: true,
-      icon: 'bi bi-table'
-    },
-    { 
-      id: 10, 
-      title: 'Trash & Recycling', 
-      description: 'Empty and remove trash and recycling bags, separate, and deposit into appropriate disposal containers. Replace can liners as needed.', 
-      frequency: '1x Week', 
-      selected: false,
-      icon: 'bi bi-trash'
-    },
-    { 
-      id: 11, 
-      title: 'Trash Splash', 
-      description: 'Wipe trash adjacent to trash cans.', 
-      frequency: '1x Week', 
-      selected: true,
-      icon: 'bi bi-droplet-half'
+// Reactive state for UI interactions (not directly synced with DB in real-time until update/delete)
+const expandedTasks = reactive({});
+
+// --- Data Fetching ---
+const fetchData = async () => {
+  try {
+    const response = await axios.get(`/api/proposals/${props.proposalId}/data-for-tasks`);
+    prospect.value = response.data.prospect;
+    allAreaTypes.value = response.data.allAreaTypes;
+    allTasks.value = response.data.allTasks;
+    allFrequencies.value = response.data.allFrequencies;
+
+    // Initialize selectedAreasData with existing data
+    selectedAreasData.value = response.data.existingProposalAreas;
+
+    // Initialize expandedTasks for any pre-selected areas that might have tasks
+    selectedAreasData.value.forEach(area => {
+        if (area.area_tasks && area.area_tasks.length > 0) {
+            expandedTasks[area.area_type_id] = false; // By default, keep closed
+        }
+    });
+
+  } catch (error) {
+    console.error('Error fetching data for proposal tasks:', error);
+    // Handle error, e.g., show a message to the user
+  }
+};
+
+onMounted(fetchData);
+
+// --- Computed Properties for UI Logic ---
+
+// Helper to check if an area is selected (exists in selectedAreasData)
+const isAreaSelected = (areaTypeId) => {
+  return selectedAreasData.value.some(area => area.area_type_id === areaTypeId);
+};
+
+// Helper to get a specific property for a selected area
+const getAreaProp = (areaTypeId, propName) => {
+  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  return area ? area[propName] : null;
+};
+
+// Helper to get the number of selected tasks for a given area type
+const getTaskCount = (areaTypeId) => {
+  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  return area && area.area_tasks ? area.area_tasks.length : 0;
+};
+
+// Returns tasks from allTasks that are relevant for a specific area (you might want to refine this)
+const getAvailableTasksForArea = (areaTypeId) => {
+    // For now, let's return all available tasks.
+    // In a real app, you might filter this based on areaType (e.g., 'Restrooms' have different tasks than 'Break Room')
+    // or category (janitorial, construction, etc. from the initial proposal form).
+    return allTasks.value;
+};
+
+// Check if a specific task is selected for a given area
+const isTaskSelected = (areaTypeId, taskId) => {
+  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  return area && area.area_tasks ? area.area_tasks.some(at => at.task_id === taskId) : false;
+};
+
+// Get the frequency ID for a task within an area (either custom or default)
+const getTaskFrequencyId = (areaTypeId, taskId) => {
+  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  if (area && area.area_tasks) {
+    const areaTask = area.area_tasks.find(at => at.task_id === taskId);
+    if (areaTask) {
+      return areaTask.custom_frequency_id || areaTask.task.default_frequency_id;
     }
-  ],
-  'Conference Room': [
-    { 
-      id: 12, 
-      title: 'Vacuum Carpet', 
-      description: 'Vacuum all carpeted areas thoroughly.', 
-      frequency: 'Daily', 
-      selected: false,
-      icon: 'bi bi-wind'
-    },
-    { 
-      id: 13, 
-      title: 'Dust Surfaces', 
-      description: 'Dust all horizontal surfaces including tables and chairs.', 
-      frequency: 'Weekly', 
-      selected: false,
-      icon: 'bi bi-brush'
-    }
-  ],
-  'Enclosed Offices': [
-    { 
-      id: 14, 
-      title: 'Empty Trash', 
-      description: 'Empty all trash bins and replace liners.', 
-      frequency: 'Daily', 
-      selected: false,
-      icon: 'bi bi-trash'
-    }
-  ]
-})
+  }
+  // If task not found in area or no frequency set, return default or first frequency
+  const taskDetails = allTasks.value.find(t => t.id === taskId);
+  return taskDetails ? taskDetails.default_frequency_id : (allFrequencies.value[0]?.id || null);
+};
+
+const getAreaNotes = (areaTypeId) => {
+    const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+    return area ? area.notes : '';
+}
+
+// Total selected tasks for the footer
+const getTotalSelectedTasks = () => {
+  let total = 0;
+  selectedAreasData.value.forEach(area => {
+    total += area.area_tasks ? area.area_tasks.length : 0;
+  });
+  return total;
+};
+
+
+// --- Methods for UI Interactions and API Calls ---
 
 const toggleView = () => {
-  isCardView.value = !isCardView.value
-}
+  isCardView.value = !isCardView.value;
+};
 
-const toggleArea = (area) => {
-  const index = selectedAreas.value.indexOf(area)
-  if (index === -1) {
-    selectedAreas.value.push(area)
-    rooms[area] = 1
-    areaCarpet[area] = false
-    areaHardFloor[area] = false
-    areaMetrics[area] = { hours: 0, mins: 0, sqft2: 0 }
-    if (!tasks[area]) {
-      tasks[area] = [
-        { 
-          id: Date.now(), 
-          title: 'Sample Task', 
-          description: 'This is a sample task for ' + area, 
-          frequency: 'Weekly', 
-          selected: false,
-          icon: 'bi bi-check-circle'
-        }
-      ]
+const toggleArea = async (areaType) => {
+  const existingArea = selectedAreasData.value.find(a => a.area_type_id === areaType.id);
+
+  if (existingArea) {
+    // Area is currently selected, so deselect it (delete from DB)
+    try {
+      await axios.delete(`/api/proposals/${props.proposalId}/areas/${existingArea.id}`);
+      selectedAreasData.value = selectedAreasData.value.filter(a => a.id !== existingArea.id);
+      delete expandedTasks[areaType.id]; // Close task list if deleted
+      console.log(`Area '${areaType.name}' deselected.`);
+    } catch (error) {
+      console.error(`Error deselecting area ${areaType.name}:`, error);
+      alert('Failed to remove area.');
     }
   } else {
-    selectedAreas.value.splice(index, 1)
-    delete expandedTasks[area]
+    // Area is not selected, so select it (store in DB)
+    try {
+      const payload = {
+        area_type_id: areaType.id,
+        rooms: 1, // Default value
+        carpet: globalCarpet.value, // Apply global defaults
+        hardfloor: globalHardFloor.value, // Apply global defaults
+        hours: 0,
+        minutes: 0,
+        sqft: 0
+      };
+      const response = await axios.post(`/api/proposals/${props.proposalId}/areas`, payload);
+      selectedAreasData.value.push(response.data.proposalArea);
+      expandedTasks[areaType.id] = false; // Initialize task list as closed
+      console.log(`Area '${areaType.name}' selected and stored.`);
+    } catch (error) {
+      console.error(`Error selecting area ${areaType.name}:`, error);
+      alert('Failed to add area.');
+    }
   }
-}
+};
 
-const toggleTaskList = (area) => {
+const toggleTaskList = (areaTypeId) => {
   // Close all other task lists (accordion behavior)
   Object.keys(expandedTasks).forEach(key => {
-    if (key !== area) {
-      expandedTasks[key] = false
+    if (parseInt(key) !== areaTypeId) { // Ensure key is compared as number
+      expandedTasks[key] = false;
     }
-  })
+  });
   // Toggle current task list
-  expandedTasks[area] = !expandedTasks[area]
-}
+  expandedTasks[areaTypeId] = !expandedTasks[areaTypeId];
+};
 
-const incrementRooms = (area) => {
-  rooms[area] = (rooms[area] || 1) + 1
-}
 
-const decrementRooms = (area) => {
-  if (rooms[area] > 1) {
-    rooms[area]--
+const updateAreaProp = async (areaTypeId, propName, value) => {
+  const areaIndex = selectedAreasData.value.findIndex(a => a.area_type_id === areaTypeId);
+  if (areaIndex === -1) return;
+
+  const currentArea = selectedAreasData.value[areaIndex];
+  // Convert value to appropriate type if needed (e.g., numbers from inputs)
+  let newValue = value;
+  if (['rooms', 'hours', 'minutes', 'sqft'].includes(propName)) {
+    newValue = parseInt(value) || 0;
   }
-}
+  if (['carpet', 'hardfloor'].includes(propName)) {
+    newValue = Boolean(value);
+  }
 
-const getTaskCount = (area) => {
-  if (!tasks[area]) return 0
-  return tasks[area].filter(t => t.selected).length
-}
+  // Optimistically update UI
+  selectedAreasData.value[areaIndex][propName] = newValue;
 
-const getTotalSelectedTasks = () => {
-  let total = 0
-  selectedAreas.value.forEach(area => {
-    if (tasks[area]) {
-      total += tasks[area].filter(t => t.selected).length
+  try {
+    const payload = { [propName]: newValue };
+    await axios.put(`/api/proposals/${props.proposalId}/areas/${currentArea.id}`, payload);
+    console.log(`Area ${propName} updated for ${currentArea.areaType.name}.`);
+    // Re-fetch or update the specific area in selectedAreasData if backend returns it
+    // For simplicity, we assume the optimistic update is fine, or we can refresh just this area data if needed.
+  } catch (error) {
+    console.error(`Error updating area ${propName} for ${currentArea.areaType.name}:`, error);
+    alert(`Failed to update ${propName}.`);
+    // Rollback optimistic update if API fails (optional but good for robustness)
+    // selectedAreasData.value[areaIndex][propName] = oldValue;
+  }
+};
+
+const incrementRooms = (areaTypeId) => {
+  const currentRooms = getAreaProp(areaTypeId, 'rooms');
+  updateAreaProp(areaTypeId, 'rooms', currentRooms + 1);
+};
+
+const decrementRooms = (areaTypeId) => {
+  const currentRooms = getAreaProp(areaTypeId, 'rooms');
+  if (currentRooms > 1) {
+    updateAreaProp(areaTypeId, 'rooms', currentRooms - 1);
+  }
+};
+
+const toggleAreaTask = async (areaTypeId, task) => {
+  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  if (!area) return;
+
+  const existingAreaTask = area.area_tasks.find(at => at.task_id === task.id);
+
+  if (existingAreaTask) {
+    // Task is selected, deselect it (delete from DB)
+    try {
+      await axios.delete(`/api/proposals/${props.proposalId}/area-tasks/${existingAreaTask.id}`);
+      area.area_tasks = area.area_tasks.filter(at => at.id !== existingAreaTask.id);
+      console.log(`Task '${task.name}' deselected for area '${area.areaType.name}'.`);
+    } catch (error) {
+      console.error(`Error deselecting task ${task.name}:`, error);
+      alert('Failed to remove task from area.');
     }
-  })
-  return total
-}
+  } else {
+    // Task is not selected, select it (store in DB)
+    try {
+      const payload = {
+        proposal_area_id: area.id,
+        task_id: task.id,
+        custom_description: null, // Default, can be customized later
+        custom_frequency_id: task.default_frequency_id // Use default frequency
+      };
+      const response = await axios.post(`/api/proposals/${props.proposalId}/area-tasks`, payload);
+      area.area_tasks.push(response.data.areaTask); // Add the new areaTask object
+      console.log(`Task '${task.name}' selected for area '${area.areaType.name}' and stored.`);
+    } catch (error) {
+      console.error(`Error selecting task ${task.name}:`, error);
+      alert('Failed to add task to area.');
+    }
+  }
+};
+
+const updateTaskFrequency = async (areaTypeId, taskId, newFrequencyId) => {
+  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  if (!area) return;
+
+  const areaTask = area.area_tasks.find(at => at.task_id === taskId);
+  if (!areaTask) return; // Should not happen if dropdown is shown for selected task
+
+  // Optimistically update UI
+  areaTask.custom_frequency_id = parseInt(newFrequencyId);
+
+  try {
+    const payload = { custom_frequency_id: parseInt(newFrequencyId) };
+    await axios.put(`/api/proposals/${props.proposalId}/area-tasks/${areaTask.id}`, payload);
+    console.log(`Frequency updated for task '${areaTask.task.name}'.`);
+  } catch (error) {
+    console.error(`Error updating frequency for task ${areaTask.task.name}:`, error);
+    alert('Failed to update task frequency.');
+    // Rollback optimistic update if API fails
+    // areaTask.custom_frequency_id = oldFrequencyId;
+  }
+};
+
+// --- Watchers ---
+watch(globalCarpet, (newValue) => {
+  // Apply global carpet setting to all selected areas
+  selectedAreasData.value.forEach(area => {
+    updateAreaProp(area.area_type_id, 'carpet', newValue);
+  });
+});
+
+watch(globalHardFloor, (newValue) => {
+  // Apply global hardfloor setting to all selected areas
+  selectedAreasData.value.forEach(area => {
+    updateAreaProp(area.area_type_id, 'hardfloor', newValue);
+  });
+});
 </script>
 
 <style scoped>
-
 /* Added styles for task metrics header */
 .task-metrics-header {
   display: flex;
@@ -650,6 +763,12 @@ const getTotalSelectedTasks = () => {
   font-weight: 600;
   min-width: 50px;
   text-align: center;
+  border: 1px solid #ced4da; /* Add border for input field */
+}
+.metric-value:focus {
+    border-color: #17a2b8;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
 }
 
 /* General Styles */
@@ -662,6 +781,18 @@ const getTotalSelectedTasks = () => {
   background: linear-gradient(135deg, #d4f1f4 0%, #b8e6ea 100%);
   border-radius: 8px;
 }
+
+.placeholder-glow .placeholder {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    height: 1em; /* Adjust based on text size */
+    animation: placeholder-glow 2s ease-in-out infinite;
+    display: inline-block; /* Ensure it takes up space */
+}
+@keyframes placeholder-glow {
+  50% { opacity: 0.5; }
+}
+
 
 /* Progress Stepper - Enhanced Design */
 .stepper-container {

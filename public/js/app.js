@@ -28499,227 +28499,493 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/lib/axios.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+
+ // Ensure axios is installed and imported
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __name: 'ProposalTasks',
+  props: {
+    proposalId: {
+      type: Number,
+      required: true
+    }
+  },
   setup: function setup(__props, _ref) {
     var __expose = _ref.expose;
     __expose();
+    var props = __props;
     var currentStep = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(1);
     var steps = ['Cleaning Tasks', 'Special Projects', 'Price Calculator', 'Finalize Proposal'];
     var isCardView = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(true);
     var globalCarpet = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
     var globalHardFloor = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
-    var allAreas = ['Break Room', 'Conference Room', 'Enclosed Offices', 'Entrance Area', 'Escalator', 'Hallways', 'IT Room', 'Janitor\'s Closet', 'Lobbies', 'Locker/Shower Rooms', 'Open Space Offices', 'Outdoor Space', 'Parts Department', 'Quiet/Nursing Room', 'Receptionist Area', 'Restrooms', 'Service & Parts Reception', 'Service Bays', 'Service Department', 'Service Reception Drive-Up', 'Showroom', 'Stairwells', 'Storage', 'Training Rooms', 'Utility Room', 'Waiting Area'];
-    var selectedAreas = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(['Break Room']);
+    var prospect = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(null);
+    var allAreaTypes = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]); // Stores all possible area types from DB
+    var allTasks = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]); // Stores all possible tasks from DB
+    var allFrequencies = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]); // Stores all frequencies from DB
+
+    // This will store the actual ProposalArea records from the backend
+    var selectedAreasData = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]); // Array of objects, each representing a stored ProposalArea
+
+    // Reactive state for UI interactions (not directly synced with DB in real-time until update/delete)
     var expandedTasks = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({});
-    var rooms = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
-      'Break Room': 1
-    });
-    var areaCarpet = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
-      'Break Room': false
-    });
-    var areaHardFloor = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
-      'Break Room': false
-    });
-    var areaMetrics = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
-      'Break Room': {
-        hours: 0,
-        mins: 0,
-        sqft2: 0
+
+    // --- Data Fetching ---
+    var fetchData = /*#__PURE__*/function () {
+      var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+        var response, _t;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.p = _context.n) {
+            case 0:
+              _context.p = 0;
+              _context.n = 1;
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].get("/api/proposals/".concat(props.proposalId, "/data-for-tasks"));
+            case 1:
+              response = _context.v;
+              prospect.value = response.data.prospect;
+              allAreaTypes.value = response.data.allAreaTypes;
+              allTasks.value = response.data.allTasks;
+              allFrequencies.value = response.data.allFrequencies;
+
+              // Initialize selectedAreasData with existing data
+              selectedAreasData.value = response.data.existingProposalAreas;
+
+              // Initialize expandedTasks for any pre-selected areas that might have tasks
+              selectedAreasData.value.forEach(function (area) {
+                if (area.area_tasks && area.area_tasks.length > 0) {
+                  expandedTasks[area.area_type_id] = false; // By default, keep closed
+                }
+              });
+              _context.n = 3;
+              break;
+            case 2:
+              _context.p = 2;
+              _t = _context.v;
+              console.error('Error fetching data for proposal tasks:', _t);
+              // Handle error, e.g., show a message to the user
+            case 3:
+              return _context.a(2);
+          }
+        }, _callee, null, [[0, 2]]);
+      }));
+      return function fetchData() {
+        return _ref2.apply(this, arguments);
+      };
+    }();
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.onMounted)(fetchData);
+
+    // --- Computed Properties for UI Logic ---
+
+    // Helper to check if an area is selected (exists in selectedAreasData)
+    var isAreaSelected = function isAreaSelected(areaTypeId) {
+      return selectedAreasData.value.some(function (area) {
+        return area.area_type_id === areaTypeId;
+      });
+    };
+
+    // Helper to get a specific property for a selected area
+    var getAreaProp = function getAreaProp(areaTypeId, propName) {
+      var area = selectedAreasData.value.find(function (a) {
+        return a.area_type_id === areaTypeId;
+      });
+      return area ? area[propName] : null;
+    };
+
+    // Helper to get the number of selected tasks for a given area type
+    var getTaskCount = function getTaskCount(areaTypeId) {
+      var area = selectedAreasData.value.find(function (a) {
+        return a.area_type_id === areaTypeId;
+      });
+      return area && area.area_tasks ? area.area_tasks.length : 0;
+    };
+
+    // Returns tasks from allTasks that are relevant for a specific area (you might want to refine this)
+    var getAvailableTasksForArea = function getAvailableTasksForArea(areaTypeId) {
+      // For now, let's return all available tasks.
+      // In a real app, you might filter this based on areaType (e.g., 'Restrooms' have different tasks than 'Break Room')
+      // or category (janitorial, construction, etc. from the initial proposal form).
+      return allTasks.value;
+    };
+
+    // Check if a specific task is selected for a given area
+    var isTaskSelected = function isTaskSelected(areaTypeId, taskId) {
+      var area = selectedAreasData.value.find(function (a) {
+        return a.area_type_id === areaTypeId;
+      });
+      return area && area.area_tasks ? area.area_tasks.some(function (at) {
+        return at.task_id === taskId;
+      }) : false;
+    };
+
+    // Get the frequency ID for a task within an area (either custom or default)
+    var getTaskFrequencyId = function getTaskFrequencyId(areaTypeId, taskId) {
+      var _allFrequencies$value;
+      var area = selectedAreasData.value.find(function (a) {
+        return a.area_type_id === areaTypeId;
+      });
+      if (area && area.area_tasks) {
+        var areaTask = area.area_tasks.find(function (at) {
+          return at.task_id === taskId;
+        });
+        if (areaTask) {
+          return areaTask.custom_frequency_id || areaTask.task.default_frequency_id;
+        }
       }
-    });
-    var tasks = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
-      'Break Room': [{
-        id: 1,
-        title: 'Air Vents & Fans',
-        description: 'Remove dust from Ceiling fans, air returns and vents.',
-        frequency: 'Monthly',
-        selected: true,
-        icon: 'bi bi-fan'
-      }, {
-        id: 2,
-        title: 'Clean Blinds',
-        description: 'Open blinds with moist free cleaning solution and microfiber cloths.',
-        frequency: 'Annual',
-        selected: false,
-        icon: 'bi bi-window'
-      }, {
-        id: 3,
-        title: 'Desk Dusting',
-        description: 'Partner desk available surface area only to not disturb paperwork and personal property.',
-        frequency: '1x Week',
-        selected: true,
-        icon: 'bi bi-brush'
-      }, {
-        id: 4,
-        title: 'High Dusting',
-        description: 'The following surfaces shall be dusted below 12 feet of height: ledges, architectural details, light fixtures and diffusers, exit signs, remove cobwebs and dust from ceilings.',
-        frequency: 'Monthly',
-        selected: false,
-        icon: 'bi bi-arrow-up-circle'
-      }, {
-        id: 5,
-        title: 'Interior of Drawers and Cabinets',
-        description: 'Clean available surfaces and front area of drawers and cabinets.',
-        frequency: 'Monthly',
-        selected: true,
-        icon: 'bi bi-box'
-      }, {
-        id: 6,
-        title: 'Routine Dusting',
-        description: 'Routine dusting shall be performed on an unobstructed horizontal surfaces between 3 and 8 ft of height. Personal items will not be moved.',
-        frequency: '1x Week',
-        selected: true,
-        icon: 'bi bi-wind'
-      }, {
-        id: 7,
-        title: 'Sealing',
-        description: 'Wipe or vacuum couches, recliners, loveseats, benches and chairs.',
-        frequency: '1x Week',
-        selected: false,
-        icon: 'bi bi-house-door'
-      }, {
-        id: 8,
-        title: 'Spot Clean Glass',
-        description: 'Spot clean interior windows, door glass and partition glass using microfiber cloths or paper towels leaving glass free of splash, smudges and streaks.',
-        frequency: '1x Week',
-        selected: true,
-        icon: 'bi bi-droplet'
-      }, {
-        id: 9,
-        title: 'Tables & Counters',
-        description: 'Wipe tables and counters to remove all stains or smudges, box dishes to designated area, discard used trash.',
-        frequency: '1x Week',
-        selected: true,
-        icon: 'bi bi-table'
-      }, {
-        id: 10,
-        title: 'Trash & Recycling',
-        description: 'Empty and remove trash and recycling bags, separate, and deposit into appropriate disposal containers. Replace can liners as needed.',
-        frequency: '1x Week',
-        selected: false,
-        icon: 'bi bi-trash'
-      }, {
-        id: 11,
-        title: 'Trash Splash',
-        description: 'Wipe trash adjacent to trash cans.',
-        frequency: '1x Week',
-        selected: true,
-        icon: 'bi bi-droplet-half'
-      }],
-      'Conference Room': [{
-        id: 12,
-        title: 'Vacuum Carpet',
-        description: 'Vacuum all carpeted areas thoroughly.',
-        frequency: 'Daily',
-        selected: false,
-        icon: 'bi bi-wind'
-      }, {
-        id: 13,
-        title: 'Dust Surfaces',
-        description: 'Dust all horizontal surfaces including tables and chairs.',
-        frequency: 'Weekly',
-        selected: false,
-        icon: 'bi bi-brush'
-      }],
-      'Enclosed Offices': [{
-        id: 14,
-        title: 'Empty Trash',
-        description: 'Empty all trash bins and replace liners.',
-        frequency: 'Daily',
-        selected: false,
-        icon: 'bi bi-trash'
-      }]
-    });
+      // If task not found in area or no frequency set, return default or first frequency
+      var taskDetails = allTasks.value.find(function (t) {
+        return t.id === taskId;
+      });
+      return taskDetails ? taskDetails.default_frequency_id : ((_allFrequencies$value = allFrequencies.value[0]) === null || _allFrequencies$value === void 0 ? void 0 : _allFrequencies$value.id) || null;
+    };
+    var getAreaNotes = function getAreaNotes(areaTypeId) {
+      var area = selectedAreasData.value.find(function (a) {
+        return a.area_type_id === areaTypeId;
+      });
+      return area ? area.notes : '';
+    };
+
+    // Total selected tasks for the footer
+    var getTotalSelectedTasks = function getTotalSelectedTasks() {
+      var total = 0;
+      selectedAreasData.value.forEach(function (area) {
+        total += area.area_tasks ? area.area_tasks.length : 0;
+      });
+      return total;
+    };
+
+    // --- Methods for UI Interactions and API Calls ---
+
     var toggleView = function toggleView() {
       isCardView.value = !isCardView.value;
     };
-    var toggleArea = function toggleArea(area) {
-      var index = selectedAreas.value.indexOf(area);
-      if (index === -1) {
-        selectedAreas.value.push(area);
-        rooms[area] = 1;
-        areaCarpet[area] = false;
-        areaHardFloor[area] = false;
-        areaMetrics[area] = {
-          hours: 0,
-          mins: 0,
-          sqft2: 0
-        };
-        if (!tasks[area]) {
-          tasks[area] = [{
-            id: Date.now(),
-            title: 'Sample Task',
-            description: 'This is a sample task for ' + area,
-            frequency: 'Weekly',
-            selected: false,
-            icon: 'bi bi-check-circle'
-          }];
-        }
-      } else {
-        selectedAreas.value.splice(index, 1);
-        delete expandedTasks[area];
-      }
-    };
-    var toggleTaskList = function toggleTaskList(area) {
+    var toggleArea = /*#__PURE__*/function () {
+      var _ref3 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(areaType) {
+        var existingArea, payload, response, _t2, _t3;
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
+            case 0:
+              existingArea = selectedAreasData.value.find(function (a) {
+                return a.area_type_id === areaType.id;
+              });
+              if (!existingArea) {
+                _context2.n = 5;
+                break;
+              }
+              _context2.p = 1;
+              _context2.n = 2;
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"]("/api/proposals/".concat(props.proposalId, "/areas/").concat(existingArea.id));
+            case 2:
+              selectedAreasData.value = selectedAreasData.value.filter(function (a) {
+                return a.id !== existingArea.id;
+              });
+              delete expandedTasks[areaType.id]; // Close task list if deleted
+              console.log("Area '".concat(areaType.name, "' deselected."));
+              _context2.n = 4;
+              break;
+            case 3:
+              _context2.p = 3;
+              _t2 = _context2.v;
+              console.error("Error deselecting area ".concat(areaType.name, ":"), _t2);
+              alert('Failed to remove area.');
+            case 4:
+              _context2.n = 8;
+              break;
+            case 5:
+              _context2.p = 5;
+              payload = {
+                area_type_id: areaType.id,
+                rooms: 1,
+                // Default value
+                carpet: globalCarpet.value,
+                // Apply global defaults
+                hardfloor: globalHardFloor.value,
+                // Apply global defaults
+                hours: 0,
+                minutes: 0,
+                sqft: 0
+              };
+              _context2.n = 6;
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post("/api/proposals/".concat(props.proposalId, "/areas"), payload);
+            case 6:
+              response = _context2.v;
+              selectedAreasData.value.push(response.data.proposalArea);
+              expandedTasks[areaType.id] = false; // Initialize task list as closed
+              console.log("Area '".concat(areaType.name, "' selected and stored."));
+              _context2.n = 8;
+              break;
+            case 7:
+              _context2.p = 7;
+              _t3 = _context2.v;
+              console.error("Error selecting area ".concat(areaType.name, ":"), _t3);
+              alert('Failed to add area.');
+            case 8:
+              return _context2.a(2);
+          }
+        }, _callee2, null, [[5, 7], [1, 3]]);
+      }));
+      return function toggleArea(_x) {
+        return _ref3.apply(this, arguments);
+      };
+    }();
+    var toggleTaskList = function toggleTaskList(areaTypeId) {
       // Close all other task lists (accordion behavior)
       Object.keys(expandedTasks).forEach(function (key) {
-        if (key !== area) {
+        if (parseInt(key) !== areaTypeId) {
+          // Ensure key is compared as number
           expandedTasks[key] = false;
         }
       });
       // Toggle current task list
-      expandedTasks[area] = !expandedTasks[area];
+      expandedTasks[areaTypeId] = !expandedTasks[areaTypeId];
     };
-    var incrementRooms = function incrementRooms(area) {
-      rooms[area] = (rooms[area] || 1) + 1;
+    var updateAreaProp = /*#__PURE__*/function () {
+      var _ref4 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(areaTypeId, propName, value) {
+        var areaIndex, currentArea, newValue, payload, _t4;
+        return _regenerator().w(function (_context3) {
+          while (1) switch (_context3.p = _context3.n) {
+            case 0:
+              areaIndex = selectedAreasData.value.findIndex(function (a) {
+                return a.area_type_id === areaTypeId;
+              });
+              if (!(areaIndex === -1)) {
+                _context3.n = 1;
+                break;
+              }
+              return _context3.a(2);
+            case 1:
+              currentArea = selectedAreasData.value[areaIndex]; // Convert value to appropriate type if needed (e.g., numbers from inputs)
+              newValue = value;
+              if (['rooms', 'hours', 'minutes', 'sqft'].includes(propName)) {
+                newValue = parseInt(value) || 0;
+              }
+              if (['carpet', 'hardfloor'].includes(propName)) {
+                newValue = Boolean(value);
+              }
+
+              // Optimistically update UI
+              selectedAreasData.value[areaIndex][propName] = newValue;
+              _context3.p = 2;
+              payload = _defineProperty({}, propName, newValue);
+              _context3.n = 3;
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].put("/api/proposals/".concat(props.proposalId, "/areas/").concat(currentArea.id), payload);
+            case 3:
+              console.log("Area ".concat(propName, " updated for ").concat(currentArea.areaType.name, "."));
+              // Re-fetch or update the specific area in selectedAreasData if backend returns it
+              // For simplicity, we assume the optimistic update is fine, or we can refresh just this area data if needed.
+              _context3.n = 5;
+              break;
+            case 4:
+              _context3.p = 4;
+              _t4 = _context3.v;
+              console.error("Error updating area ".concat(propName, " for ").concat(currentArea.areaType.name, ":"), _t4);
+              alert("Failed to update ".concat(propName, "."));
+              // Rollback optimistic update if API fails (optional but good for robustness)
+              // selectedAreasData.value[areaIndex][propName] = oldValue;
+            case 5:
+              return _context3.a(2);
+          }
+        }, _callee3, null, [[2, 4]]);
+      }));
+      return function updateAreaProp(_x2, _x3, _x4) {
+        return _ref4.apply(this, arguments);
+      };
+    }();
+    var incrementRooms = function incrementRooms(areaTypeId) {
+      var currentRooms = getAreaProp(areaTypeId, 'rooms');
+      updateAreaProp(areaTypeId, 'rooms', currentRooms + 1);
     };
-    var decrementRooms = function decrementRooms(area) {
-      if (rooms[area] > 1) {
-        rooms[area]--;
+    var decrementRooms = function decrementRooms(areaTypeId) {
+      var currentRooms = getAreaProp(areaTypeId, 'rooms');
+      if (currentRooms > 1) {
+        updateAreaProp(areaTypeId, 'rooms', currentRooms - 1);
       }
     };
-    var getTaskCount = function getTaskCount(area) {
-      if (!tasks[area]) return 0;
-      return tasks[area].filter(function (t) {
-        return t.selected;
-      }).length;
-    };
-    var getTotalSelectedTasks = function getTotalSelectedTasks() {
-      var total = 0;
-      selectedAreas.value.forEach(function (area) {
-        if (tasks[area]) {
-          total += tasks[area].filter(function (t) {
-            return t.selected;
-          }).length;
-        }
+    var toggleAreaTask = /*#__PURE__*/function () {
+      var _ref5 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(areaTypeId, task) {
+        var area, existingAreaTask, payload, response, _t5, _t6;
+        return _regenerator().w(function (_context4) {
+          while (1) switch (_context4.p = _context4.n) {
+            case 0:
+              area = selectedAreasData.value.find(function (a) {
+                return a.area_type_id === areaTypeId;
+              });
+              if (area) {
+                _context4.n = 1;
+                break;
+              }
+              return _context4.a(2);
+            case 1:
+              existingAreaTask = area.area_tasks.find(function (at) {
+                return at.task_id === task.id;
+              });
+              if (!existingAreaTask) {
+                _context4.n = 6;
+                break;
+              }
+              _context4.p = 2;
+              _context4.n = 3;
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"]("/api/proposals/".concat(props.proposalId, "/area-tasks/").concat(existingAreaTask.id));
+            case 3:
+              area.area_tasks = area.area_tasks.filter(function (at) {
+                return at.id !== existingAreaTask.id;
+              });
+              console.log("Task '".concat(task.name, "' deselected for area '").concat(area.areaType.name, "'."));
+              _context4.n = 5;
+              break;
+            case 4:
+              _context4.p = 4;
+              _t5 = _context4.v;
+              console.error("Error deselecting task ".concat(task.name, ":"), _t5);
+              alert('Failed to remove task from area.');
+            case 5:
+              _context4.n = 9;
+              break;
+            case 6:
+              _context4.p = 6;
+              payload = {
+                proposal_area_id: area.id,
+                task_id: task.id,
+                custom_description: null,
+                // Default, can be customized later
+                custom_frequency_id: task.default_frequency_id // Use default frequency
+              };
+              _context4.n = 7;
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post("/api/proposals/".concat(props.proposalId, "/area-tasks"), payload);
+            case 7:
+              response = _context4.v;
+              area.area_tasks.push(response.data.areaTask); // Add the new areaTask object
+              console.log("Task '".concat(task.name, "' selected for area '").concat(area.areaType.name, "' and stored."));
+              _context4.n = 9;
+              break;
+            case 8:
+              _context4.p = 8;
+              _t6 = _context4.v;
+              console.error("Error selecting task ".concat(task.name, ":"), _t6);
+              alert('Failed to add task to area.');
+            case 9:
+              return _context4.a(2);
+          }
+        }, _callee4, null, [[6, 8], [2, 4]]);
+      }));
+      return function toggleAreaTask(_x5, _x6) {
+        return _ref5.apply(this, arguments);
+      };
+    }();
+    var updateTaskFrequency = /*#__PURE__*/function () {
+      var _ref6 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(areaTypeId, taskId, newFrequencyId) {
+        var area, areaTask, payload, _t7;
+        return _regenerator().w(function (_context5) {
+          while (1) switch (_context5.p = _context5.n) {
+            case 0:
+              area = selectedAreasData.value.find(function (a) {
+                return a.area_type_id === areaTypeId;
+              });
+              if (area) {
+                _context5.n = 1;
+                break;
+              }
+              return _context5.a(2);
+            case 1:
+              areaTask = area.area_tasks.find(function (at) {
+                return at.task_id === taskId;
+              });
+              if (areaTask) {
+                _context5.n = 2;
+                break;
+              }
+              return _context5.a(2);
+            case 2:
+              // Should not happen if dropdown is shown for selected task
+
+              // Optimistically update UI
+              areaTask.custom_frequency_id = parseInt(newFrequencyId);
+              _context5.p = 3;
+              payload = {
+                custom_frequency_id: parseInt(newFrequencyId)
+              };
+              _context5.n = 4;
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].put("/api/proposals/".concat(props.proposalId, "/area-tasks/").concat(areaTask.id), payload);
+            case 4:
+              console.log("Frequency updated for task '".concat(areaTask.task.name, "'."));
+              _context5.n = 6;
+              break;
+            case 5:
+              _context5.p = 5;
+              _t7 = _context5.v;
+              console.error("Error updating frequency for task ".concat(areaTask.task.name, ":"), _t7);
+              alert('Failed to update task frequency.');
+              // Rollback optimistic update if API fails
+              // areaTask.custom_frequency_id = oldFrequencyId;
+            case 6:
+              return _context5.a(2);
+          }
+        }, _callee5, null, [[3, 5]]);
+      }));
+      return function updateTaskFrequency(_x7, _x8, _x9) {
+        return _ref6.apply(this, arguments);
+      };
+    }();
+
+    // --- Watchers ---
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(globalCarpet, function (newValue) {
+      // Apply global carpet setting to all selected areas
+      selectedAreasData.value.forEach(function (area) {
+        updateAreaProp(area.area_type_id, 'carpet', newValue);
       });
-      return total;
-    };
+    });
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(globalHardFloor, function (newValue) {
+      // Apply global hardfloor setting to all selected areas
+      selectedAreasData.value.forEach(function (area) {
+        updateAreaProp(area.area_type_id, 'hardfloor', newValue);
+      });
+    });
     var __returned__ = {
+      props: props,
       currentStep: currentStep,
       steps: steps,
       isCardView: isCardView,
       globalCarpet: globalCarpet,
       globalHardFloor: globalHardFloor,
-      allAreas: allAreas,
-      selectedAreas: selectedAreas,
+      prospect: prospect,
+      allAreaTypes: allAreaTypes,
+      allTasks: allTasks,
+      allFrequencies: allFrequencies,
+      selectedAreasData: selectedAreasData,
       expandedTasks: expandedTasks,
-      rooms: rooms,
-      areaCarpet: areaCarpet,
-      areaHardFloor: areaHardFloor,
-      areaMetrics: areaMetrics,
-      tasks: tasks,
+      fetchData: fetchData,
+      isAreaSelected: isAreaSelected,
+      getAreaProp: getAreaProp,
+      getTaskCount: getTaskCount,
+      getAvailableTasksForArea: getAvailableTasksForArea,
+      isTaskSelected: isTaskSelected,
+      getTaskFrequencyId: getTaskFrequencyId,
+      getAreaNotes: getAreaNotes,
+      getTotalSelectedTasks: getTotalSelectedTasks,
       toggleView: toggleView,
       toggleArea: toggleArea,
       toggleTaskList: toggleTaskList,
+      updateAreaProp: updateAreaProp,
       incrementRooms: incrementRooms,
       decrementRooms: decrementRooms,
-      getTaskCount: getTaskCount,
-      getTotalSelectedTasks: getTotalSelectedTasks,
+      toggleAreaTask: toggleAreaTask,
+      updateTaskFrequency: updateTaskFrequency,
       ref: vue__WEBPACK_IMPORTED_MODULE_0__.ref,
-      reactive: vue__WEBPACK_IMPORTED_MODULE_0__.reactive
+      reactive: vue__WEBPACK_IMPORTED_MODULE_0__.reactive,
+      onMounted: vue__WEBPACK_IMPORTED_MODULE_0__.onMounted,
+      computed: vue__WEBPACK_IMPORTED_MODULE_0__.computed,
+      watch: vue__WEBPACK_IMPORTED_MODULE_0__.watch,
+      get axios() {
+        return axios__WEBPACK_IMPORTED_MODULE_1__["default"];
+      }
     };
     Object.defineProperty(__returned__, '__isScriptSetup', {
       enumerable: false,
@@ -29890,231 +30156,262 @@ var _hoisted_1 = {
   "class": "min-vh-100 bg-light"
 };
 var _hoisted_2 = {
-  "class": "stepper-container mx-4 mb-4"
+  key: 0,
+  "class": "prospect-card p-4 mx-4 mb-3"
 };
-var _hoisted_3 = ["onClick"];
+var _hoisted_3 = {
+  "class": "fw-bold text-dark mb-2"
+};
 var _hoisted_4 = {
-  "class": "step-content"
+  "class": "text-muted small mb-0"
 };
 var _hoisted_5 = {
-  "class": "step-number"
+  key: 1,
+  "class": "prospect-card p-4 mx-4 mb-3 placeholder-glow"
 };
 var _hoisted_6 = {
-  "class": "step-label"
+  "class": "stepper-container mx-4 mb-4"
 };
-var _hoisted_7 = {
-  "class": "main-content-wrapper mx-4 mb-4"
-};
+var _hoisted_7 = ["onClick"];
 var _hoisted_8 = {
-  "class": "text-center mb-4 pt-4"
+  "class": "step-content"
 };
 var _hoisted_9 = {
-  "class": "d-flex justify-content-center align-items-center gap-3"
+  "class": "step-number"
 };
 var _hoisted_10 = {
-  "class": "badge-selected"
+  "class": "step-label"
 };
 var _hoisted_11 = {
-  "class": "area-builder-card p-4 mb-4"
+  "class": "main-content-wrapper mx-4 mb-4"
 };
 var _hoisted_12 = {
-  "class": "d-flex justify-content-between align-items-center mb-4"
+  "class": "text-center mb-4 pt-4"
 };
 var _hoisted_13 = {
-  "class": "view-options"
+  "class": "d-flex justify-content-center align-items-center gap-3"
 };
 var _hoisted_14 = {
-  "class": "global-checkboxes"
+  "class": "badge-selected"
 };
 var _hoisted_15 = {
-  "class": "checkbox-label"
+  "class": "area-builder-card p-4 mb-4"
 };
 var _hoisted_16 = {
-  "class": "checkbox-label"
+  "class": "d-flex justify-content-between align-items-center mb-4"
 };
 var _hoisted_17 = {
-  "class": "areas-list"
+  "class": "view-options"
 };
 var _hoisted_18 = {
+  "class": "global-checkboxes"
+};
+var _hoisted_19 = {
+  "class": "checkbox-label"
+};
+var _hoisted_20 = {
+  "class": "checkbox-label"
+};
+var _hoisted_21 = {
+  key: 0,
+  "class": "areas-list"
+};
+var _hoisted_22 = {
   key: 0,
   "class": "area-card-expanded"
 };
-var _hoisted_19 = {
+var _hoisted_23 = {
   "class": "area-header"
 };
-var _hoisted_20 = {
+var _hoisted_24 = {
   "class": "area-header-left"
 };
-var _hoisted_21 = ["onChange"];
-var _hoisted_22 = {
+var _hoisted_25 = ["checked", "onChange"];
+var _hoisted_26 = {
   "class": "area-info"
 };
-var _hoisted_23 = {
+var _hoisted_27 = {
   "class": "area-title mb-0"
 };
-var _hoisted_24 = {
+var _hoisted_28 = {
   "class": "area-subtitle"
 };
-var _hoisted_25 = {
+var _hoisted_29 = {
+  "class": "area-header-center"
+};
+var _hoisted_30 = {
+  "class": "action-btn"
+};
+var _hoisted_31 = {
   "class": "area-header-right"
 };
-var _hoisted_26 = {
+var _hoisted_32 = {
   "class": "area-checkboxes"
 };
-var _hoisted_27 = {
+var _hoisted_33 = {
   "class": "area-checkbox-label"
 };
-var _hoisted_28 = ["onUpdate:modelValue"];
-var _hoisted_29 = {
+var _hoisted_34 = ["checked", "onChange"];
+var _hoisted_35 = {
   "class": "area-checkbox-label"
 };
-var _hoisted_30 = ["onUpdate:modelValue"];
-var _hoisted_31 = {
+var _hoisted_36 = ["checked", "onChange"];
+var _hoisted_37 = {
   "class": "rooms-control"
 };
-var _hoisted_32 = {
+var _hoisted_38 = {
   "class": "counter-group"
 };
-var _hoisted_33 = ["onClick"];
-var _hoisted_34 = {
+var _hoisted_39 = ["onClick"];
+var _hoisted_40 = {
   "class": "counter-value"
 };
-var _hoisted_35 = ["onClick"];
-var _hoisted_36 = ["onClick"];
-var _hoisted_37 = {
+var _hoisted_41 = ["onClick"];
+var _hoisted_42 = ["onClick"];
+var _hoisted_43 = {
   key: 0,
   "class": "task-list-container"
 };
-var _hoisted_38 = {
+var _hoisted_44 = {
+  "class": "task-metrics-header"
+};
+var _hoisted_45 = {
+  "class": "metric-item"
+};
+var _hoisted_46 = ["value", "onInput"];
+var _hoisted_47 = {
+  "class": "metric-item"
+};
+var _hoisted_48 = ["value", "onInput"];
+var _hoisted_49 = {
+  "class": "metric-item"
+};
+var _hoisted_50 = ["value", "onInput"];
+var _hoisted_51 = {
   "class": "task-left"
 };
-var _hoisted_39 = ["onUpdate:modelValue"];
-var _hoisted_40 = {
-  "class": "task-icon"
-};
-var _hoisted_41 = {
+var _hoisted_52 = ["checked", "onChange"];
+var _hoisted_53 = {
   "class": "task-details"
 };
-var _hoisted_42 = {
+var _hoisted_54 = {
   "class": "task-title mb-1"
 };
-var _hoisted_43 = {
+var _hoisted_55 = {
   "class": "task-description mb-0"
 };
-var _hoisted_44 = {
+var _hoisted_56 = {
   "class": "task-right"
 };
-var _hoisted_45 = ["onUpdate:modelValue"];
-var _hoisted_46 = {
+var _hoisted_57 = ["value", "onChange"];
+var _hoisted_58 = ["value"];
+var _hoisted_59 = {
   "class": "list-left"
 };
-var _hoisted_47 = ["checked", "onChange"];
-var _hoisted_48 = {
+var _hoisted_60 = ["checked", "onChange"];
+var _hoisted_61 = {
   "class": "list-label"
 };
-var _hoisted_49 = {
+var _hoisted_62 = {
   key: 0,
   "class": "list-right"
 };
-var _hoisted_50 = {
+var _hoisted_63 = {
   "class": "area-checkboxes-inline"
 };
-var _hoisted_51 = {
+var _hoisted_64 = {
   "class": "area-checkbox-label-inline"
 };
-var _hoisted_52 = ["onUpdate:modelValue"];
-var _hoisted_53 = {
+var _hoisted_65 = ["checked", "onChange"];
+var _hoisted_66 = {
   "class": "area-checkbox-label-inline"
 };
-var _hoisted_54 = ["onUpdate:modelValue"];
-var _hoisted_55 = {
+var _hoisted_67 = ["checked", "onChange"];
+var _hoisted_68 = {
   "class": "rooms-control-inline"
 };
-var _hoisted_56 = {
+var _hoisted_69 = {
   "class": "counter-group"
 };
-var _hoisted_57 = ["onClick"];
-var _hoisted_58 = {
+var _hoisted_70 = ["onClick"];
+var _hoisted_71 = {
   "class": "counter-value"
 };
-var _hoisted_59 = ["onClick"];
-var _hoisted_60 = ["onClick"];
-var _hoisted_61 = {
+var _hoisted_72 = ["onClick"];
+var _hoisted_73 = ["onClick"];
+var _hoisted_74 = {
   key: 1,
   "class": "task-list-container-inline"
 };
-var _hoisted_62 = {
+var _hoisted_75 = {
   "class": "task-metrics-header"
 };
-var _hoisted_63 = {
+var _hoisted_76 = {
   "class": "metric-item"
 };
-var _hoisted_64 = {
-  "class": "metric-value"
-};
-var _hoisted_65 = {
+var _hoisted_77 = ["value", "onInput"];
+var _hoisted_78 = {
   "class": "metric-item"
 };
-var _hoisted_66 = {
-  "class": "metric-value"
-};
-var _hoisted_67 = {
+var _hoisted_79 = ["value", "onInput"];
+var _hoisted_80 = {
   "class": "metric-item"
 };
-var _hoisted_68 = {
-  "class": "metric-value"
-};
-var _hoisted_69 = {
+var _hoisted_81 = ["value", "onInput"];
+var _hoisted_82 = {
   "class": "task-left"
 };
-var _hoisted_70 = ["onUpdate:modelValue"];
-var _hoisted_71 = {
+var _hoisted_83 = ["checked", "onChange"];
+var _hoisted_84 = {
   "class": "task-icon"
 };
-var _hoisted_72 = {
+var _hoisted_85 = {
   "class": "task-details"
 };
-var _hoisted_73 = {
+var _hoisted_86 = {
   "class": "task-title mb-1"
 };
-var _hoisted_74 = {
+var _hoisted_87 = {
   "class": "task-description mb-0"
 };
-var _hoisted_75 = {
+var _hoisted_88 = {
   "class": "task-right"
 };
-var _hoisted_76 = ["onUpdate:modelValue"];
-var _hoisted_77 = ["onClick"];
-var _hoisted_78 = {
+var _hoisted_89 = ["value", "onChange"];
+var _hoisted_90 = ["value"];
+var _hoisted_91 = ["onClick"];
+var _hoisted_92 = {
   "class": "collapsed-label"
 };
-var _hoisted_79 = {
+var _hoisted_93 = {
+  key: 1,
+  "class": "text-center py-5 text-muted"
+};
+var _hoisted_94 = {
   "class": "footer-section"
 };
-var _hoisted_80 = {
+var _hoisted_95 = {
   "class": "footer-text mb-3"
 };
-var _hoisted_81 = {
+var _hoisted_96 = {
   "class": "highlight"
 };
-var _hoisted_82 = {
+var _hoisted_97 = {
   "class": "highlight"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Back Button "), _cache[30] || (_cache[30] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Back Button "), _cache[32] || (_cache[32] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "ps-4 pt-3 pb-2"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
     href: "#",
     "class": "text-muted text-decoration-none small fw-semibold"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
     "class": "bi bi-chevron-left"
-  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" BACK TO PROPOSALS ")])], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Prospect Info Card "), _cache[31] || (_cache[31] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "prospect-card p-4 mx-4 mb-3"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
-    "class": "fw-bold text-dark mb-2"
-  }, "Prospect: Golf Castro Traders"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
-    "class": "text-muted small mb-0"
-  }, " Location: Culpa deserunt in accusamus adiuta officia qui nobis fuga Debitis impedit cum eos similique eius, Unit 547, Id incididunt aut ipsum adipisci fugiat dolore aut, 63035 ")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Progress Stepper "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.steps, function (step, index) {
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" BACK TO PROPOSALS ")])], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Prospect Info Card "), $setup.prospect ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_3, "Prospect: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.prospect.company_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Location: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.prospect.address, $setup.prospect.unit_number, $setup.prospect.city, $setup.prospect.state, $setup.prospect.zip) + " ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Adjust based on your actual prospect object structure ")])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, _toConsumableArray(_cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
+    "class": "placeholder w-50"
+  }, null, -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+    "class": "placeholder w-75"
+  }, null, -1 /* CACHED */)])))), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Progress Stepper "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.steps, function (step, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
       key: index,
       "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["stepper-step", {
@@ -30125,196 +30422,277 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       onClick: function onClick($event) {
         return $setup.currentStep = index + 1;
       }
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(index + 1) + ".", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(step), 1 /* TEXT */)])], 10 /* CLASS, PROPS */, _hoisted_3);
-  }), 64 /* STABLE_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Main Content "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(index + 1) + ".", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(step), 1 /* TEXT */)])], 10 /* CLASS, PROPS */, _hoisted_7);
+  }), 64 /* STABLE_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Main Content "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "fw-bold text-dark mb-1"
-  }, "ADD AREAS & CLEANING", -1 /* CACHED */)), _cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
+  }, "ADD AREAS & CLEANING", -1 /* CACHED */)), _cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "fw-bold text-dark mb-3"
-  }, "TASKS BELOW BEFORE CONTINUING", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.selectedAreas.length) + " AREAS SELECTED", 1 /* TEXT */), _cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+  }, "TASKS BELOW BEFORE CONTINUING", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.selectedAreasData.length) + " AREAS SELECTED", 1 /* TEXT */), _cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
     href: "#",
     "class": "text-info text-decoration-none small fw-semibold"
-  }, " Im done here next step → ", -1 /* CACHED */))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Area Builder Section "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<button class=\"btn-add-area\" data-v-51a20561><i class=\"bi bi-grid-3x3-gap me-2\" data-v-51a20561></i>ADD CUSTOM AREA </button><div class=\"text-center\" data-v-51a20561><div class=\"building-icon-wrapper\" data-v-51a20561><i class=\"bi bi-building\" data-v-51a20561></i></div><h6 class=\"fw-bold mt-2 mb-0\" data-v-51a20561>Area Builder</h6></div>", 2)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, " Im done here next step → ", -1 /* CACHED */))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Area Builder Section "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [_cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<button class=\"btn-add-area\" data-v-51a20561><i class=\"bi bi-grid-3x3-gap me-2\" data-v-51a20561></i>ADD CUSTOM AREA </button><div class=\"text-center\" data-v-51a20561><div class=\"building-icon-wrapper\" data-v-51a20561><i class=\"bi bi-building\" data-v-51a20561></i></div><h6 class=\"fw-bold mt-2 mb-0\" data-v-51a20561>Area Builder</h6></div>", 2)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: $setup.toggleView,
     "class": "btn-view-toggle"
-  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.isCardView ? 'Show List View' : 'Show Card View'), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.isCardView ? 'Show List View' : 'Show Card View'), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "checkbox",
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $setup.globalCarpet = $event;
     }),
     "class": "form-check-input"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.globalCarpet]]), _cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Carpet", -1 /* CACHED */))]), _cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.globalCarpet]]), _cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Carpet", -1 /* CACHED */))]), _cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": "separator"
-  }, "|", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, "|", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "checkbox",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $setup.globalHardFloor = $event;
     }),
     "class": "form-check-input"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.globalHardFloor]]), _cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hard Floor", -1 /* CACHED */))])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Area List "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.allAreas, function (area) {
-    var _$setup$areaMetrics$a, _$setup$areaMetrics$a2, _$setup$areaMetrics$a3;
-    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-      key: area,
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.globalHardFloor]]), _cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hard Floor", -1 /* CACHED */))])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Area List "), $setup.allAreaTypes.length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_21, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.allAreaTypes, function (areaType) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+      key: areaType.id,
       "class": "area-wrapper mb-3"
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Card View - Expanded Area Card "), $setup.isCardView && $setup.selectedAreas.includes(area) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Card View - Expanded Area Card "), $setup.isCardView && $setup.isAreaSelected(areaType.id) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "checkbox",
       "class": "form-check-input me-3",
-      checked: true,
+      checked: $setup.isAreaSelected(areaType.id),
       onChange: function onChange($event) {
-        return $setup.toggleArea(area);
+        return $setup.toggleArea(areaType);
       }
-    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_21), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(area), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("small", _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.getTaskCount(area)) + " task selected", 1 /* TEXT */)])]), _cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"area-header-center\" data-v-51a20561><button class=\"action-btn\" data-v-51a20561><i class=\"bi bi-file-text\" data-v-51a20561></i><span data-v-51a20561>0 Notes</span></button><button class=\"action-btn\" data-v-51a20561><i class=\"bi bi-files\" data-v-51a20561></i><span data-v-51a20561>Make a Copy</span></button></div>", 1)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_25), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", _hoisted_27, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(areaType.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("small", _hoisted_28, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.getTaskCount(areaType.id)) + " task selected", 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_30, [_cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+      "class": "bi bi-file-text"
+    }, null, -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.getAreaNotes(areaType.id) ? '1 Note' : '0 Notes'), 1 /* TEXT */)]), _cache[11] || (_cache[11] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+      "class": "action-btn"
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+      "class": "bi bi-files"
+    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Make a Copy")], -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_31, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "checkbox",
-      "onUpdate:modelValue": function onUpdateModelValue($event) {
-        return $setup.areaCarpet[area] = $event;
+      checked: $setup.getAreaProp(areaType.id, 'carpet'),
+      onChange: function onChange($event) {
+        return $setup.updateAreaProp(areaType.id, 'carpet', $event.target.checked);
       },
       "class": "form-check-input"
-    }, null, 8 /* PROPS */, _hoisted_28), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.areaCarpet[area]]]), _cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Carpet", -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_34), _cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Carpet", -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_35, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "checkbox",
-      "onUpdate:modelValue": function onUpdateModelValue($event) {
-        return $setup.areaHardFloor[area] = $event;
+      checked: $setup.getAreaProp(areaType.id, 'hardfloor'),
+      onChange: function onChange($event) {
+        return $setup.updateAreaProp(areaType.id, 'hardfloor', $event.target.checked);
       },
       "class": "form-check-input"
-    }, null, 8 /* PROPS */, _hoisted_30), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.areaHardFloor[area]]]), _cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hard Floor", -1 /* CACHED */))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_31, [_cache[11] || (_cache[11] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_36), _cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hard Floor", -1 /* CACHED */))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_37, [_cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
       "class": "rooms-label"
-    }, "Rooms", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, "Rooms", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_38, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "counter-btn",
       onClick: function onClick($event) {
-        return $setup.decrementRooms(area);
+        return $setup.decrementRooms(areaType.id);
       }
-    }, "−", 8 /* PROPS */, _hoisted_33), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_34, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.rooms[area] || 1), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, "−", 8 /* PROPS */, _hoisted_39), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_40, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.getAreaProp(areaType.id, 'rooms')), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "counter-btn",
       onClick: function onClick($event) {
-        return $setup.incrementRooms(area);
+        return $setup.incrementRooms(areaType.id);
       }
-    }, "+", 8 /* PROPS */, _hoisted_35)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, "+", 8 /* PROPS */, _hoisted_41)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["btn-task-list", {
-        'active': $setup.expandedTasks[area]
+        'active': $setup.expandedTasks[areaType.id]
       }]),
       onClick: function onClick($event) {
-        return $setup.toggleTaskList(area);
+        return $setup.toggleTaskList(areaType.id);
       }
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.expandedTasks[area] ? 'Close Task List' : 'Task List') + " ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($setup.expandedTasks[area] ? 'bi bi-chevron-up' : 'bi bi-chevron-down')
-    }, null, 2 /* CLASS */)], 10 /* CLASS, PROPS */, _hoisted_36)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Task List "), $setup.expandedTasks[area] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_37, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Added hours, mins, sqft2 fields at the top of task list "), _cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"task-metrics-header\" data-v-51a20561><div class=\"metric-item\" data-v-51a20561><div class=\"metric-label\" data-v-51a20561><i class=\"bi bi-clock\" data-v-51a20561></i><span data-v-51a20561>Hours</span></div><input type=\"number\" min=\"0\" class=\"metric-value\" data-v-51a20561></div><div class=\"metric-item\" data-v-51a20561><div class=\"metric-label\" data-v-51a20561><i class=\"bi bi-clock\" data-v-51a20561></i><span data-v-51a20561>Minutes</span></div><input type=\"number\" min=\"0\" class=\"metric-value\" data-v-51a20561></div><div class=\"metric-item\" data-v-51a20561><div class=\"metric-label\" data-v-51a20561><i class=\"bi bi-building\" data-v-51a20561></i><span data-v-51a20561>Square footage (ft2)</span></div><input type=\"number\" min=\"0\" class=\"metric-value\" data-v-51a20561></div></div>", 1)), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.tasks[area], function (task) {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.expandedTasks[areaType.id] ? 'Close Task List' : 'Task List') + " ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($setup.expandedTasks[areaType.id] ? 'bi bi-chevron-up' : 'bi bi-chevron-down')
+    }, null, 2 /* CLASS */)], 10 /* CLASS, PROPS */, _hoisted_42)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Task List "), $setup.expandedTasks[areaType.id] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_43, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_44, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_45, [_cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+      "class": "metric-label"
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+      "class": "bi bi-clock"
+    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hours")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      type: "number",
+      min: "0",
+      "class": "metric-value",
+      value: $setup.getAreaProp(areaType.id, 'hours'),
+      onInput: function onInput($event) {
+        return $setup.updateAreaProp(areaType.id, 'hours', $event.target.value);
+      }
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_46)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_47, [_cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+      "class": "metric-label"
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+      "class": "bi bi-clock"
+    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Minutes")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      type: "number",
+      min: "0",
+      "class": "metric-value",
+      value: $setup.getAreaProp(areaType.id, 'minutes'),
+      onInput: function onInput($event) {
+        return $setup.updateAreaProp(areaType.id, 'minutes', $event.target.value);
+      }
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_48)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_49, [_cache[17] || (_cache[17] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+      "class": "metric-label"
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+      "class": "bi bi-building"
+    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Square footage (ft2)")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      type: "number",
+      min: "0",
+      "class": "metric-value",
+      value: $setup.getAreaProp(areaType.id, 'sqft'),
+      onInput: function onInput($event) {
+        return $setup.updateAreaProp(areaType.id, 'sqft', $event.target.value);
+      }
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_50)])]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.getAvailableTasksForArea(areaType.id), function (task) {
       return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
         key: task.id,
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["task-item", {
-          'selected': task.selected
+          'selected': $setup.isTaskSelected(areaType.id, task.id)
         }])
-      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_38, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         type: "checkbox",
-        "onUpdate:modelValue": function onUpdateModelValue($event) {
-          return task.selected = $event;
+        checked: $setup.isTaskSelected(areaType.id, task.id),
+        onChange: function onChange($event) {
+          return $setup.toggleAreaTask(areaType.id, task);
         },
         "class": "form-check-input me-3"
-      }, null, 8 /* PROPS */, _hoisted_39), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, task.selected]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_40, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-        "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(task.icon)
-      }, null, 2 /* CLASS */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_41, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", _hoisted_42, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.title), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_43, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.description), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_44, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": function onUpdateModelValue($event) {
-          return task.frequency = $event;
-        },
-        "class": "form-select form-select-sm"
-      }, _toConsumableArray(_cache[13] || (_cache[13] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Daily", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Weekly", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "1x Week", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Monthly", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Annual", -1 /* CACHED */)])), 8 /* PROPS */, _hoisted_45), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, task.frequency]])])], 2 /* CLASS */);
+      }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_52), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class=\"task-icon\">\r\n                      <i :class=\"task.icon || 'bi bi-check-circle'\"></i>\r\n                    </div> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_53, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", _hoisted_54, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_55, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.description), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_56, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        "class": "form-select form-select-sm",
+        value: $setup.getTaskFrequencyId(areaType.id, task.id),
+        onChange: function onChange($event) {
+          return $setup.updateTaskFrequency(areaType.id, task.id, $event.target.value);
+        }
+      }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.allFrequencies, function (freq) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+          key: freq.id,
+          value: freq.id
+        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(freq.label), 9 /* TEXT, PROPS */, _hoisted_58);
+      }), 128 /* KEYED_FRAGMENT */))], 40 /* PROPS, NEED_HYDRATION */, _hoisted_57)])], 2 /* CLASS */);
     }), 128 /* KEYED_FRAGMENT */))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : !$setup.isCardView ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
       key: 1
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" List View - Simple Row "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
       "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["area-card-list", {
-        'selected': $setup.selectedAreas.includes(area)
+        'selected': $setup.isAreaSelected(areaType.id)
       }])
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_46, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_59, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "checkbox",
       "class": "form-check-input",
-      checked: $setup.selectedAreas.includes(area),
+      checked: $setup.isAreaSelected(areaType.id),
       onChange: function onChange($event) {
-        return $setup.toggleArea(area);
+        return $setup.toggleArea(areaType);
       }
-    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_47), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_48, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(area), 1 /* TEXT */)]), $setup.selectedAreas.includes(area) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_49, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_60), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_61, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(areaType.name), 1 /* TEXT */)]), $setup.isAreaSelected(areaType.id) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_62, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_63, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_64, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "checkbox",
-      "onUpdate:modelValue": function onUpdateModelValue($event) {
-        return $setup.areaCarpet[area] = $event;
+      checked: $setup.getAreaProp(areaType.id, 'carpet'),
+      onChange: function onChange($event) {
+        return $setup.updateAreaProp(areaType.id, 'carpet', $event.target.checked);
       },
       "class": "form-check-input"
-    }, null, 8 /* PROPS */, _hoisted_52), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.areaCarpet[area]]]), _cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Carpet", -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_53, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_65), _cache[18] || (_cache[18] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Carpet", -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_66, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "checkbox",
-      "onUpdate:modelValue": function onUpdateModelValue($event) {
-        return $setup.areaHardFloor[area] = $event;
+      checked: $setup.getAreaProp(areaType.id, 'hardfloor'),
+      onChange: function onChange($event) {
+        return $setup.updateAreaProp(areaType.id, 'hardfloor', $event.target.checked);
       },
       "class": "form-check-input"
-    }, null, 8 /* PROPS */, _hoisted_54), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.areaHardFloor[area]]]), _cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hard Floor", -1 /* CACHED */))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_55, [_cache[17] || (_cache[17] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_67), _cache[19] || (_cache[19] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hard Floor", -1 /* CACHED */))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_68, [_cache[20] || (_cache[20] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
       "class": "rooms-label"
-    }, "Rooms", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_56, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, "Rooms", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_69, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "counter-btn",
       onClick: function onClick($event) {
-        return $setup.decrementRooms(area);
+        return $setup.decrementRooms(areaType.id);
       }
-    }, "−", 8 /* PROPS */, _hoisted_57), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_58, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.rooms[area] || 1), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, "−", 8 /* PROPS */, _hoisted_70), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_71, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.getAreaProp(areaType.id, 'rooms')), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "counter-btn",
       onClick: function onClick($event) {
-        return $setup.incrementRooms(area);
+        return $setup.incrementRooms(areaType.id);
       }
-    }, "+", 8 /* PROPS */, _hoisted_59)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, "+", 8 /* PROPS */, _hoisted_72)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["btn-task-list-inline", {
-        'active': $setup.expandedTasks[area]
+        'active': $setup.expandedTasks[areaType.id]
       }]),
       onClick: function onClick($event) {
-        return $setup.toggleTaskList(area);
+        return $setup.toggleTaskList(areaType.id);
       }
-    }, [_cache[18] || (_cache[18] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Task List ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($setup.expandedTasks[area] ? 'bi bi-chevron-up' : 'bi bi-chevron-down')
-    }, null, 2 /* CLASS */)], 10 /* CLASS, PROPS */, _hoisted_60)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Task List for List View "), $setup.selectedAreas.includes(area) && $setup.expandedTasks[area] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_61, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Added hours, mins, sqft2 fields for list view "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_62, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_63, [_cache[19] || (_cache[19] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    }, [_cache[21] || (_cache[21] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Task List ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($setup.expandedTasks[areaType.id] ? 'bi bi-chevron-up' : 'bi bi-chevron-down')
+    }, null, 2 /* CLASS */)], 10 /* CLASS, PROPS */, _hoisted_73)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Task List for List View "), $setup.isAreaSelected(areaType.id) && $setup.expandedTasks[areaType.id] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_74, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_75, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_76, [_cache[22] || (_cache[22] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
       "class": "metric-label"
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
       "class": "bi bi-clock"
-    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hours")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_64, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(((_$setup$areaMetrics$a = $setup.areaMetrics[area]) === null || _$setup$areaMetrics$a === void 0 ? void 0 : _$setup$areaMetrics$a.hours) || 0), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_65, [_cache[20] || (_cache[20] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Hours")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      type: "number",
+      min: "0",
+      "class": "metric-value",
+      value: $setup.getAreaProp(areaType.id, 'hours'),
+      onInput: function onInput($event) {
+        return $setup.updateAreaProp(areaType.id, 'hours', $event.target.value);
+      }
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_77)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_78, [_cache[23] || (_cache[23] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
       "class": "metric-label"
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
       "class": "bi bi-clock"
-    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Minutes")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_66, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(((_$setup$areaMetrics$a2 = $setup.areaMetrics[area]) === null || _$setup$areaMetrics$a2 === void 0 ? void 0 : _$setup$areaMetrics$a2.mins) || 0), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_67, [_cache[21] || (_cache[21] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Minutes")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      type: "number",
+      min: "0",
+      "class": "metric-value",
+      value: $setup.getAreaProp(areaType.id, 'minutes'),
+      onInput: function onInput($event) {
+        return $setup.updateAreaProp(areaType.id, 'minutes', $event.target.value);
+      }
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_79)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_80, [_cache[24] || (_cache[24] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
       "class": "metric-label"
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
       "class": "bi bi-building"
-    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Square footage (ft2)")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_68, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(((_$setup$areaMetrics$a3 = $setup.areaMetrics[area]) === null || _$setup$areaMetrics$a3 === void 0 ? void 0 : _$setup$areaMetrics$a3.sqft2) || 0), 1 /* TEXT */)])]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.tasks[area], function (task) {
+    }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Square footage (ft2)")], -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      type: "number",
+      min: "0",
+      "class": "metric-value",
+      value: $setup.getAreaProp(areaType.id, 'sqft'),
+      onInput: function onInput($event) {
+        return $setup.updateAreaProp(areaType.id, 'sqft', $event.target.value);
+      }
+    }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_81)])]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.getAvailableTasksForArea(areaType.id), function (task) {
       return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
         key: task.id,
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["task-item", {
-          'selected': task.selected
+          'selected': $setup.isTaskSelected(areaType.id, task.id)
         }])
-      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_69, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_82, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         type: "checkbox",
-        "onUpdate:modelValue": function onUpdateModelValue($event) {
-          return task.selected = $event;
+        checked: $setup.isTaskSelected(areaType.id, task.id),
+        onChange: function onChange($event) {
+          return $setup.toggleAreaTask(areaType.id, task);
         },
         "class": "form-check-input me-3"
-      }, null, 8 /* PROPS */, _hoisted_70), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, task.selected]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_71, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-        "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(task.icon)
-      }, null, 2 /* CLASS */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_72, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", _hoisted_73, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.title), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_74, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.description), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_75, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": function onUpdateModelValue($event) {
-          return task.frequency = $event;
-        },
-        "class": "form-select form-select-sm"
-      }, _toConsumableArray(_cache[22] || (_cache[22] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Daily", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Weekly", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "1x Week", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Monthly", -1 /* CACHED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Annual", -1 /* CACHED */)])), 8 /* PROPS */, _hoisted_76), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, task.frequency]])])], 2 /* CLASS */);
-    }), 128 /* KEYED_FRAGMENT */))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 2 /* CLASS */)], 2112 /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */)) : $setup.isCardView && !$setup.selectedAreas.includes(area) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+      }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_83), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_84, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+        "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(task.icon || 'bi bi-check-circle')
+      }, null, 2 /* CLASS */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_85, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", _hoisted_86, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_87, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.description), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_88, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        "class": "form-select form-select-sm",
+        value: $setup.getTaskFrequencyId(areaType.id, task.id),
+        onChange: function onChange($event) {
+          return $setup.updateTaskFrequency(areaType.id, task.id, $event.target.value);
+        }
+      }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.allFrequencies, function (freq) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+          key: freq.id,
+          value: freq.id
+        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(freq.label), 9 /* TEXT, PROPS */, _hoisted_90);
+      }), 128 /* KEYED_FRAGMENT */))], 40 /* PROPS, NEED_HYDRATION */, _hoisted_89)])], 2 /* CLASS */);
+    }), 128 /* KEYED_FRAGMENT */))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 2 /* CLASS */)], 2112 /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */)) : $setup.isCardView && !$setup.isAreaSelected(areaType.id) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
       key: 2
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Card View - Collapsed (Unselected) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
       "class": "area-card-collapsed",
       onClick: function onClick($event) {
-        return $setup.toggleArea(area);
+        return $setup.toggleArea(areaType);
       }
-    }, [_cache[23] || (_cache[23] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    }, [_cache[25] || (_cache[25] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
       "class": "collapsed-checkbox"
-    }, null, -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_78, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(area), 1 /* TEXT */)], 8 /* PROPS */, _hoisted_77)], 2112 /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
-  }), 64 /* STABLE_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Bottom Links "), _cache[24] || (_cache[24] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    }, null, -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_92, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(areaType.name), 1 /* TEXT */)], 8 /* PROPS */, _hoisted_91)], 2112 /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+  }), 128 /* KEYED_FRAGMENT */))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_93, "Loading areas...")), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Bottom Links "), _cache[26] || (_cache[26] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "bottom-links mt-4 pt-3"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
     href: "#",
     "class": "text-info text-decoration-none small fw-semibold"
-  }, "Hide Unused Areas/Tasks")], -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Bottom Add Button "), _cache[25] || (_cache[25] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, "Hide Unused Areas/Tasks")], -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Bottom Add Button "), _cache[27] || (_cache[27] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "text-end mb-4"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn-add-area"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
     "class": "bi bi-grid-3x3-gap me-2"
-  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("ADD CUSTOM AREA ")])], -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Footer "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_79, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_80, [_cache[26] || (_cache[26] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Great! You've have ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_81, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.selectedAreas.length) + " areas", 1 /* TEXT */), _cache[27] || (_cache[27] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" and selected ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_82, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.getTotalSelectedTasks()) + " tasks", 1 /* TEXT */), _cache[28] || (_cache[28] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(". ", -1 /* CACHED */))]), _cache[29] || (_cache[29] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("ADD CUSTOM AREA ")])], -1 /* CACHED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Footer "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_94, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_95, [_cache[28] || (_cache[28] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Great! You've have ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_96, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.selectedAreasData.length) + " areas", 1 /* TEXT */), _cache[29] || (_cache[29] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" and selected ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_97, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.getTotalSelectedTasks()) + " tasks", 1 /* TEXT */), _cache[30] || (_cache[30] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(". ", -1 /* CACHED */))]), _cache[31] || (_cache[31] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn-projects"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Projects "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
     "class": "bi bi-arrow-right ms-2"
@@ -37306,7 +37684,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n\r\n/* Added styles for task metrics header */\n.task-metrics-header[data-v-51a20561] {\r\n  display: flex;\r\n  gap: 24px;\r\n  padding: 16px 20px;\r\n  background: linear-gradient(135deg, #b8e6ea 0%, #a0dce3 100%);\r\n  border-radius: 8px;\r\n  margin-bottom: 16px;\r\n  align-items: center;\n}\n.metric-item[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.metric-label[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #2c3e50;\n}\n.metric-label i[data-v-51a20561] {\r\n  font-size: 18px;\r\n  color: #2c3e50;\n}\n.metric-value[data-v-51a20561] {\r\n  background: white;\r\n  color: #2c3e50;\r\n  padding: 6px 16px;\r\n  border-radius: 20px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  min-width: 50px;\r\n  text-align: center;\n}\r\n\r\n/* General Styles */\n.bg-light[data-v-51a20561] {\r\n  background-color: #f8f9fa !important;\n}\r\n\r\n/* Prospect Card */\n.prospect-card[data-v-51a20561] {\r\n  background: linear-gradient(135deg, #d4f1f4 0%, #b8e6ea 100%);\r\n  border-radius: 8px;\n}\r\n\r\n/* Progress Stepper - Enhanced Design */\n.stepper-container[data-v-51a20561] {\r\n  display: flex;\r\n  gap: 0;\r\n  position: relative;\r\n  height: 70px;\n}\n.stepper-step[data-v-51a20561] {\r\n  flex: 1;\r\n  background: #5a6c7d;\r\n  color: white;\r\n  display: flex;\r\n  align-items: center;\r\n  position: relative;\r\n  cursor: pointer;\r\n  transition: all 0.3s ease;\r\n  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%, 30px 50%);\n}\n.stepper-step.first[data-v-51a20561] {\r\n  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%);\r\n  padding-left: 30px;\n}\n.stepper-step.last[data-v-51a20561] {\r\n  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 30px 50%);\r\n  padding-right: 30px;\n}\n.stepper-step[data-v-51a20561]:not(.first) {\r\n  margin-left: -30px;\n}\n.stepper-step.active[data-v-51a20561] {\r\n  background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);\r\n  position: relative;\r\n  z-index: 2;\n}\n.step-content[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 0 40px;\r\n  position: relative;\r\n  z-index: 1;\n}\n.step-number[data-v-51a20561] {\r\n  background: rgba(255, 255, 255, 0.3);\r\n  color: white;\r\n  width: 32px;\r\n  height: 32px;\r\n  border-radius: 50%;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  font-size: 14px;\r\n  flex-shrink: 0;\n}\n.stepper-step.active .step-number[data-v-51a20561] {\r\n  background: white;\r\n  color: #17a2b8;\n}\n.step-label[data-v-51a20561] {\r\n  font-weight: 600;\r\n  font-size: 16px;\r\n  white-space: nowrap;\n}\r\n\r\n/* Main Content */\n.main-content-wrapper[data-v-51a20561] {\r\n  background: #f5f5f5;\r\n  border-radius: 8px;\r\n  padding: 0 24px 24px;\n}\n.badge-selected[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  padding: 6px 16px;\r\n  border-radius: 20px;\r\n  font-size: 13px;\r\n  font-weight: 600;\n}\r\n\r\n/* Area Builder Card */\n.area-builder-card[data-v-51a20561] {\r\n  background: white;\r\n  border-radius: 12px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);\n}\n.btn-add-area[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 20px;\r\n  border-radius: 6px;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n  cursor: pointer;\r\n  transition: all 0.2s;\r\n  display: inline-flex;\r\n  align-items: center;\n}\n.btn-add-area[data-v-51a20561]:hover {\r\n  background: #138496;\r\n  transform: translateY(-1px);\n}\n.building-icon-wrapper[data-v-51a20561] {\r\n  width: 60px;\r\n  height: 60px;\r\n  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);\r\n  border-radius: 12px;\r\n  display: inline-flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  margin: 0 auto;\n}\n.building-icon-wrapper i[data-v-51a20561] {\r\n  font-size: 28px;\r\n  color: white;\n}\n.view-options[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 16px;\n}\n.btn-view-toggle[data-v-51a20561] {\r\n  background: transparent;\r\n  border: none;\r\n  color: #17a2b8;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  cursor: pointer;\r\n  text-decoration: underline;\r\n  padding: 0;\r\n  transition: color 0.2s;\n}\n.btn-view-toggle[data-v-51a20561]:hover {\r\n  color: #138496;\n}\n.global-checkboxes[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.checkbox-label[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  margin: 0;\n}\n.checkbox-label span[data-v-51a20561] {\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #495057;\n}\n.separator[data-v-51a20561] {\r\n  color: #ced4da;\r\n  font-weight: 300;\n}\r\n\r\n/* Area Cards */\n.areas-list[data-v-51a20561] {\r\n  max-height: 600px;\r\n  overflow-y: auto;\r\n  padding-right: 8px;\n}\n.areas-list[data-v-51a20561]::-webkit-scrollbar {\r\n  width: 6px;\n}\n.areas-list[data-v-51a20561]::-webkit-scrollbar-track {\r\n  background: #f1f1f1;\r\n  border-radius: 10px;\n}\n.areas-list[data-v-51a20561]::-webkit-scrollbar-thumb {\r\n  background: #17a2b8;\r\n  border-radius: 10px;\n}\r\n\r\n/* List View Styles */\n.area-card-list[data-v-51a20561] {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 14px 16px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #e9ecef;\r\n  border-radius: 8px;\r\n  transition: all 0.2s;\r\n  flex-wrap: wrap;\n}\n.area-card-list.selected[data-v-51a20561] {\r\n  background: white;\r\n  border-color: #17a2b8;\n}\n.list-left[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.list-label[data-v-51a20561] {\r\n  font-size: 15px;\r\n  font-weight: 500;\r\n  color: #495057;\n}\n.list-right[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\n}\n.area-checkboxes-inline[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n  padding: 8px 16px;\r\n  background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);\r\n  border-radius: 6px;\n}\n.area-checkbox-label-inline[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  margin: 0;\n}\n.area-checkbox-label-inline span[data-v-51a20561] {\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  color: white;\n}\n.area-checkbox-label-inline .form-check-input[data-v-51a20561] {\r\n  background-color: white;\r\n  border-color: white;\n}\n.rooms-control-inline[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.btn-task-list-inline[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 16px;\r\n  border-radius: 6px;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: all 0.2s;\n}\n.btn-task-list-inline[data-v-51a20561]:hover {\r\n  background: #138496;\n}\n.btn-task-list-inline i[data-v-51a20561] {\r\n  font-size: 12px;\n}\n.task-list-container-inline[data-v-51a20561] {\r\n  width: 100%;\r\n  margin-top: 12px;\r\n  padding-top: 12px;\r\n  border-top: 1px solid #e9ecef;\n}\r\n\r\n/* Collapsed Area Card */\n.area-card-collapsed[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n  padding: 14px 16px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #e9ecef;\r\n  border-radius: 8px;\r\n  cursor: pointer;\r\n  transition: all 0.2s;\n}\n.area-card-collapsed[data-v-51a20561]:hover {\r\n  background: #e9ecef;\r\n  border-color: #17a2b8;\n}\n.collapsed-checkbox[data-v-51a20561] {\r\n  width: 20px;\r\n  height: 20px;\r\n  border: 2px solid #ced4da;\r\n  border-radius: 4px;\r\n  flex-shrink: 0;\n}\n.collapsed-label[data-v-51a20561] {\r\n  font-size: 15px;\r\n  font-weight: 500;\r\n  color: #495057;\n}\r\n\r\n/* Expanded Area Card */\n.area-card-expanded[data-v-51a20561] {\r\n  background: white;\r\n  border: 2px solid #17a2b8;\r\n  border-radius: 12px;\r\n  overflow: hidden;\n}\n.area-header[data-v-51a20561] {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 20px 24px;\r\n  gap: 24px;\n}\n.area-header-left[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 0;\r\n  flex: 0 0 auto;\n}\n.area-icon[data-v-51a20561] {\r\n  width: 40px;\r\n  height: 40px;\r\n  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);\r\n  border-radius: 8px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  margin-right: 12px;\n}\n.area-icon i[data-v-51a20561] {\r\n  font-size: 20px;\r\n  color: white;\n}\n.area-info[data-v-51a20561] {\r\n  display: flex;\r\n  flex-direction: column;\n}\n.area-title[data-v-51a20561] {\r\n  font-size: 16px;\r\n  font-weight: 700;\r\n  color: #212529;\r\n  margin-bottom: 2px;\n}\n.area-subtitle[data-v-51a20561] {\r\n  font-size: 13px;\r\n  color: #6c757d;\n}\n.area-header-center[data-v-51a20561] {\r\n  flex: 1;\r\n  display: flex;\r\n  justify-content: center;\r\n  gap: 32px;\n}\n.action-btn[data-v-51a20561] {\r\n  background: transparent;\r\n  border: none;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  color: #6c757d;\r\n  font-size: 14px;\r\n  cursor: pointer;\r\n  transition: color 0.2s;\n}\n.action-btn[data-v-51a20561]:hover {\r\n  color: #17a2b8;\n}\n.action-btn i[data-v-51a20561] {\r\n  font-size: 18px;\r\n  color: #d0d0d0;\n}\n.area-header-right[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n  flex: 0 0 auto;\n}\n.area-checkboxes[data-v-51a20561] {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 6px;\r\n  padding: 10px 16px;\r\n  background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);\r\n  border-radius: 6px;\n}\n.area-checkbox-label[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  margin: 0;\n}\n.area-checkbox-label span[data-v-51a20561] {\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  color: white;\n}\n.area-checkbox-label .form-check-input[data-v-51a20561] {\r\n  background-color: white;\r\n  border-color: white;\n}\n.rooms-control[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.rooms-label[data-v-51a20561] {\r\n  font-size: 14px;\r\n  font-weight: 500;\r\n  color: #495057;\n}\n.counter-group[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\n}\n.counter-btn[data-v-51a20561] {\r\n  width: 28px;\r\n  height: 28px;\r\n  background: #e8f4f8;\r\n  border: none;\r\n  border-radius: 4px;\r\n  color: #17a2b8;\r\n  font-size: 18px;\r\n  font-weight: bold;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  transition: all 0.2s;\n}\n.counter-btn[data-v-51a20561]:hover {\r\n  background: #d0e8ed;\n}\n.counter-value[data-v-51a20561] {\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #212529;\r\n  min-width: 24px;\r\n  text-align: center;\n}\n.btn-task-list[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 18px;\r\n  border-radius: 6px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: all 0.2s;\n}\n.btn-task-list[data-v-51a20561]:hover {\r\n  background: #138496;\n}\n.btn-task-list i[data-v-51a20561] {\r\n  font-size: 12px;\n}\r\n\r\n/* Task List */\n.task-list-container[data-v-51a20561] {\r\n  background: #f8f9fa;\r\n  padding: 20px 24px;\r\n  border-top: 1px solid #e9ecef;\n}\n.task-item[data-v-51a20561] {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 16px 20px;\r\n  background: white;\r\n  border: 1px solid #e9ecef;\r\n  border-radius: 8px;\r\n  margin-bottom: 12px;\r\n  transition: all 0.2s;\n}\n.task-item[data-v-51a20561]:last-child {\r\n  margin-bottom: 0;\n}\n.task-item.selected[data-v-51a20561] {\r\n  background: #e7f7f9;\r\n  border-color: #17a2b8;\n}\n.task-left[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 0;\r\n  flex: 1;\n}\n.task-icon[data-v-51a20561] {\r\n  width: 36px;\r\n  height: 36px;\r\n  background: #e8f4f8;\r\n  border-radius: 6px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  margin-right: 12px;\r\n  flex-shrink: 0;\n}\n.task-icon i[data-v-51a20561] {\r\n  font-size: 18px;\r\n  color: #17a2b8;\n}\n.task-details[data-v-51a20561] {\r\n  flex: 1;\n}\n.task-title[data-v-51a20561] {\r\n  font-size: 15px;\r\n  font-weight: 600;\r\n  color: #212529;\n}\n.task-description[data-v-51a20561] {\r\n  font-size: 13px;\r\n  color: #6c757d;\r\n  line-height: 1.5;\n}\n.task-right[data-v-51a20561] {\r\n  flex: 0 0 auto;\r\n  margin-left: 16px;\n}\n.task-right .form-select[data-v-51a20561] {\r\n  min-width: 120px;\r\n  border-color: #ced4da;\r\n  font-size: 14px;\n}\r\n\r\n/* Form Controls */\n.form-check-input[data-v-51a20561] {\r\n  width: 20px;\r\n  height: 20px;\r\n  border: 2px solid #ced4da;\r\n  cursor: pointer;\r\n  margin-right: 0;\n}\n.form-check-input[data-v-51a20561]:checked {\r\n  background-color: #17a2b8;\r\n  border-color: #17a2b8;\n}\r\n\r\n/* Bottom Links */\n.bottom-links[data-v-51a20561] {\r\n  border-top: 1px solid #e9ecef;\n}\r\n\r\n/* Footer */\n.footer-section[data-v-51a20561] {\r\n  background: #2c3e50;\r\n  color: white;\r\n  padding: 32px;\r\n  text-align: center;\n}\n.footer-text[data-v-51a20561] {\r\n  font-size: 16px;\r\n  margin-bottom: 20px;\n}\n.footer-text .highlight[data-v-51a20561] {\r\n  color: #17a2b8;\r\n  font-weight: 700;\n}\n.btn-projects[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  border: none;\r\n  padding: 12px 32px;\r\n  border-radius: 6px;\r\n  font-size: 16px;\r\n  font-weight: 600;\r\n  cursor: pointer;\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: all 0.2s;\n}\n.btn-projects[data-v-51a20561]:hover {\r\n  background: #138496;\r\n  transform: translateY(-2px);\r\n  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Added styles for task metrics header */\n.task-metrics-header[data-v-51a20561] {\r\n  display: flex;\r\n  gap: 24px;\r\n  padding: 16px 20px;\r\n  background: linear-gradient(135deg, #b8e6ea 0%, #a0dce3 100%);\r\n  border-radius: 8px;\r\n  margin-bottom: 16px;\r\n  align-items: center;\n}\n.metric-item[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.metric-label[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #2c3e50;\n}\n.metric-label i[data-v-51a20561] {\r\n  font-size: 18px;\r\n  color: #2c3e50;\n}\n.metric-value[data-v-51a20561] {\r\n  background: white;\r\n  color: #2c3e50;\r\n  padding: 6px 16px;\r\n  border-radius: 20px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  min-width: 50px;\r\n  text-align: center;\r\n  border: 1px solid #ced4da; /* Add border for input field */\n}\n.metric-value[data-v-51a20561]:focus {\r\n    border-color: #17a2b8;\r\n    outline: none;\r\n    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);\n}\r\n\r\n/* General Styles */\n.bg-light[data-v-51a20561] {\r\n  background-color: #f8f9fa !important;\n}\r\n\r\n/* Prospect Card */\n.prospect-card[data-v-51a20561] {\r\n  background: linear-gradient(135deg, #d4f1f4 0%, #b8e6ea 100%);\r\n  border-radius: 8px;\n}\n.placeholder-glow .placeholder[data-v-51a20561] {\r\n    background-color: #e0e0e0;\r\n    border-radius: 4px;\r\n    height: 1em; /* Adjust based on text size */\r\n    animation: placeholder-glow-51a20561 2s ease-in-out infinite;\r\n    display: inline-block; /* Ensure it takes up space */\n}\n@keyframes placeholder-glow-51a20561 {\n50% { opacity: 0.5;\n}\n}\r\n\r\n\r\n/* Progress Stepper - Enhanced Design */\n.stepper-container[data-v-51a20561] {\r\n  display: flex;\r\n  gap: 0;\r\n  position: relative;\r\n  height: 70px;\n}\n.stepper-step[data-v-51a20561] {\r\n  flex: 1;\r\n  background: #5a6c7d;\r\n  color: white;\r\n  display: flex;\r\n  align-items: center;\r\n  position: relative;\r\n  cursor: pointer;\r\n  transition: all 0.3s ease;\r\n  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%, 30px 50%);\n}\n.stepper-step.first[data-v-51a20561] {\r\n  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%);\r\n  padding-left: 30px;\n}\n.stepper-step.last[data-v-51a20561] {\r\n  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 30px 50%);\r\n  padding-right: 30px;\n}\n.stepper-step[data-v-51a20561]:not(.first) {\r\n  margin-left: -30px;\n}\n.stepper-step.active[data-v-51a20561] {\r\n  background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);\r\n  position: relative;\r\n  z-index: 2;\n}\n.step-content[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 0 40px;\r\n  position: relative;\r\n  z-index: 1;\n}\n.step-number[data-v-51a20561] {\r\n  background: rgba(255, 255, 255, 0.3);\r\n  color: white;\r\n  width: 32px;\r\n  height: 32px;\r\n  border-radius: 50%;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  font-size: 14px;\r\n  flex-shrink: 0;\n}\n.stepper-step.active .step-number[data-v-51a20561] {\r\n  background: white;\r\n  color: #17a2b8;\n}\n.step-label[data-v-51a20561] {\r\n  font-weight: 600;\r\n  font-size: 16px;\r\n  white-space: nowrap;\n}\r\n\r\n/* Main Content */\n.main-content-wrapper[data-v-51a20561] {\r\n  background: #f5f5f5;\r\n  border-radius: 8px;\r\n  padding: 0 24px 24px;\n}\n.badge-selected[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  padding: 6px 16px;\r\n  border-radius: 20px;\r\n  font-size: 13px;\r\n  font-weight: 600;\n}\r\n\r\n/* Area Builder Card */\n.area-builder-card[data-v-51a20561] {\r\n  background: white;\r\n  border-radius: 12px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);\n}\n.btn-add-area[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 20px;\r\n  border-radius: 6px;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n  cursor: pointer;\r\n  transition: all 0.2s;\r\n  display: inline-flex;\r\n  align-items: center;\n}\n.btn-add-area[data-v-51a20561]:hover {\r\n  background: #138496;\r\n  transform: translateY(-1px);\n}\n.building-icon-wrapper[data-v-51a20561] {\r\n  width: 60px;\r\n  height: 60px;\r\n  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);\r\n  border-radius: 12px;\r\n  display: inline-flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  margin: 0 auto;\n}\n.building-icon-wrapper i[data-v-51a20561] {\r\n  font-size: 28px;\r\n  color: white;\n}\n.view-options[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 16px;\n}\n.btn-view-toggle[data-v-51a20561] {\r\n  background: transparent;\r\n  border: none;\r\n  color: #17a2b8;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  cursor: pointer;\r\n  text-decoration: underline;\r\n  padding: 0;\r\n  transition: color 0.2s;\n}\n.btn-view-toggle[data-v-51a20561]:hover {\r\n  color: #138496;\n}\n.global-checkboxes[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.checkbox-label[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  margin: 0;\n}\n.checkbox-label span[data-v-51a20561] {\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #495057;\n}\n.separator[data-v-51a20561] {\r\n  color: #ced4da;\r\n  font-weight: 300;\n}\r\n\r\n/* Area Cards */\n.areas-list[data-v-51a20561] {\r\n  max-height: 600px;\r\n  overflow-y: auto;\r\n  padding-right: 8px;\n}\n.areas-list[data-v-51a20561]::-webkit-scrollbar {\r\n  width: 6px;\n}\n.areas-list[data-v-51a20561]::-webkit-scrollbar-track {\r\n  background: #f1f1f1;\r\n  border-radius: 10px;\n}\n.areas-list[data-v-51a20561]::-webkit-scrollbar-thumb {\r\n  background: #17a2b8;\r\n  border-radius: 10px;\n}\r\n\r\n/* List View Styles */\n.area-card-list[data-v-51a20561] {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 14px 16px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #e9ecef;\r\n  border-radius: 8px;\r\n  transition: all 0.2s;\r\n  flex-wrap: wrap;\n}\n.area-card-list.selected[data-v-51a20561] {\r\n  background: white;\r\n  border-color: #17a2b8;\n}\n.list-left[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.list-label[data-v-51a20561] {\r\n  font-size: 15px;\r\n  font-weight: 500;\r\n  color: #495057;\n}\n.list-right[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\n}\n.area-checkboxes-inline[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n  padding: 8px 16px;\r\n  background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);\r\n  border-radius: 6px;\n}\n.area-checkbox-label-inline[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  margin: 0;\n}\n.area-checkbox-label-inline span[data-v-51a20561] {\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  color: white;\n}\n.area-checkbox-label-inline .form-check-input[data-v-51a20561] {\r\n  background-color: white;\r\n  border-color: white;\n}\n.rooms-control-inline[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.btn-task-list-inline[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 16px;\r\n  border-radius: 6px;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: all 0.2s;\n}\n.btn-task-list-inline[data-v-51a20561]:hover {\r\n  background: #138496;\n}\n.btn-task-list-inline i[data-v-51a20561] {\r\n  font-size: 12px;\n}\n.task-list-container-inline[data-v-51a20561] {\r\n  width: 100%;\r\n  margin-top: 12px;\r\n  padding-top: 12px;\r\n  border-top: 1px solid #e9ecef;\n}\r\n\r\n/* Collapsed Area Card */\n.area-card-collapsed[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n  padding: 14px 16px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #e9ecef;\r\n  border-radius: 8px;\r\n  cursor: pointer;\r\n  transition: all 0.2s;\n}\n.area-card-collapsed[data-v-51a20561]:hover {\r\n  background: #e9ecef;\r\n  border-color: #17a2b8;\n}\n.collapsed-checkbox[data-v-51a20561] {\r\n  width: 20px;\r\n  height: 20px;\r\n  border: 2px solid #ced4da;\r\n  border-radius: 4px;\r\n  flex-shrink: 0;\n}\n.collapsed-label[data-v-51a20561] {\r\n  font-size: 15px;\r\n  font-weight: 500;\r\n  color: #495057;\n}\r\n\r\n/* Expanded Area Card */\n.area-card-expanded[data-v-51a20561] {\r\n  background: white;\r\n  border: 2px solid #17a2b8;\r\n  border-radius: 12px;\r\n  overflow: hidden;\n}\n.area-header[data-v-51a20561] {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 20px 24px;\r\n  gap: 24px;\n}\n.area-header-left[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 0;\r\n  flex: 0 0 auto;\n}\n.area-icon[data-v-51a20561] {\r\n  width: 40px;\r\n  height: 40px;\r\n  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);\r\n  border-radius: 8px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  margin-right: 12px;\n}\n.area-icon i[data-v-51a20561] {\r\n  font-size: 20px;\r\n  color: white;\n}\n.area-info[data-v-51a20561] {\r\n  display: flex;\r\n  flex-direction: column;\n}\n.area-title[data-v-51a20561] {\r\n  font-size: 16px;\r\n  font-weight: 700;\r\n  color: #212529;\r\n  margin-bottom: 2px;\n}\n.area-subtitle[data-v-51a20561] {\r\n  font-size: 13px;\r\n  color: #6c757d;\n}\n.area-header-center[data-v-51a20561] {\r\n  flex: 1;\r\n  display: flex;\r\n  justify-content: center;\r\n  gap: 32px;\n}\n.action-btn[data-v-51a20561] {\r\n  background: transparent;\r\n  border: none;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  color: #6c757d;\r\n  font-size: 14px;\r\n  cursor: pointer;\r\n  transition: color 0.2s;\n}\n.action-btn[data-v-51a20561]:hover {\r\n  color: #17a2b8;\n}\n.action-btn i[data-v-51a20561] {\r\n  font-size: 18px;\r\n  color: #d0d0d0;\n}\n.area-header-right[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n  flex: 0 0 auto;\n}\n.area-checkboxes[data-v-51a20561] {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 6px;\r\n  padding: 10px 16px;\r\n  background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);\r\n  border-radius: 6px;\n}\n.area-checkbox-label[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  margin: 0;\n}\n.area-checkbox-label span[data-v-51a20561] {\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  color: white;\n}\n.area-checkbox-label .form-check-input[data-v-51a20561] {\r\n  background-color: white;\r\n  border-color: white;\n}\n.rooms-control[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\n}\n.rooms-label[data-v-51a20561] {\r\n  font-size: 14px;\r\n  font-weight: 500;\r\n  color: #495057;\n}\n.counter-group[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\n}\n.counter-btn[data-v-51a20561] {\r\n  width: 28px;\r\n  height: 28px;\r\n  background: #e8f4f8;\r\n  border: none;\r\n  border-radius: 4px;\r\n  color: #17a2b8;\r\n  font-size: 18px;\r\n  font-weight: bold;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  transition: all 0.2s;\n}\n.counter-btn[data-v-51a20561]:hover {\r\n  background: #d0e8ed;\n}\n.counter-value[data-v-51a20561] {\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #212529;\r\n  min-width: 24px;\r\n  text-align: center;\n}\n.btn-task-list[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 18px;\r\n  border-radius: 6px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: all 0.2s;\n}\n.btn-task-list[data-v-51a20561]:hover {\r\n  background: #138496;\n}\n.btn-task-list i[data-v-51a20561] {\r\n  font-size: 12px;\n}\r\n\r\n/* Task List */\n.task-list-container[data-v-51a20561] {\r\n  background: #f8f9fa;\r\n  padding: 20px 24px;\r\n  border-top: 1px solid #e9ecef;\n}\n.task-item[data-v-51a20561] {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 16px 20px;\r\n  background: white;\r\n  border: 1px solid #e9ecef;\r\n  border-radius: 8px;\r\n  margin-bottom: 12px;\r\n  transition: all 0.2s;\n}\n.task-item[data-v-51a20561]:last-child {\r\n  margin-bottom: 0;\n}\n.task-item.selected[data-v-51a20561] {\r\n  background: #e7f7f9;\r\n  border-color: #17a2b8;\n}\n.task-left[data-v-51a20561] {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 0;\r\n  flex: 1;\n}\n.task-icon[data-v-51a20561] {\r\n  width: 36px;\r\n  height: 36px;\r\n  background: #e8f4f8;\r\n  border-radius: 6px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  margin-right: 12px;\r\n  flex-shrink: 0;\n}\n.task-icon i[data-v-51a20561] {\r\n  font-size: 18px;\r\n  color: #17a2b8;\n}\n.task-details[data-v-51a20561] {\r\n  flex: 1;\n}\n.task-title[data-v-51a20561] {\r\n  font-size: 15px;\r\n  font-weight: 600;\r\n  color: #212529;\n}\n.task-description[data-v-51a20561] {\r\n  font-size: 13px;\r\n  color: #6c757d;\r\n  line-height: 1.5;\n}\n.task-right[data-v-51a20561] {\r\n  flex: 0 0 auto;\r\n  margin-left: 16px;\n}\n.task-right .form-select[data-v-51a20561] {\r\n  min-width: 120px;\r\n  border-color: #ced4da;\r\n  font-size: 14px;\n}\r\n\r\n/* Form Controls */\n.form-check-input[data-v-51a20561] {\r\n  width: 20px;\r\n  height: 20px;\r\n  border: 2px solid #ced4da;\r\n  cursor: pointer;\r\n  margin-right: 0;\n}\n.form-check-input[data-v-51a20561]:checked {\r\n  background-color: #17a2b8;\r\n  border-color: #17a2b8;\n}\r\n\r\n/* Bottom Links */\n.bottom-links[data-v-51a20561] {\r\n  border-top: 1px solid #e9ecef;\n}\r\n\r\n/* Footer */\n.footer-section[data-v-51a20561] {\r\n  background: #2c3e50;\r\n  color: white;\r\n  padding: 32px;\r\n  text-align: center;\n}\n.footer-text[data-v-51a20561] {\r\n  font-size: 16px;\r\n  margin-bottom: 20px;\n}\n.footer-text .highlight[data-v-51a20561] {\r\n  color: #17a2b8;\r\n  font-weight: 700;\n}\n.btn-projects[data-v-51a20561] {\r\n  background: #17a2b8;\r\n  color: white;\r\n  border: none;\r\n  padding: 12px 32px;\r\n  border-radius: 6px;\r\n  font-size: 16px;\r\n  font-weight: 600;\r\n  cursor: pointer;\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: all 0.2s;\n}\n.btn-projects[data-v-51a20561]:hover {\r\n  background: #138496;\r\n  transform: translateY(-2px);\r\n  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

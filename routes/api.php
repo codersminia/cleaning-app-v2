@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\ProposalController;   
+use App\Http\Controllers\ProposalTasksController;   
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -17,3 +18,15 @@ Route::get('/facilities', [DashboardController::class, 'getfacilities']);
 Route::get('/frequencies', [DashboardController::class, 'getfrequencies']);
 Route::get('/weekdays', [DashboardController::class, 'getweekdays']);
 Route::post('/proposals', [ProposalController::class, 'store']);
+
+
+Route::prefix('proposals/{proposal}')->group(function () {
+    Route::get('data-for-tasks', [ProposalTasksController::class, 'getDataForTasks']);
+    Route::post('areas', [ProposalTasksController::class, 'storeArea']);
+    Route::delete('areas/{proposalArea}', [ProposalTasksController::class, 'deleteArea']); // For deselecting an area
+    Route::put('areas/{proposalArea}', [ProposalTasksController::class, 'updateArea']); // For updating area details (rooms, carpet, etc.)
+
+    Route::post('area-tasks', [ProposalTasksController::class, 'storeAreaTask']);
+    Route::delete('area-tasks/{areaTask}', [ProposalTasksController::class, 'deleteAreaTask']);
+    Route::put('area-tasks/{areaTask}', [ProposalTasksController::class, 'updateAreaTask']); // For updating custom frequency/description
+});
