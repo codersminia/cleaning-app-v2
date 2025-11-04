@@ -14,4 +14,6 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/prospects', [DashboardController::class, 'prospects'])->name('prospects');
 Route::get('/location/{id}', [DashboardController::class, 'showLocation'])->name('location.show');
-Route::get('/proposals/{proposal}/tasks', [ProposalController::class, 'showTasks'])->name('proposals.tasks');
+Route::get('/proposals/{proposal}/{any?}', [ProposalController::class, 'showTasks'])
+    ->where('any', '.*')
+    ->name('proposals.tasks');

@@ -7,31 +7,39 @@
       </a>
     </div>
 
-
     <!-- Prospect Info -->
-    <div class="prospect-card p-4 mx-4 mb-3">
-      <h5 class="fw-bold text-dark mb-2">Prospect: ABC Cleaning Services</h5>
-      <p class="text-muted small mb-0">Location: 123 Main St, Suite 4, New York</p>
+    <div class="prospect-card p-4 mx-4 mb-3" v-if="prospect">
+      <h5 class="fw-bold text-dark mb-2">Prospect: {{ prospect.company_name }}</h5>
+      <p class="text-muted small mb-0">
+        Location:
+        {{ [prospect.address, prospect.unit_number, prospect.city, prospect.state, prospect.zip]
+          .filter(Boolean)
+          .join(', ') }}
+      </p>
+    </div>
+    <div v-else class="prospect-card p-4 mx-4 mb-3 placeholder-glow">
+      <h5 class="placeholder w-50"></h5>
+      <p class="placeholder w-75"></p>
     </div>
 
     <!-- Stepper -->
     <div class="stepper-container mx-4 mb-4">
-    <router-link
+      <router-link
         v-for="(step, index) in steps"
         :key="index"
         :to="{ name: step.name, params: { id: proposalId } }"
         class="stepper-step text-decoration-none"
         :class="{
-        active: $route.name === step.name,
-        first: index === 0,
-        last: index === steps.length - 1
+          active: $route.name === step.name,
+          first: index === 0,
+          last: index === steps.length - 1
         }"
-    >
+      >
         <div class="step-content">
-        <span class="step-number">{{ index + 1 }}.</span>
-        <span class="step-label">{{ step.label }}</span>
+          <span class="step-number">{{ index + 1 }}.</span>
+          <span class="step-label">{{ step.label }}</span>
         </div>
-    </router-link>
+      </router-link>
     </div>
 
     <!-- Main content -->
@@ -42,10 +50,13 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import axios from 'axios'
 
 const route = useRoute()
-const proposalId = route.params.id
+const proposalId = Number(route.params.id)
+const prospect = ref(null)
 
 const steps = [
   { label: 'Cleaning Tasks', name: 'proposal.tasks' },
@@ -53,6 +64,17 @@ const steps = [
   { label: 'Price Calculator', name: 'proposal.calculator' },
   { label: 'Finalize Proposal', name: 'proposal.finalize' },
 ]
+
+const fetchProspect = async () => {
+  try {
+    const response = await axios.get(`/api/proposals/${proposalId}/data-for-tasks`)
+    prospect.value = response.data.prospect
+  } catch (error) {
+    console.error('Error fetching prospect:', error)
+  }
+}
+
+onMounted(fetchProspect)
 </script>
 
 <style scoped>
