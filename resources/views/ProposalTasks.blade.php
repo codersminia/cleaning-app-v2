@@ -12,7 +12,7 @@
     
     <div id="app">
         <navbar-component></navbar-component>
-        <proposal-tasks :proposal-id="{{ $proposalId }}"></proposal-tasks>
+        <router-view></router-view>
     </div>
 
     {{-- Load compiled JS from Mix --}}

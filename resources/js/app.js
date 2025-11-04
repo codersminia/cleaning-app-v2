@@ -1,6 +1,7 @@
 
 import './bootstrap';
 import { createApp } from 'vue';
+import router from './router';
 
 const app = createApp({});
 
@@ -14,8 +15,8 @@ app.component('prospect-modal', require('./components/Modals/ProspectModal.vue')
 app.component('add-prospect-modal', require('./components/Modals/AddProspectModal.vue').default);
 app.component('location-component', require('./components/location.vue').default);
 app.component('add-proposal-modal', require('./components/Modals/AddProposalModal.vue').default);
-app.component('proposal-tasks', require('./components/ProposalTasks.vue').default);
 
 // Mount Vue app
+app.use(router);
 app.mount('#app');
 
