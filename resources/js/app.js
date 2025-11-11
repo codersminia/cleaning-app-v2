@@ -17,6 +17,7 @@ app.component('location-component', require('./components/location.vue').default
 app.component('add-proposal-modal', require('./components/Modals/AddProposalModal.vue').default);
 app.component('add-labor-cost-modal', require('./components/Proposal/Modals/LaboutCostModal.vue').default);
 app.component('add-project-cost-modal', require('./components/Proposal/Modals/ProjectCostModel.vue').default);
+app.component('SendProposalModal', require('./components/Proposal/Modals/SendProposalModal.vue').default);
 
 // Mount Vue app
 app.use(router);
