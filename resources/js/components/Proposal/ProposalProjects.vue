@@ -20,8 +20,8 @@
         <p class="text-muted mt-2">Fetching projects and tasks...</p>
     </div>
 
-    <!-- 💥 No Projects State (Matches the image) 💥 -->
-    <div v-if="!isLoading && !hasProjects" class="text-center py-5 no-projects-container">
+    <!-- No Projects State (Matches the image) -->
+    <div v-else-if="!hasProjects" class="text-center py-5 no-projects-container">
         <div class="folder-icon-wrapper mx-auto mb-4">
             <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#17a2b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
@@ -34,20 +34,22 @@
                 class="btn btn-info btn-lg d-flex align-items-center py-3 px-4 rounded"
                 @click="openModal('recurring')"
             >
+                <!-- Assuming you have a CSS/Bootstrap icon for arrow-repeat/sync/refresh. If not, replace with text. -->
                 <i class="bi bi-arrow-repeat me-2 fw-bold fs-5"></i> ADD A FIRST RECURRING PROJECT
             </button>
             <button
                 class="btn btn-success btn-lg d-flex align-items-center py-3 px-4 rounded"
                 @click="openModal('one-time')"
             >
+                <!-- Assuming you have a CSS/Bootstrap icon for 1-circle. If not, replace with text. -->
                 <i class="bi bi-1-circle me-2 fw-bold fs-5"></i> ADD A FIRST ONE-TIME PROJECT
             </button>
         </div>
     </div>
 
 
-    <!-- 🟢 Projects Exist State 🟢 -->
-    <div v-else-if="!isLoading" class="projects-list">
+    <!-- Projects Exist State -->
+    <div v-else class="projects-list">
         <!-- Recurring Projects Section -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
@@ -65,23 +67,18 @@
                 <!-- Recurring Project Cards (Dynamic) -->
                 <div v-for="project in recurringProjects" :key="project.id" class="project-item p-3 mb-3 border rounded">
                     <div class="d-flex align-items-center">
-                        <!-- Project Title (Name) -->
                         <span class="project-title fw-bold text-dark flex-grow-1">{{ project.name }}</span>
                         <button class="btn btn-outline-secondary btn-sm me-2">0 Notes</button>
                         
-                        <!-- Area Type -->
                         <span class="text-muted small me-2">Area Type:</span>
                         <span class="fw-bold me-3">Special Areas</span>
                         
-                        <!-- Frequency -->
                         <span class="text-muted small me-2">Frequency:</span>
                         <span class="fw-bold me-3">{{ project.frequency_id }} {{ project.per }}</span>
                         
-                        <!-- Tasks -->
                         <span class="text-muted small me-2">Tasks:</span>
                         <span class="fw-bold me-3">{{ project.total_tasks }}</span>
                         
-                        <!-- Toggle Details Button -->
                         <button class="btn btn-link text-decoration-none text-info show-details me-2" @click="toggleProjectDetails(project.id)">
                           {{ expandedProjects[project.id] ? 'HIDE PROJECT DETAILS' : 'SHOW PROJECT DETAILS' }}
                         </button>
@@ -92,26 +89,30 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex align-items-center">
                                 <span class="text-muted small me-2">Frequency</span>
-                                <!-- Frequency Dropdown -->
-                                <select class="form-select form-select-sm w-auto me-2" v-model="project.frequency_id">
+                                <select class="form-select form-select-sm w-auto me-2"  disabled v-model="project.frequency_id">
                                     <option v-for="i in 30" :key="i" :value="i">{{ i }}</option>
                                 </select>
                                 <span class="text-muted small me-2">Per</span>
-                                <!-- Per Dropdown -->
-                                <select class="form-select form-select-sm w-auto" v-model="project.per">
+                                <select class="form-select form-select-sm w-auto" disabled v-model="project.per">
                                     <option value="week">Week</option>
                                     <option value="month">Month</option>
                                     <option value="quarter">Quarter</option>
                                     <option value="year">Year</option>
                                 </select>
                             </div>
-                            <span class="fw-bold">Tasks ({{ project.total_tasks }})</span>
+                            <span class="fw-bold">Tasks ({{ project.total_tasks }})</span> 
                         </div>
                         <div class="task-list-container">
                             <!-- Dynamic Task List -->
-                            <div v-for="task in availableTasks" :key="task.id" class="task-item">
+                            <div v-for="task in availableTasks" :key="task.id" class="task-item" :class="{ 'selected': project.selected_task_ids.includes(task.id) }">
                                 <div class="task-left">
-                                    <input type="checkbox" class="form-check-input me-3" :id="task.id" />
+                                    <input 
+                                        type="checkbox" 
+                                        class="form-check-input me-3" 
+                                        :id="task.id" 
+                                        :checked="project.selected_task_ids.includes(task.id)"
+                                        @change="toggleProjectTask(project, task, $event.target.checked)"
+                                    />
                                     <div class="task-icon"><i class="bi bi-check-circle"></i></div>
                                     <div class="task-details">
                                         <p class="task-description mb-0">{{ task.description }}</p>
@@ -144,23 +145,18 @@
                 <!-- One Time Project Cards (Dynamic) -->
                 <div v-for="project in oneTimeProjects" :key="project.id" class="project-item p-3 mb-3 border rounded">
                     <div class="d-flex align-items-center">
-                        <!-- Project Title (Name) -->
                         <span class="project-title fw-bold text-dark flex-grow-1">{{ project.name }}</span>
                         <button class="btn btn-outline-secondary btn-sm me-2">0 Notes</button>
                         
-                        <!-- Area Type -->
                         <span class="text-muted small me-2">Area Type:</span>
                         <span class="fw-bold me-3">Special Areas</span>
                         
-                        <!-- Frequency (1 time) -->
                         <span class="text-muted small me-2">Frequency:</span>
                         <span class="fw-bold me-3">1 time</span>
                         
-                        <!-- Tasks -->
                         <span class="text-muted small me-2">Tasks:</span>
                         <span class="fw-bold me-3">{{ project.total_tasks }}</span>
                         
-                        <!-- Toggle Details Button -->
                         <button class="btn btn-link text-decoration-none text-info show-details me-2" @click="toggleProjectDetails(project.id)">
                             {{ expandedProjects[project.id] ? 'HIDE PROJECT DETAILS' : 'SHOW PROJECT DETAILS' }}
                         </button>
@@ -177,13 +173,19 @@
                                 <span class="text-muted small me-2">Per</span>
                                 <input type="text" class="form-control form-control-sm w-auto" value="Time" disabled>
                             </div>
-                            <span class="fw-bold">Tasks ({{ project.total_tasks }})</span>
+                            <span class="fw-bold">Tasks ({{ project.total_tasks }})</span> 
                         </div>
                         <div class="task-list-container">
                             <!-- Dynamic Task List -->
-                            <div v-for="task in availableTasks" :key="task.id" class="task-item">
+                            <div v-for="task in availableTasks" :key="task.id" class="task-item" :class="{ 'selected': project.selected_task_ids.includes(task.id) }">
                                 <div class="task-left">
-                                    <input type="checkbox" class="form-check-input me-3" :id="task.id" />
+                                    <input 
+                                        type="checkbox" 
+                                        class="form-check-input me-3" 
+                                        :id="task.id" 
+                                        :checked="project.selected_task_ids.includes(task.id)"
+                                        @change="toggleProjectTask(project, task, $event.target.checked)"
+                                    />
                                     <div class="task-icon"><i class="bi bi-check-circle"></i></div>
                                     <div class="task-details">
                                         <p class="task-description mb-0">{{ task.description }}</p>
@@ -213,8 +215,8 @@
 
 <script setup>
 import { defineProps, ref, computed, onMounted } from 'vue';
-import AddNewProjectModal from '../Modals/AddProjectModal.vue'
-import axios from 'axios'; // Import axios
+import AddNewProjectModal from '../Modals/AddProjectModal.vue' // Adjust path if necessary
+import axios from 'axios';
 
 const props = defineProps({
   proposalId: {
@@ -224,13 +226,13 @@ const props = defineProps({
 });
 
 // State
-const isLoading = ref(true); // New loading state
+const isLoading = ref(true);
 const isModalOpen = ref(false);
 const projectType = ref('');
-const recurringProjects = ref([]); // Store fetched recurring projects
-const oneTimeProjects = ref([]);   // Store fetched one-time projects
-const availableTasks = ref([]);    // Store all available tasks
-const expandedProjects = ref({}); // State to manage the expansion of project details
+const recurringProjects = ref([]);
+const oneTimeProjects = ref([]);
+const availableTasks = ref([]);
+const expandedProjects = ref({});
 
 // Computed
 const hasProjects = computed(() => {
@@ -239,57 +241,92 @@ const hasProjects = computed(() => {
 
 // Methods
 
-// Function to fetch data from the backend
+// Method to handle task selection/deselection and call API
+const toggleProjectTask = async (project, task, isSelected) => {
+    
+    // --- Optimistic UI Update ---
+    const projectsArray = project.is_recurring ? recurringProjects.value : oneTimeProjects.value;
+    const projectIndex = projectsArray.findIndex(p => p.id === project.id);
+    
+    if (projectIndex !== -1) {
+        const selectedIds = projectsArray[projectIndex].selected_task_ids;
+        if (isSelected && !selectedIds.includes(task.id)) {
+            selectedIds.push(task.id);
+        } else if (!isSelected) {
+            projectsArray[projectIndex].selected_task_ids = selectedIds.filter(id => id !== task.id);
+        }
+        // Update task count
+        projectsArray[projectIndex].total_tasks = projectsArray[projectIndex].selected_task_ids.length;
+    }
+
+
+    try {
+        // Call API to save/delete the task
+        const payload = {
+            project_id: project.id,
+            task_id: task.id,
+            is_selected: isSelected,
+        };
+        
+        // This hits the new POST /api/project-tasks/toggle endpoint
+        await axios.post('/api/project-tasks/toggle', payload);
+        
+    } catch (error) {
+        console.error('Error toggling project task:', error);
+        alert('Failed to update task. Please refresh and try again.');
+        
+        // Revert Optimistic UI on failure by reloading data
+        fetchProjectsAndTasks();
+    }
+};
+
+
 const fetchProjectsAndTasks = async () => {
     isLoading.value = true;
     try {
+        // This hits the GET /api/proposals/{proposalId}/projects-and-tasks endpoint
         const response = await axios.get(`/api/proposals/${props.proposalId}/projects-and-tasks`);
         const data = response.data;
         
-        // Populate reactive data
         recurringProjects.value = data.recurringProjects || [];
         oneTimeProjects.value = data.oneTimeProjects || [];
         availableTasks.value = data.availableTasks || [];
 
-        // Clear and re-initialize expandedProjects based on new IDs
-        expandedProjects.value = {};
+        // Clear and re-initialize expandedProjects state
+        const newExpandedState = {};
         [...recurringProjects.value, ...oneTimeProjects.value].forEach(project => {
-            expandedProjects.value[project.id] = false;
+            // Keep the expanded state if the project already exists, otherwise default to false
+            newExpandedState[project.id] = expandedProjects.value[project.id] || false;
         });
+        expandedProjects.value = newExpandedState;
 
     } catch (error) {
         console.error('Failed to fetch projects and tasks:', error);
-        // Optional: show a user-friendly error message
     } finally {
         isLoading.value = false;
     }
 };
 
-// Open modal function
 const openModal = (type) => {
   projectType.value = type
   isModalOpen.value = true
 }
 
-// Close modal function
 const closeModal = () => {
   isModalOpen.value = false
 }
 
-// Handle Save event from modal (refetches data)
 const handleSave = (newProject) => {
   console.log('New project added:', newProject);
   isModalOpen.value = false;
-  // Re-fetch all projects to update the list with the new project
+  // Reload the list to show the new project
   fetchProjectsAndTasks(); 
 }
 
-// Function to toggle the visibility of project details
 const toggleProjectDetails = (projectId) => {
   expandedProjects.value[projectId] = !expandedProjects.value[projectId];
 };
 
-// Lifecycle Hook
 onMounted(() => {
     fetchProjectsAndTasks();
 });
@@ -303,7 +340,7 @@ onMounted(() => {
 
 /* Custom styles for the "No Projects" state (from the image) */
 .no-projects-container {
-    max-width: 600px; /* Constrain the width for better presentation */
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -312,13 +349,25 @@ onMounted(() => {
     position: relative;
     width: 60px;
     height: 60px;
-    /* Add background/effect to mimic the image's style */
 }
 
 .btn-lg {
     font-size: 1rem;
     padding: 0.75rem 1.5rem;
 }
+
+.card {
+  border: none;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.card-title {
+  color: #333;
+}
+
 .btn-info {
   background-color: #17a2b8;
   border-color: #17a2b8;
@@ -396,10 +445,11 @@ onMounted(() => {
   border: 1px solid #e0e0e0;
   border-radius: 5px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: border-color 0.2s ease;
 }
 
 .task-item.selected {
-  border-color: #20c997;
+  border-color: #20c997; /* Green border for selected/checked tasks */
 }
 
 .task-left {
@@ -410,7 +460,7 @@ onMounted(() => {
 
 .task-icon {
   font-size: 1.2rem;
-  color: #20c997;
+  color: #20c997; /* Green for the checkmark icon */
   margin-right: 15px;
 }
 

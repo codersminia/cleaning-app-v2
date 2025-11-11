@@ -6,6 +6,7 @@ use App\Models\ServiceType; // Assuming you have a ServiceType model
 use App\Models\ProposalAreaType; // Assuming you have a ProposalAreaType model
 use App\Models\Project; // Assuming you have a Project model
 use App\Models\Task;
+use App\Models\ProjectTask;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -109,7 +110,9 @@ class ProjectController extends Controller
 
     public function getProjectsAndTasks(int $proposalId)
     {
-        $projects = Project::where('proposal_id', $proposalId)->get();
+        $projects = Project::where('proposal_id', $proposalId)
+        ->with('projectTasks')
+        ->get();
         $serviceTypes = ServiceType::pluck('name', 'id');
         $proposalAreaTypes = ProposalAreaType::pluck('name', 'id');
         $tasks = Task::select('id', 'description')->get();
@@ -125,6 +128,8 @@ class ProjectController extends Controller
             $serviceName = $serviceTypes[$project->service_type_id] ?? 'Unknown Service';
             $projectNamePrefix = $project->is_recurring ? 'Recurring Project - ' : 'One-Time Project - ';
             $projectName = $projectNamePrefix . $serviceName;
+            $selectedTaskIds = $project->projectTasks->pluck('task_id')->toArray();
+        $totalTasks = count($selectedTaskIds);
 
             return [
                 'id' => $project->id,
@@ -134,7 +139,8 @@ class ProjectController extends Controller
                 'frequency_id' => $project->frequency_id,
                 'per' => $project->per,
                 'is_recurring' => (bool)$project->is_recurring,
-                'total_tasks' => 0, // Set to 0 as requested for now
+                'total_tasks' => 0,
+                'selected_task_ids' => $selectedTaskIds,
             ];
         })->groupBy('is_recurring');
 
@@ -148,5 +154,45 @@ class ProjectController extends Controller
                 return ['id' => $task->id, 'description' => $task->description];
             }),
         ]);
+    }
+
+    public function toggleTask(Request $request)
+    {
+        $validated = $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'task_id' => 'required|exists:tasks,id',
+            'is_selected' => 'required|boolean', // True for adding, false for removing
+        ]);
+
+        $projectId = $validated['project_id'];
+        $taskId = $validated['task_id'];
+        $isSelected = $validated['is_selected'];
+
+        $projectTask = ProjectTask::where('project_id', $projectId)
+                                  ->where('task_id', $taskId)
+                                  ->first();
+
+        if ($isSelected) {
+            if (!$projectTask) {
+                $task = Task::find($taskId); // Get the task to fetch its description
+
+                $projectTask = ProjectTask::create([
+                    'project_id' => $projectId,
+                    'task_id' => $taskId,
+                    'task_description' => $task->description,
+                ]);
+
+                return response()->json(['status' => 'added', 'project_task' => $projectTask], 201);
+            }
+            return response()->json(['status' => 'already_exists'], 200);
+
+        }
+        else {
+            if ($projectTask) {
+                $projectTask->delete();
+                return response()->json(['status' => 'removed'], 200);
+            }
+            return response()->json(['status' => 'not_found'], 200);
+        }
     }
 }

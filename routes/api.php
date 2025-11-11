@@ -23,6 +23,7 @@ Route::post('/proposals', [ProposalController::class, 'store']);
 Route::get('/project-modal-data', [ProjectController::class, 'getProjectModalData']);
 Route::post('/projects', [ProjectController::class, 'storeProject']);
 Route::get('/proposals/{proposalId}/projects-and-tasks', [ProjectController::class, 'getProjectsAndTasks']);
+Route::post('/project-tasks/toggle', [ProjectController::class, 'toggleTask']);
 
 Route::prefix('proposals/{proposal}')->group(function () {
     Route::get('data-for-tasks', [ProposalTasksController::class, 'getDataForTasks']);
