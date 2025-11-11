@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProposalController;   
 use App\Http\Controllers\ProposalTasksController;   
+use App\Http\Controllers\ProjectController;   
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -19,6 +20,8 @@ Route::get('/frequencies', [DashboardController::class, 'getfrequencies']);
 Route::get('/weekdays', [DashboardController::class, 'getweekdays']);
 Route::post('/proposals', [ProposalController::class, 'store']);
 
+Route::get('/project-modal-data', [ProjectController::class, 'getProjectModalData']);
+Route::post('/projects', [ProjectController::class, 'storeProject']);
 
 Route::prefix('proposals/{proposal}')->group(function () {
     Route::get('data-for-tasks', [ProposalTasksController::class, 'getDataForTasks']);
