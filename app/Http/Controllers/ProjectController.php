@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ServiceType; // Assuming you have a ServiceType model
 use App\Models\ProposalAreaType; // Assuming you have a ProposalAreaType model
 use App\Models\Project; // Assuming you have a Project model
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -103,5 +104,49 @@ class ProjectController extends Controller
             \Log::error('Error storing project: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while creating the project.'], 500);
         }
+    }
+
+
+    public function getProjectsAndTasks(int $proposalId)
+    {
+        $projects = Project::where('proposal_id', $proposalId)->get();
+        $serviceTypes = ServiceType::pluck('name', 'id');
+        $proposalAreaTypes = ProposalAreaType::pluck('name', 'id');
+        $tasks = Task::select('id', 'description')->get();
+        $formattedProjects = $projects->map(function($project) use ($serviceTypes, $proposalAreaTypes) {
+            $areaNames = [];
+            $areaIds = json_decode($project->area_ids, true) ?? [];
+            foreach ($areaIds as $areaId) {
+                if (isset($proposalAreaTypes[$areaId])) {
+                    $areaNames[] = $proposalAreaTypes[$areaId];
+                }
+            }
+            
+            $serviceName = $serviceTypes[$project->service_type_id] ?? 'Unknown Service';
+            $projectNamePrefix = $project->is_recurring ? 'Recurring Project - ' : 'One-Time Project - ';
+            $projectName = $projectNamePrefix . $serviceName;
+
+            return [
+                'id' => $project->id,
+                'name' => $projectName,
+                'service_type_name' => $serviceTypes[$project->service_type_id] ?? 'Unknown',
+                'area_names' => $areaNames, // Array of Area Names
+                'frequency_id' => $project->frequency_id,
+                'per' => $project->per,
+                'is_recurring' => (bool)$project->is_recurring,
+                'total_tasks' => 0, // Set to 0 as requested for now
+            ];
+        })->groupBy('is_recurring');
+
+        $recurringProjects = $formattedProjects->get(true) ?? collect();
+        $oneTimeProjects = $formattedProjects->get(false) ?? collect();
+
+        return response()->json([
+            'recurringProjects' => $recurringProjects,
+            'oneTimeProjects' => $oneTimeProjects,
+            'availableTasks' => $tasks->map(function($task) {
+                return ['id' => $task->id, 'description' => $task->description];
+            }),
+        ]);
     }
 }
