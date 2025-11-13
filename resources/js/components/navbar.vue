@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #475569;">
     <div class="container-fluid">
       <!-- Logo and HOME text -->
-      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard">
         <span style="font-size: 18px; font-weight: bold; color: white;">HOME</span>
       </a>
 

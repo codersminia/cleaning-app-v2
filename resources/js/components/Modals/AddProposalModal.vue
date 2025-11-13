@@ -350,9 +350,11 @@ export default {
   width: 90%;
   max-width: 900px;
   border-radius: 8px;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   z-index: 1051;
   max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header-custom {
@@ -379,6 +381,8 @@ export default {
 
 .modal-body-custom {
   padding: 40px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .form-control-custom {

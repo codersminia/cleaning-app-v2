@@ -9,7 +9,7 @@
     style="width: 90%; max-width: 900px; z-index: 1050; transform: translate(-50%, -50%); max-height: 80vh; overflow-y: auto;"
   >
     <!-- Teal Header -->
-    <div class="bg-info text-white p-3 d-flex justify-content-end align-items-center">
+    <div style="background-color: #20b2aa;" class="text-white p-3 d-flex justify-content-end align-items-center">
       <button
         class="btn text-white p-0"
         @click="closeModal"
@@ -26,8 +26,8 @@
         <div class="col-md-8">
           <select
             v-model="selectedProspectId"
-            class="form-select border-0 border-bottom border-info rounded-0"
-            style="border-width: 2px !important;"
+            class="form-select border-0 border-bottom rounded-0"
+            style="border-width: 2px !important; border-color: #20b2aa !important;"
           >
             <option value="">Select from existing</option>
             <option
@@ -43,8 +43,9 @@
         <!-- Right Side - Button -->
         <div class="col-md-4 d-flex justify-content-end">
           <button
+            style="background-color: #20b2aa;"
             @click="openAddProspectModal"
-            class="btn btn-info text-white fw-bold px-4 py-2"
+            class="btn text-white fw-bold px-4 py-2"
           >
             ADD NEW PROSPECT
           </button>

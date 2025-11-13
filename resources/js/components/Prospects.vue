@@ -15,6 +15,14 @@
     <div v-else>
       <!-- Header Section -->
       <div class="container mb-5">
+
+        <div class="mb-4">
+            <a href="/dashboard" class="text-decoration-none text-muted d-flex align-items-center gap-2">
+                <span>&lt;</span>
+                <span>BACK</span>
+            </a>
+        </div>
+
         <div class="text-center mb-4">
           <div class="mb-3">
             <svg class="mx-auto text-info" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -105,7 +113,10 @@ export default {
 
   async mounted() {
     await this.fetchProspects()
-    this.showModal = true 
+    const params = new URLSearchParams(window.location.search)
+    const shouldOpen = params.get('openModal')
+
+    this.showModal = shouldOpen === '1'
   },
 
   methods: {

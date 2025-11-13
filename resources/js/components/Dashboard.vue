@@ -20,10 +20,10 @@
           <button class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100" @click="goToProspectsWithModal">CREATE PROPOSAL</button>
         </div>
         <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <button class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100">TRACK SENT PROPOSALS</button>
+          <button @click="goToTracking" class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100">TRACK SENT PROPOSALS</button>
         </div>
         <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <button class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100">EDIT CLIENTS & PROPOSALS</button>
+          <button @click="goToProposal" class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100">EDIT CLIENTS & PROPOSALS</button>
         </div>
       </div>
     </div>
@@ -66,7 +66,15 @@
 <script setup>
 // Dashboard component logic
 const goToProspectsWithModal = () => {
-  window.location.href = '/prospects'
+  window.location.href = '/prospects?openModal=1'
+}
+
+const goToTracking = () => {
+    window.location.href = '/tracking'
+}
+
+const goToProposal = () => {
+    window.location.href = '/prospects?openModal=0'
 }
 </script>
 

@@ -127,7 +127,7 @@
                     class="form-control-custom flex-grow-1"
                     placeholder="000-000-0000"
                   />
-                  <input v-model="form.phoneExt" type="text" class="form-control-custom" placeholder="Ext" style="max-width: 70px;" />
+                  <input v-model="form.phoneExt" type="number" class="form-control-custom" placeholder="Ext" style="max-width: 70px;" />
                 </div>
               </div>
 
@@ -294,8 +294,10 @@ export default {
   width: 90%;
   max-width: 900px;
   max-height: 90vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   z-index: 1051;
+  /* removed overflow-y: auto and added flexbox layout to keep header/footer fixed */
 }
 
 /* ===== Header ===== */
@@ -308,6 +310,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
+  /* added flex-shrink: 0 to prevent header from shrinking */
 }
 .btn-close-custom {
   background: none;
@@ -321,6 +325,9 @@ export default {
 /* ===== Body ===== */
 .modal-body-custom {
   padding: 40px 50px;
+  overflow-y: auto;
+  flex: 1;
+  /* added overflow-y: auto and flex: 1 to enable scroll only in body content */
 }
 
 /* ===== Form Styles ===== */

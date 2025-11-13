@@ -35,7 +35,7 @@ class DashboardController extends Controller
             'area_in_sqft' => 'nullable|integer',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:50',
-            'ext' => 'nullable|string|max:10',
+            'ext' => 'nullable|integer',
             'mobile' => 'nullable|string|max:50',
             'address' => 'required|string',
             'unit_number' => 'nullable|string|max:50',
