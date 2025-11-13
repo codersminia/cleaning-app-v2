@@ -23,4 +23,8 @@ class Project extends Model
         return $this->hasMany(ProjectTask::class);
     }
     
+    public function serviceType()
+    {
+        return $this->belongsTo(ServiceType::class, 'service_type_id');
+    }
 }

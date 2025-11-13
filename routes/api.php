@@ -25,6 +25,8 @@ Route::post('/projects', [ProjectController::class, 'storeProject']);
 Route::get('/proposals/{proposalId}/projects-and-tasks', [ProjectController::class, 'getProjectsAndTasks']);
 Route::post('/project-tasks/toggle', [ProjectController::class, 'toggleTask']);
 
+Route::get('/proposals/{proposal}/projects-for-calculator', [ProposalController::class, 'getProjectsForCalculator']);
+
 Route::prefix('proposals/{proposal}')->group(function () {
     Route::get('data-for-tasks', [ProposalTasksController::class, 'getDataForTasks']);
     Route::post('areas', [ProposalTasksController::class, 'storeArea']);
