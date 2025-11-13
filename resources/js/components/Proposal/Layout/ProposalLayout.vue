@@ -2,9 +2,9 @@
   <div class="min-vh-100 bg-light">
     <!-- Back Button -->
     <div class="ps-4 pt-3 pb-2">
-      <a href="/proposals" class="text-muted text-decoration-none small fw-semibold">
+      <!-- <a href="/proposals" class="text-muted text-decoration-none small fw-semibold">
         <i class="bi bi-chevron-left"></i> BACK TO PROPOSALS
-      </a>
+      </a> -->
     </div>
 
     <!-- Prospect Info -->

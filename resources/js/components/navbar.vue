@@ -41,7 +41,7 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown" style="background-color: #334155;">
               <li><a class="dropdown-item" href="#" style="color: white;">Profile</a></li>
               <li><a class="dropdown-item" href="#" style="color: white;">Settings</a></li>
-              <li><a class="dropdown-item" href="#" style="color: white;">Logout</a></li>
+              <li><a class="dropdown-item" @click="logout" href="#" style="color: white;">Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -51,8 +51,30 @@
 </template>
 
 <script setup>
-// Bootstrap navbar is handled by Bootstrap's JavaScript
-// No additional Vue logic needed for basic functionality
+import axios from "axios";
+
+function logout() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        return window.location.href = "/";
+    }
+
+    axios.post('/api/logout', {}, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+    .then(res => {
+        localStorage.removeItem("token");
+        delete axios.defaults.headers.common["Authorization"];
+        window.location.href = res.data.redirect;
+    })
+    .catch(() => {
+        localStorage.removeItem("token");
+        window.location.href = '/';
+    });
+}
 </script>
 
 <style scoped>

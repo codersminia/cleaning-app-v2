@@ -40,4 +40,16 @@ class LoginController extends Controller
             'redirect' => route('dashboard')
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        // Delete the token used by the user
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logged out successfully',
+            'redirect' => route('login'),
+        ]);
+    }
 }
