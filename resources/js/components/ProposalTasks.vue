@@ -679,7 +679,6 @@ const toggleAreaTask = async (areaTypeId, task) => {
       console.log(`Task '${task.name}' selected for area '${area.areaType.name}' and stored.`);
     } catch (error) {
       console.error(`Error selecting task ${task.name}:`, error);
-      alert('Failed to add task to area.');
     }
   }
 };
