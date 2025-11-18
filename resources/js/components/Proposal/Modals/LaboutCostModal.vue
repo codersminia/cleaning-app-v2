@@ -40,41 +40,38 @@
         <div class="row g-4 mb-4">
           <div class="col-md-6">
             <label class="form-label fw-bold mb-2" style="font-size: 0.9rem;">Frequency</label>
-            <select class="form-control-modal w-100" v-model="formData.frequency">
-              <option value="">Select frequency</option>
-              <option value="weekly">Weekly</option>
-              <option value="biweekly">Bi-weekly</option>
-              <option value="monthly">Monthly</option>
+            <!-- Dynamic loop 1 to 30 -->
+            <select class="form-control-modal w-100" v-model.number="formData.frequency">
+              <option v-for="n in 30" :key="n" :value="n">{{ n }}</option>
             </select>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-bold mb-2" style="font-size: 0.9rem;">Per</label>
             <select class="form-control-modal w-100" v-model="formData.per">
-              <option value="">Select</option>
-              <option value="clean">Clean</option>
-              <option value="hour">Hour</option>
-              <option value="day">Day</option>
+              <option value="Week">Week</option>
+              <option value="Month">Month</option>
+              <option value="Quarter">Quarter</option>
+              <option value="Year">Year</option>
             </select>
           </div>
         </div>
 
-        <!-- Cost Summary Section (Light Blue Background) -->
+        <!-- Cost Summary Section (Calculated Read-Only) -->
         <div class="row g-3 p-4 rounded" style="background-color: #f0f8f9;">
           <div class="col-md-4">
             <label class="text-uppercase fw-bold text-teal" style="font-size: 0.85rem;">Cost per Clean</label>
-            <div class="fw-bold mt-2" style="font-size: 1.1rem;">0.00</div>
+            <div class="fw-bold mt-2" style="font-size: 1.1rem;">${{ calculatedPerClean }}</div>
           </div>
           <div class="col-md-4">
             <label class="text-uppercase fw-bold text-teal" style="font-size: 0.85rem;">Annual Cost</label>
-            <div class="fw-bold mt-2" style="font-size: 1.1rem;">0.00</div>
+            <div class="fw-bold mt-2" style="font-size: 1.1rem;">${{ calculatedAnnual }}</div>
           </div>
           <div class="col-md-4">
             <label class="text-uppercase fw-bold text-teal" style="font-size: 0.85rem;">Monthly Cost</label>
-            <div class="fw-bold mt-2" style="font-size: 1.1rem;">0.00</div>
+            <div class="fw-bold mt-2" style="font-size: 1.1rem;">${{ calculatedMonthly }}</div>
           </div>
         </div>
       </div>
-
       <!-- Modal Footer -->
       <div class="modal-footer p-4 bg-light border-top d-flex gap-3">
         <button class="btn btn-teal text-white px-4 py-2 fw-bold" @click="saveForm">SAVE</button>
@@ -100,10 +97,46 @@ export default {
         staff: 0,
         rateOfPay: 0,
         hours: 0,
-        frequency: '',
-        per: ''
+        frequency: 1,
+        per: 'Week'
       }
     };
+  },
+  computed: {
+    // 1. Base Calculation: Staff * Rate * Hours
+    calculatedPerClean() {
+      const val = (parseFloat(this.formData.staff) || 0) * 
+                  (parseFloat(this.formData.rateOfPay) || 0) * 
+                  (parseFloat(this.formData.hours) || 0);
+      return val.toFixed(2);
+    },
+    // 2. Monthly Calculation based on "Per" logic
+    calculatedMonthly() {
+      const perClean = parseFloat(this.calculatedPerClean);
+      const freq = parseFloat(this.formData.frequency) || 0;
+      const type = this.formData.per;
+      let monthly = 0;
+
+      if (type === 'Week') {
+        // Freq * 4.333
+        monthly = perClean * (freq * 4.333);
+      } else if (type === 'Month') {
+        // Freq (No scaling)
+        monthly = perClean * freq;
+      } else if (type === 'Quarter') {
+        // Freq / 3
+        monthly = perClean * (freq / 3);
+      } else if (type === 'Year') {
+        // Freq / 12
+        monthly = perClean * (freq / 12);
+      }
+
+      return monthly.toFixed(2);
+    },
+    // 3. Annual Calculation: Monthly * 12
+    calculatedAnnual() {
+      return (parseFloat(this.calculatedMonthly) * 12).toFixed(2);
+    }
   },
   methods: {
     closeModal() {
@@ -121,8 +154,8 @@ export default {
         staff: 0,
         rateOfPay: 0,
         hours: 0,
-        frequency: '',
-        per: ''
+        frequency: 1,
+        per: 'Week'
       };
     }
   }
