@@ -79,29 +79,27 @@ class ProposalController extends Controller
 
     public function getProjectsForCalculator(Proposal $proposal)
     {
-        // Fetch all projects for the given proposal ID
         $projects = Project::where('proposal_id', $proposal->id)
-                            ->with('serviceType') // Eager load the service type relationship
+                            ->with('serviceType')
                             ->get();
 
-        // Transform the collection to include the area names
         $transformedProjects = $projects->map(function ($project) {
-            // area_ids is a JSON array like [30, 29, 35], so we decode it
-            $areaIds = json_decode($project->area_ids);
+            
+            // SAFETY CHECK: Only json_decode if it's a string. 
+            // If Laravel already cast it to an array, use it directly.
+            $areaIds = is_string($project->area_ids) ? json_decode($project->area_ids, true) : $project->area_ids;
 
             $areaNames = [];
             if (is_array($areaIds) && count($areaIds) > 0) {
-                 // Fetch names from proposal_area_types where the id is in our array
                 $areaNames = ProposalAreaType::whereIn('id', $areaIds)->pluck('name')->toArray();
             }
 
             return [
                 'id' => $project->id,
                 'is_recurring' => $project->is_recurring,
-                'frequency_id' => $project->frequency_id,
+                'frequency_id' => $project->frequency_id, 
                 'per' => $project->per,
-                // Get the name from the eager-loaded relationship
-                'service_type_name' => $project->serviceType ? $project->serviceType->name : 'N/A',
+                'service_type_name' => $project->serviceType ? $project->serviceType->name : 'Project',
                 'area_names' => $areaNames,
             ];
         });
