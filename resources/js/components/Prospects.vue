@@ -76,6 +76,7 @@
               :key="prospect.id"
               class="d-flex align-items-center bg-white mb-2 p-3 cursor-pointer"
               style="border-right: 6px solid #17A2B8; background-color: #f8f9fa;"
+              @click="goToLocation(prospect.id)"
             >
               <h5 class="fw-bold mb-0">{{ prospect.name }}</h5>
             </div>
@@ -143,6 +144,10 @@ export default {
       this.selectedFilter = null
       this.showFilter = false
     },
+
+    goToLocation(id) {
+        window.location.href = `/location/${id}`;
+    }
   },
 }
 </script>

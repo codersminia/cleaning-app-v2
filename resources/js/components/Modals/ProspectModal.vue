@@ -26,6 +26,7 @@
         <div class="col-md-8">
           <select
             v-model="selectedProspectId"
+            @change="goToLocation"
             class="form-select border-0 border-bottom rounded-0"
             style="border-width: 2px !important; border-color: #20b2aa !important;"
           >
@@ -113,6 +114,11 @@ export default {
     },
     closeAddProspectModal() {
       this.showAddProspectModal = false
+    },
+    goToLocation() {
+        if (this.selectedProspectId) {
+        window.location.href = `/location/${this.selectedProspectId}`;
+        }
     }
   }
 }
