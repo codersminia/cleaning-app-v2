@@ -1338,10 +1338,13 @@ export default {
   },
   methods: {
       getCostPerClean(cost) {
-        const val = (parseFloat(cost.staff) || 0) * 
-                    (parseFloat(cost.rateOfPay) || 0) * 
-                    (parseFloat(cost.hours) || 0);
-        return val; // Return number for math, format in template
+          const base = (parseFloat(cost.staff) || 0) * 
+               (parseFloat(cost.rateOfPay) || 0) * 
+               (parseFloat(cost.hours) || 0);
+               
+          const burdenMultiplier = 1 + (this.totalPayroll / 100);
+
+          return base * burdenMultiplier;
       },
 
       getMonthlyCost(cost) {
@@ -1534,9 +1537,15 @@ export default {
 
     // 1. Calculate Labor Cost (Base)
     getProjectLaborCost(project) {
-      return (parseFloat(project.staff) || 0) * 
-            (parseFloat(project.rateOfPay) || 0) * 
-            (parseFloat(project.hours) || 0);
+      const base = (parseFloat(project.staff) || 0) * 
+               (parseFloat(project.rateOfPay) || 0) * 
+               (parseFloat(project.hours) || 0);
+
+      // 2. Calculate Burden Multiplier
+      const burdenMultiplier = 1 + (this.totalPayroll / 100);
+
+      // 3. Return Fully Loaded Cost
+      return base * burdenMultiplier;
     },
 
     // 2. Calculate Monthly Cost (For Recurring)
@@ -1643,9 +1652,15 @@ export default {
     getOneTimeProjectTotalCost(project) {
       // For one-time, frequency usually implies "doing it once", 
       // but typically it's just Staff * Rate * Hours for the whole job.
-      return (parseFloat(project.staff) || 0) * 
-            (parseFloat(project.rateOfPay) || 0) * 
-            (parseFloat(project.hours) || 0);
+      const base = (parseFloat(project.staff) || 0) * 
+                  (parseFloat(project.rateOfPay) || 0) * 
+                  (parseFloat(project.hours) || 0);
+                  
+      // 2. Calculate Burden Multiplier
+      const burdenMultiplier = 1 + (this.totalPayroll / 100);
+
+      // 3. Return Fully Loaded Cost
+      return base * burdenMultiplier;
     },
 
     // --- STEP 3: RECURRING SUMMARY HELPERS (Expenses/Margins) ---
