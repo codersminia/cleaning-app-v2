@@ -1332,9 +1332,36 @@ export default {
       return this.recurringProjects.length;
     }
   },
-  mounted() {
-    this.fetchProposalProjects();
-    // this.loadFromDatabase(); // Your existing Janitorial loader
+  watch: {
+    // Watch deep objects (Arrays)
+    laborCosts: { handler() { this.debouncedSave(); }, deep: true },
+    additionalExpenses: { handler() { this.debouncedSave(); }, deep: true },
+    recurringProjects: { handler() { this.debouncedSave(); }, deep: true },
+    oneTimeProjects: { handler() { this.debouncedSave(); }, deep: true },
+    recurringExpenses: { handler() { this.debouncedSave(); }, deep: true },
+
+    // Watch Simple Variables
+    payrollTaxes() { this.debouncedSave(); },
+    insurance() { this.debouncedSave(); },
+    overhead() { this.debouncedSave(); },
+    buildingSqFt() { this.debouncedSave(); },
+    
+    marginPercent() { this.debouncedSave(); },
+    marginDollar() { this.debouncedSave(); },
+    salesTaxPercent() { this.debouncedSave(); },
+    addSalesTax() { this.saveToDatabase(); }, // Toggle saves instantly
+
+    recurringMarginPercent() { this.debouncedSave(); },
+    recurringMarginDollar() { this.debouncedSave(); },
+    recurringSalesTaxPercent() { this.debouncedSave(); },
+    addRecurringSalesTax() { this.saveToDatabase(); },
+  },
+  async mounted() {
+    // 1. Fetch structure from DB (Proposals table)
+    await this.fetchProposalProjects();
+    
+    // 2. Fill in the saved numbers from DB (Calculations table)
+    await this.loadFromDatabase();
   },
   methods: {
       getCostPerClean(cost) {
@@ -1690,8 +1717,120 @@ export default {
         return;
       }
       this.recurringMarginPercent = ((dollar / this.recurringSubTotal) * 100).toFixed(2);
+    },
+
+    async saveToDatabase() {
+      const proposalId = this.$route.params.id;
+      
+      // Construct the payload with ALL state variables
+      const payload = {
+        // 1. Global Payroll/Settings
+        payrollTaxes: this.payrollTaxes,
+        insurance: this.insurance,
+        overhead: this.overhead,
+        buildingSqFt: this.buildingSqFt,
+        
+        // 2. Janitorial Data
+        laborCosts: this.laborCosts,
+        additionalExpenses: this.additionalExpenses,
+        marginPercent: this.marginPercent,
+        marginDollar: this.marginDollar,
+        addSalesTax: this.addSalesTax,
+        salesTaxPercent: this.salesTaxPercent,
+
+        // 3. Project Data (We save the whole array to keep their specific inputs)
+        recurringProjects: this.recurringProjects,
+        oneTimeProjects: this.oneTimeProjects,
+        
+        // 4. Recurring Summary Data
+        recurringExpenses: this.recurringExpenses,
+        recurringMarginPercent: this.recurringMarginPercent,
+        recurringMarginDollar: this.recurringMarginDollar,
+        addRecurringSalesTax: this.addRecurringSalesTax,
+        recurringSalesTaxPercent: this.recurringSalesTaxPercent,
+      };
+
+      try {
+        await axios.post(`/api/proposals/${proposalId}/calculator`, payload);
+        console.log("Auto-saved successfully");
+      } catch (error) {
+        console.error("Save failed", error);
+      }
+    },
+
+    async loadFromDatabase() {
+      const proposalId = this.$route.params.id;
+      try {
+        const response = await axios.get(`/api/proposals/${proposalId}/calculator`);
+        const data = response.data;
+
+        if (Object.keys(data).length === 0) return; // No data saved yet
+
+        // 1. Restore Global Settings
+        this.payrollTaxes = data.payrollTaxes || 0;
+        this.insurance = data.insurance || 0;
+        this.overhead = data.overhead || 0;
+        this.buildingSqFt = data.buildingSqFt || 0;
+
+        // 2. Restore Janitorial
+        this.laborCosts = data.laborCosts || [];
+        this.additionalExpenses = data.additionalExpenses || [];
+        this.marginPercent = data.marginPercent || 0;
+        this.marginDollar = data.marginDollar || 0;
+        this.addSalesTax = data.addSalesTax || false;
+        this.salesTaxPercent = data.salesTaxPercent || 0;
+
+        // 3. Restore Recurring Summary
+        this.recurringExpenses = data.recurringExpenses || [];
+        this.recurringMarginPercent = data.recurringMarginPercent || 0;
+        this.recurringMarginDollar = data.recurringMarginDollar || 0;
+        this.addRecurringSalesTax = data.addRecurringSalesTax || false;
+        this.recurringSalesTaxPercent = data.recurringSalesTaxPercent || 0;
+
+        // 4. Restore Projects (Tricky Part: Merge saved values with DB structure)
+        // We call this AFTER fetchProposalProjects finishes
+        this.mergeProjectData(this.recurringProjects, data.recurringProjects);
+        this.mergeProjectData(this.oneTimeProjects, data.oneTimeProjects);
+
+      } catch (error) {
+        console.error("Load failed", error);
+      }
+    },
+
+    // Helper to merge saved project inputs (staff, rate, etc) into the fresh DB list
+    mergeProjectData(currentList, savedList) {
+      if (!savedList || savedList.length === 0) return;
+
+      currentList.forEach(currentProj => {
+        const savedProj = savedList.find(s => s.id === currentProj.id);
+        if (savedProj) {
+          // Restore inputs
+          currentProj.staff = savedProj.staff;
+          currentProj.rateOfPay = savedProj.rateOfPay;
+          currentProj.hours = savedProj.hours;
+          
+          // Restore calculator state
+          currentProj.expenses = savedProj.expenses || [];
+          currentProj.marginPercent = savedProj.marginPercent;
+          currentProj.marginDollar = savedProj.marginDollar;
+          currentProj.addSalesTax = savedProj.addSalesTax;
+          currentProj.salesTaxPercent = savedProj.salesTaxPercent;
+          currentProj.sqFt = savedProj.sqFt;
+        }
+      });
     }
   },
+  created() {
+    // Debounce function to prevent saving on every single keystroke
+    // It waits 1 second after the user stops typing
+    let timeout;
+    this.debouncedSave = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        this.saveToDatabase();
+      }, 1000);
+    };
+  }
 };
 </script>
 
