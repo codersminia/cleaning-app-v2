@@ -3,7 +3,7 @@
     <!-- Logo -->
     <div class="logo">
       <img
-        src="https://app.cleanproposals.com/static/images/CP-logo_mlohft_old.svg"
+        src="/images/logo.png"
         alt="Logo"
       />
     </div>
