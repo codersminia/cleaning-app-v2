@@ -107,4 +107,33 @@ class ProposalController extends Controller
         return response()->json(['projects' => $transformedProjects]);
     }
 
+    public function saveCalculation(Request $request, $id)
+    {
+        // Validate that proposal exists
+        $proposal = Proposal::findOrFail($id);
+
+        // Upsert (Update if exists, Insert if not)
+        DB::table('proposal_calculations')->updateOrInsert(
+            ['proposal_id' => $id],
+            [
+                'calculator_data' => json_encode($request->all()),
+                'updated_at' => now(),
+                'created_at' => now() // Only used on insert, ignored on update usually
+            ]
+        );
+
+        return response()->json(['message' => 'Saved successfully']);
+    }
+
+    public function getCalculation($id)
+    {
+        $calculation = DB::table('proposal_calculations')->where('proposal_id', $id)->first();
+
+        if (!$calculation) {
+            return response()->json([], 200); // Return empty if nothing saved yet
+        }
+
+        return response()->json(json_decode($calculation->calculator_data, true));
+    }
+
 }
