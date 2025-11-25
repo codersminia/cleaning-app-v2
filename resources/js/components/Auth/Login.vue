@@ -53,7 +53,7 @@
 
 <script>
 import axios from "axios";
-
+axios.defaults.withCredentials = true; 
 export default {
   name: "LoginComponent",
 
@@ -66,34 +66,34 @@ export default {
   },
 
   methods: {
-    async handleSubmit() {
+async handleSubmit() {
       this.errorMessage = "";
 
-      const payload = {
-        data: {
-          type: "token",
-          attributes: {
-            email: this.email,
-            password: this.password,
-          },
-        },
-      };
-
       try {
-        const response = await axios.post("/api/login", payload, {
-          headers: {
-            Accept: "application/vnd.api+json",
-            "Content-Type": "application/vnd.api+json",
-          },
-        });
+        // 👇 THIS IS REQUIRED. 
+        // It sets the XSRF-TOKEN cookie in your browser.
+        await axios.get('/sanctum/csrf-cookie');
+        
+        // NOW perform the login
+        const payload = {
+            data: {
+                attributes: {
+                    email: this.email,
+                    password: this.password
+                }
+            }
+        };
 
-        // Save token for authenticated requests
-        localStorage.setItem("token", response.data.token);
+        const response = await axios.post("/api/login", payload);
 
-        // Redirect to dashboard
+        // Redirect
         window.location.href = "/dashboard";
+
       } catch (error) {
-        if (error.response && error.response.status === 401) {
+        console.error(error);
+        if (error.response && error.response.status === 419) {
+            this.errorMessage = "Security token expired. Please refresh the page.";
+        } else if (error.response && error.response.status === 401) {
           this.errorMessage = "Invalid email or password.";
         } else {
           this.errorMessage = "An unexpected error occurred.";

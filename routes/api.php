@@ -8,37 +8,63 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProposalTasksController;   
 use App\Http\Controllers\ProjectController;   
 
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+| These routes do not require the user to be logged in.
+*/
 Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+/*
+|--------------------------------------------------------------------------
+| Protected Routes
+|--------------------------------------------------------------------------
+| These routes require the user to be logged in. 
+| Sanctum will check for a Session Cookie (Web) or a Bearer Token (API Client).
+*/
+Route::middleware(['auth:sanctum'])->group(function () {
 
-Route::post('/saveprospect', [DashboardController::class, 'saveprospect']);
-Route::get('/prospects', [DashboardController::class, 'getProspects']);
-Route::get('/facilities', [DashboardController::class, 'getfacilities']);
-Route::get('/frequencies', [DashboardController::class, 'getfrequencies']);
-Route::get('/weekdays', [DashboardController::class, 'getweekdays']);
-Route::post('/proposals', [ProposalController::class, 'store']);
+    // --- User Management ---
+    Route::post('/logout', [LoginController::class, 'logout']);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-Route::get('/project-modal-data', [ProjectController::class, 'getProjectModalData']);
-Route::post('/projects', [ProjectController::class, 'storeProject']);
-Route::get('/proposals/{proposalId}/projects-and-tasks', [ProjectController::class, 'getProjectsAndTasks']);
-Route::post('/project-tasks/toggle', [ProjectController::class, 'toggleTask']);
+    // --- Dashboard & Prospects ---
+    Route::post('/saveprospect', [DashboardController::class, 'saveprospect']);
+    Route::get('/prospects', [DashboardController::class, 'getProspects']);
+    Route::get('/facilities', [DashboardController::class, 'getfacilities']);
+    Route::get('/frequencies', [DashboardController::class, 'getfrequencies']);
+    Route::get('/weekdays', [DashboardController::class, 'getweekdays']);
 
-Route::get('/proposals/{proposal}/projects-for-calculator', [ProposalController::class, 'getProjectsForCalculator']);
+    // --- Proposals ---
+    Route::post('/proposals', [ProposalController::class, 'store']);
+    Route::get('/proposals/{proposal}/projects-for-calculator', [ProposalController::class, 'getProjectsForCalculator']);
+    
+    // Calculator
+    Route::get('/proposals/{id}/calculator', [ProposalController::class, 'getCalculation']);
+    Route::post('/proposals/{id}/calculator', [ProposalController::class, 'saveCalculation']);
 
-Route::get('/proposals/{id}/calculator', [ProposalController::class, 'getCalculation']);
-Route::post('/proposals/{id}/calculator', [ProposalController::class, 'saveCalculation']);
+    // --- Projects ---
+    Route::get('/project-modal-data', [ProjectController::class, 'getProjectModalData']);
+    Route::post('/projects', [ProjectController::class, 'storeProject']);
+    Route::get('/proposals/{proposalId}/projects-and-tasks', [ProjectController::class, 'getProjectsAndTasks']);
+    Route::post('/project-tasks/toggle', [ProjectController::class, 'toggleTask']);
 
-Route::prefix('proposals/{proposal}')->group(function () {
-    Route::get('data-for-tasks', [ProposalTasksController::class, 'getDataForTasks']);
-    Route::post('areas', [ProposalTasksController::class, 'storeArea']);
-    Route::delete('areas/{proposalArea}', [ProposalTasksController::class, 'deleteArea']); // For deselecting an area
-    Route::put('areas/{proposalArea}', [ProposalTasksController::class, 'updateArea']); // For updating area details (rooms, carpet, etc.)
+    // --- Proposal Tasks (Nested Group for Clarity) ---
+    Route::prefix('proposals/{proposal}')->group(function () {
+        Route::get('data-for-tasks', [ProposalTasksController::class, 'getDataForTasks']);
+        
+        // Areas
+        Route::post('areas', [ProposalTasksController::class, 'storeArea']);
+        Route::delete('areas/{proposalArea}', [ProposalTasksController::class, 'deleteArea']);
+        Route::put('areas/{proposalArea}', [ProposalTasksController::class, 'updateArea']);
 
-    Route::post('area-tasks', [ProposalTasksController::class, 'storeAreaTask']);
-    Route::delete('area-tasks/{areaTask}', [ProposalTasksController::class, 'deleteAreaTask']);
-    Route::put('area-tasks/{areaTask}', [ProposalTasksController::class, 'updateAreaTask']); // For updating custom frequency/description
+        // Tasks
+        Route::post('area-tasks', [ProposalTasksController::class, 'storeAreaTask']);
+        Route::delete('area-tasks/{areaTask}', [ProposalTasksController::class, 'deleteAreaTask']);
+        Route::put('area-tasks/{areaTask}', [ProposalTasksController::class, 'updateAreaTask']);
+    });
+
 });

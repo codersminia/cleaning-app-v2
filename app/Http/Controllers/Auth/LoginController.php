@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth; 
 use App\Models\User;
 
 class LoginController extends Controller
@@ -14,37 +15,42 @@ class LoginController extends Controller
         return view('auth.login'); // Blade with Vue mount
     }
 
-    public function login(Request $request)
+public function login(Request $request)
     {
+        // 1. Validate
         $request->validate([
             'data.attributes.email' => 'required|email',
             'data.attributes.password' => 'required',
         ]);
 
-        $email = $request->input('data.attributes.email');
-        $password = $request->input('data.attributes.password');
+        $credentials = [
+            'email' => $request->input('data.attributes.email'),
+            'password' => $request->input('data.attributes.password')
+        ];
 
-        $user = User::where('email', $email)->first();
+        // 2. Attempt Login (Creates Session)
+        if (Auth::attempt($credentials)) {
+            // Security: Regenerate session ID to prevent fixation attacks
+            $request->session()->regenerate();
 
-        if (!$user || !Hash::check($password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return response()->json([
+                'success' => true,
+                'user' => Auth::user(),
+                'redirect' => route('dashboard')
+            ]);
         }
 
-        // Create token for API usage
-        $token = $user->createToken('api_token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'token' => $token,
-            'user' => $user,
-            'redirect' => route('dashboard')
-        ]);
+        // 3. Fail
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
     public function logout(Request $request)
     {
-        // Delete the token used by the user
-        $request->user()->currentAccessToken()->delete();
+        // Invalidate Session
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json([
             'success' => true,
