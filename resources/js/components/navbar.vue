@@ -41,7 +41,7 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown" style="background-color: #334155;">
               <li><a class="dropdown-item" href="#" style="color: white;">Profile</a></li>
               <li><a class="dropdown-item" href="#" style="color: white;">Settings</a></li>
-              <li><a class="dropdown-item" @click="logout" href="#" style="color: white;">Logout</a></li>
+            <li><a class="dropdown-item" @click.prevent="logout" href="#" style="color: white;">Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -52,29 +52,22 @@
 
 <script setup>
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
-function logout() {
-    const token = localStorage.getItem("token");
+const logout = async () => {
+    try {
+        // 1. Call the API to destroy the session on the server
+        await axios.post('/api/logout');
 
-    if (!token) {
-        return window.location.href = "/";
-    }
-
-    axios.post('/api/logout', {}, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
-    .then(res => {
-        localStorage.removeItem("token");
-        delete axios.defaults.headers.common["Authorization"];
-        window.location.href = res.data.redirect;
-    })
-    .catch(() => {
-        localStorage.removeItem("token");
+        // 2. Force a hard reload to the login page.
+        // This clears the browser's memory of the dashboard.
+        window.location.href = '/'; 
+    } catch (error) {
+        console.error("Logout failed or session already expired", error);
+        // If the API fails (e.g., internet down), force redirect anyway
         window.location.href = '/';
-    });
-}
+    }
+  }
 </script>
 
 <style scoped>

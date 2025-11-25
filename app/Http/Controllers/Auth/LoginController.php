@@ -45,17 +45,19 @@ public function login(Request $request)
     }
 
     public function logout(Request $request)
-    {
-        // Invalidate Session
-        Auth::guard('web')->logout();
+{
+    // 1. Logout the user
+    Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    // 2. Invalidate the session (Kill it in the DB)
+    $request->session()->invalidate();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully',
-            'redirect' => route('login'),
-        ]);
-    }
+    // 3. Regenerate the token to prevent reuse
+    $request->session()->regenerateToken();
+
+    return response()->json([
+        'success' => true,
+        'redirect' => '/'
+    ]);
+}
 }
