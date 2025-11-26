@@ -6,7 +6,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\TrackingController;
 
-Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/', function () {
+    return view('welcome'); 
+})->name('home');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/prospects', [DashboardController::class, 'prospects'])->name('prospects');

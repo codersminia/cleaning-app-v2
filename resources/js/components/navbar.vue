@@ -61,7 +61,7 @@ const logout = async () => {
 
         // 2. Force a hard reload to the login page.
         // This clears the browser's memory of the dashboard.
-        window.location.href = '/'; 
+        window.location.href = '/login'; 
     } catch (error) {
         console.error("Logout failed or session already expired", error);
         // If the API fails (e.g., internet down), force redirect anyway

@@ -12,7 +12,11 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login'); // Blade with Vue mount
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        return view('auth.login');
     }
 
 public function login(Request $request)
@@ -57,7 +61,7 @@ public function login(Request $request)
 
     return response()->json([
         'success' => true,
-        'redirect' => '/'
+        'redirect' => route('login'),
     ]);
 }
 }
