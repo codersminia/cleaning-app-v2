@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login — My App</title>
-
+    <title>Login</title>
+<link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
     {{-- load compiled css from Mix --}}
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 </head>
