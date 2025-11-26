@@ -8,6 +8,7 @@ const app = createApp({});
 // Register global components
 app.component('example-component', require('./components/ExampleComponent.vue').default);
 app.component('login-component', require('./components/Auth/Login.vue').default);
+app.component('register-component', require('./components/Auth/Register.vue').default);
 app.component('dashboard-component', require('./components/Dashboard.vue').default);
 app.component('navbar-component', require('./components/navbar.vue').default);
 app.component('prospect-component', require('./components/Prospects.vue').default);
