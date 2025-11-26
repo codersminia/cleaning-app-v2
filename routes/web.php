@@ -10,6 +10,7 @@ Route::get('/', function () {
     return view('welcome'); 
 })->name('home');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/register', [LoginController::class, 'showRegistrationForm'])->name('register');
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/prospects', [DashboardController::class, 'prospects'])->name('prospects');

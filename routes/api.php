@@ -15,6 +15,7 @@ use App\Http\Controllers\ProjectController;
 | These routes do not require the user to be logged in.
 */
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/register', [LoginController::class, 'register']);
 
 /*
 |--------------------------------------------------------------------------

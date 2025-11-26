@@ -36,14 +36,23 @@
       </div>
 
       <!-- Forgot Password -->
-      <div class="forgot">
+      <!-- <div class="forgot">
         <a href="#">FORGOT YOUR PASSWORD?</a>
-      </div>
+      </div> -->
 
       <!-- Login Button -->
       <button class="login-btn" @click.prevent="handleSubmit">
         <span class="btn-icon">👤</span> Login
       </button>
+
+      <div class="mt-3" style="margin-top: 20px;">
+        <p style="font-size: 14px; color: gray;">
+          Don't have an account? 
+          <a href="/register" style="color: #20b2aa; text-decoration: none; font-weight: bold;">
+            Register here
+          </a>
+        </p>
+      </div>
 
       <!-- Message -->
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
