@@ -53,7 +53,7 @@
           </div>
 
           <!-- Facility (only for commercial) -->
-          <div v-if="form.type === 'commercial'" class="mb-5">
+          <div v-if="form.type == 'commercial'" class="mb-5">
             <label class="fw-bold mb-2 d-block">Pick Facility</label>
             <select v-model="form.facility_id" class="form-control-custom">
               <option value="">Select Facility</option>
@@ -70,7 +70,7 @@
           <div class="mb-5">
             <label class="fw-bold mb-2 d-block">Category</label>
             <div class="d-flex flex-wrap gap-4 mb-3">
-              <template v-if="form.type === 'commercial'">
+              <template v-if="form.type == 'commercial'">
                 <label class="d-flex align-items-center gap-2 cursor-pointer">
                   <input type="radio" value="janitorial_projects" v-model="form.category" class="form-check-input" />
                   <span>Janitorial & Projects</span>
@@ -106,8 +106,8 @@
           <!-- Janitorial/ Cleaning & Projects -->
           <div
             v-if="
-              form.category === 'janitorial_projects' ||
-              form.category === 'cleaning_projects'
+              form.category == 'janitorial_projects' ||
+              form.category == 'cleaning_projects'
             "
             class="mb-5"
           >            
@@ -141,7 +141,7 @@
             </div>
           </div>
 
-          <div v-if="form.category === 'construction_cleaning'" class="mb-5">
+          <div v-if="form.category == 'construction_cleaning'" class="mb-5">
             <label class="fw-bold mb-2 d-block">Select Phase</label>
             <div class="d-flex flex-wrap gap-3">
               <label class="d-flex align-items-center gap-2 cursor-pointer">
@@ -235,7 +235,7 @@ export default {
   watch: {
     'form.type'(val) {
       this.form.facility_id = '';
-      this.form.category = val === 'commercial' ? 'janitorial_projects' : 'cleaning_projects';
+      this.form.category = val == 'commercial' ? 'janitorial_projects' : 'cleaning_projects';
       this.form.frequency = '';
       this.form.phase = '';
       this.form.selectedDays = [];
@@ -254,13 +254,13 @@ export default {
         this.errors.type = 'Please select a proposal type.';
       }
 
-      if (this.form.type === 'commercial' && !this.form.facility_id) {
+      if (this.form.type == 'commercial' && !this.form.facility_id) {
         this.errors.facility_id = 'Please select a facility.';
       }
 
       if (
-        this.form.category === 'janitorial_projects' ||
-        this.form.category === 'cleaning_projects'
+        this.form.category == 'janitorial_projects' ||
+        this.form.category == 'cleaning_projects'
       ) {
         if (!this.form.frequency) {
           this.errors.frequency = 'Please select a frequency.';
@@ -273,7 +273,7 @@ export default {
         }
       }
 
-      if (this.form.category === 'construction_cleaning' && !this.form.phase) {
+      if (this.form.category == 'construction_cleaning' && !this.form.phase) {
         this.errors.phase = 'Please select a cleaning phase.';
       }
 
@@ -299,7 +299,24 @@ export default {
         const proposal = res.data.proposal;
           setTimeout(() => {
             this.closeModal();
-            window.location.href = `/proposals/${proposal.id}/tasks`;
+            let nextRoute = 'tasks'; // Default to step 1
+
+            const isCommercialJanitorial = 
+                proposal.proposal_type == 'commercial' && 
+                proposal.commercial_category == 'janitorial_cleaning'; // Note: Your DB might save it as 'janitorial_projects' based on your radio value
+            
+            const isResidentialCleaning = 
+                proposal.proposal_type == 'residential' && 
+                proposal.residential_category == 'cleaning_projects';
+
+            // If it DOES NOT match the "Show Step 1" conditions, skip to 'projects'
+            if (!isCommercialJanitorial && !isResidentialCleaning) {
+                nextRoute = 'projects';
+            }
+
+            // Redirect
+            window.location.href = `/proposals/${proposal.id}/${nextRoute}`;
+
           }, 200);
       } catch (err) {
         console.error(err);

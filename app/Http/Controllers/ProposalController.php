@@ -40,7 +40,7 @@ class ProposalController extends Controller
                 'updated_at' => now(),
             ];
 
-            if ($validated['type'] === 'commercial') {
+            if ($validated['type'] == 'commercial') {
                 $proposalData['commercial_category'] = match ($validated['category']) {
                     'janitorial_projects' => 'janitorial_cleaning',
                     'construction_cleaning' => 'construction_cleaning',

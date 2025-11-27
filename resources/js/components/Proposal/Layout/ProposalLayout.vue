@@ -1,13 +1,13 @@
 <template>
   <div class="min-vh-100 bg-light">
-    <!-- Back Button -->
+    <!-- Back Button (Currently Commented Out based on your code) -->
     <div class="ps-4 pt-3 pb-2">
       <!-- <a href="/proposals" class="text-muted text-decoration-none small fw-semibold">
         <i class="bi bi-chevron-left"></i> BACK TO PROPOSALS
       </a> -->
     </div>
 
-    <!-- Prospect Info -->
+    <!-- Prospect Info / Loader -->
     <div class="prospect-card p-4 mx-4 mb-3" v-if="prospect">
       <h5 class="fw-bold text-dark mb-2">Prospect: {{ prospect.company_name }}</h5>
       <p class="text-muted small mb-0">
@@ -17,13 +17,16 @@
           .join(', ') }}
       </p>
     </div>
+    
+    <!-- Skeleton Loader while fetching -->
     <div v-else class="prospect-card p-4 mx-4 mb-3 placeholder-glow">
       <h5 class="placeholder w-50"></h5>
       <p class="placeholder w-75"></p>
     </div>
 
     <!-- Stepper -->
-    <div class="stepper-container mx-4 mb-4">
+    <!-- Only show stepper if steps are calculated -->
+    <div class="stepper-container mx-4 mb-4" v-if="steps.length > 0">
       <router-link
         v-for="(step, index) in steps"
         :key="index"
@@ -44,41 +47,99 @@
 
     <!-- Main content -->
     <div class="p-4">
-      <router-view :proposal-id="proposalId" />
+      <!-- Show loader if data is still fetching to prevent flash of wrong content -->
+      <div v-if="loading" class="d-flex justify-content-center py-5">
+        <div class="spinner-border text-info" role="status"></div>
+      </div>
+      <router-view v-else :proposal-id="proposalId" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
 const route = useRoute()
+const router = useRouter()
 const proposalId = Number(route.params.id)
-const prospect = ref(null)
 
-const steps = [
+const prospect = ref(null)
+const proposal = ref(null)
+const loading = ref(true)
+
+// The Full List of Steps
+const allSteps = [
   { label: 'Cleaning Tasks', name: 'proposal.tasks' },
   { label: 'Special Projects', name: 'proposal.projects' },
   { label: 'Price Calculator', name: 'proposal.calculator' },
   { label: 'Finalize Proposal', name: 'proposal.finalize' },
 ]
 
-const fetchProspect = async () => {
+// The Dynamic List (starts empty)
+const steps = ref([])
+
+const fetchData = async () => {
   try {
+    // 1. Fetch Data
     const response = await axios.get(`/api/proposals/${proposalId}/data-for-tasks`)
+    
     prospect.value = response.data.prospect
+    proposal.value = response.data.proposal // Ensure your Controller sends this!
+
+    // 2. Calculate which steps to show
+    calculateSteps()
+    
+    // 3. Finish loading
+    loading.value = false
+
   } catch (error) {
-    console.error('Error fetching prospect:', error)
+    console.error('Error fetching data:', error)
+    loading.value = false
   }
 }
 
-onMounted(fetchProspect)
+const calculateSteps = () => {
+  if (!proposal.value) return;
+
+  const p = proposal.value;
+  
+  // LOGIC: Check conditions to SHOW Step 1 (Cleaning Tasks)
+  // 1. Commercial + Janitorial
+  const isCommercialJanitorial = 
+      p.proposal_type == 'commercial' && 
+      p.commercial_category == 'janitorial_cleaning';
+
+  // 2. Residential + Cleaning Projects
+  const isResidentialCleaning = 
+      p.proposal_type == 'residential' && 
+      p.residential_category == 'cleaning_projects';
+
+  // Combined Condition
+  const showCleaningTasks = isCommercialJanitorial || isResidentialCleaning;
+
+  if (showCleaningTasks) {
+    // SHOW ALL 4 STEPS
+    steps.value = allSteps;
+  } else {
+    // HIDE FIRST STEP (Slice the array to skip the first item)
+    // New Steps: Projects -> Calculator -> Finalize
+    steps.value = allSteps.slice(1);
+
+    // 🛡️ SECURITY REDIRECT
+    // If the user manually typed the URL for 'Cleaning Tasks' but it's supposed to be hidden,
+    // redirect them to the first available step (Special Projects).
+    if (route.name === 'proposal.tasks') {
+        router.replace({ name: 'proposal.projects', params: { id: proposalId } });
+    }
+  }
+}
+
+onMounted(fetchData)
 </script>
 
 <style scoped>
-
 /* General Styles */
 .bg-light {
   background-color: #f8f9fa !important;

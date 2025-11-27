@@ -41,6 +41,7 @@ class ProposalTasksController extends Controller
         ->get();
 
         return response()->json([
+            'proposal' => $proposal,
             'prospect' => $prospect,
             'allAreaTypes' => $allAreaTypes,
             'allTasks' => $allTasks,
