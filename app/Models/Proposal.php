@@ -30,4 +30,10 @@ class Proposal extends Model
     {
         return $this->belongsTo(Prospect::class); // Assuming you have a Prospect model
     }
+
+    public function calculations()
+    {
+        // hasOne looks for 'proposal_id' in the 'proposal_calculations' table
+        return $this->hasOne(ProposalCalculation::class, 'proposal_id');
+    }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\TrackingController;
 Route::get('/', function () {
     return view('welcome'); 
 })->name('home');
+
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::get('/register', [LoginController::class, 'showRegistrationForm'])->name('register');
 Route::middleware(['auth'])->group(function () {
@@ -23,3 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking');
 });
 
+// NEW — points to the clean blade file we just created
+Route::get('/view-proposal', function () {
+    return view('public-proposal');
+})->name('public.proposal');

@@ -9,6 +9,10 @@ use App\Models\Project;
 use App\Models\Weekday;
 use App\Models\ProposalAreaType;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ProposalSentMail;
+use App\Models\ProposalSignature;
 
 class ProposalController extends Controller
 {
@@ -134,6 +138,91 @@ class ProposalController extends Controller
         }
 
         return response()->json(json_decode($calculation->calculator_data, true));
+    }
+
+    // 1. Save Content (Sidebar text), Generate Token, Send Email
+    public function finalizeAndSend(Request $request, $id)
+    {
+        $proposal = Proposal::findOrFail($id);
+        
+        $request->validate([
+            'email' => 'required|email',
+            'content_data' => 'required|array' // The text from your Vue sidebar
+        ]);
+
+        // Generate a token if one doesn't exist
+        if (!$proposal->url_token) {
+            $proposal->url_token = Str::random(64);
+        }
+
+        $proposal->status = 'sent';
+        $proposal->sent_to_email = $request->email;
+        $proposal->sent_at = now();
+        $proposal->content_data = json_encode($request->content_data); // Save the customized text
+        $proposal->save();
+
+        // Development fix — works instantly
+        $link = (app()->environment('local') 
+            ? "http://localhost:8000" 
+            : url('')) . "/view-proposal?token=" . $proposal->url_token;
+        
+        Mail::to($request->email)->send(new ProposalSentMail($proposal, $link));
+
+        return response()->json(['success' => true, 'message' => 'Proposal sent successfully!']);
+    }
+
+    // 2. Public View (No Auth)
+    public function getPublicProposal($token)
+    {
+        $proposal = Proposal::where('url_token', $token)->with('calculations', 'prospect')->firstOrFail();
+        
+        // Decode the saved content data
+        $proposal->content_data = json_decode($proposal->content_data, true);
+        
+        // Check if already signed
+        $signature = DB::table('proposal_signatures')->where('proposal_id', $proposal->id)->first();
+
+        return response()->json([
+            'proposal' => $proposal,
+            'signature' => $signature
+        ]);
+    }
+
+    // 3. Process Signature (No Auth)
+    public function signProposal(Request $request, $token)
+    {
+        $proposal = Proposal::where('url_token', $token)->firstOrFail();
+
+        $validated = $request->validate([
+            'signer_name' => 'required|string',
+            'signer_title' => 'required|string',
+            'signature_image' => 'required|string', // Base64
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Save Signature
+            ProposalSignature::create([
+                'proposal_id' => $proposal->id,
+                'signer_name' => $validated['signer_name'],
+                'signer_title' => $validated['signer_title'],
+                'signer_email' => $proposal->sent_to_email,
+                'signature_image' => $validated['signature_image'],
+                'ip_address' => $request->ip(),
+                'signed_at' => now(),
+            ]);
+
+            // Update Proposal Status
+            $proposal->status = 'accepted';
+            $proposal->signed_at = now();
+            $proposal->save();
+
+            DB::commit();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
 }
