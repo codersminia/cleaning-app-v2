@@ -31,6 +31,7 @@
         <p class="text-muted mb-5">You can choose type of project: Recurring or One-Time</p>
         <div class="d-flex justify-content-center gap-3">
             <button
+                v-if="showRecurring"
                 class="btn btn-info btn-lg d-flex align-items-center py-3 px-4 rounded"
                 @click="openModal('recurring')"
             >
@@ -51,7 +52,7 @@
     <!-- Projects Exist State -->
     <div v-else class="projects-list">
         <!-- Recurring Projects Section -->
-        <div class="card shadow-sm mb-4">
+        <div v-if="showRecurring" class="card shadow-sm mb-4">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
                     <i class="bi bi-folder-fill text-info fs-3 me-2"></i>
@@ -233,12 +234,17 @@ const recurringProjects = ref([]);
 const oneTimeProjects = ref([]);
 const availableTasks = ref([]);
 const expandedProjects = ref({});
+const proposalCategory = ref('');  
 
 // Computed
 const hasProjects = computed(() => {
   return recurringProjects.value.length > 0 || oneTimeProjects.value.length > 0;
 });
 
+const showRecurring = computed(() => {
+    // Hide if category is 'construction_cleaning'
+    return proposalCategory.value != 'construction_cleaning';
+});
 // Methods
 
 // Method to handle task selection/deselection and call API
@@ -292,6 +298,7 @@ const fetchProjectsAndTasks = async () => {
         oneTimeProjects.value = data.oneTimeProjects || [];
         availableTasks.value = data.availableTasks || [];
 
+        proposalCategory.value = data.proposal_category;
         // Clear and re-initialize expandedProjects state
         const newExpandedState = {};
         [...recurringProjects.value, ...oneTimeProjects.value].forEach(project => {

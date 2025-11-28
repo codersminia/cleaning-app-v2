@@ -65,6 +65,41 @@ class ProposalController extends Controller
             }
 
             DB::commit();
+
+            $isConstruction = ($proposal->commercial_category == 'construction_cleaning') || 
+                          ($proposal->residential_category == 'construction_cleaning');
+
+            if ($isConstruction && $proposal->phase) {
+                
+                $serviceTypeIds = [];
+
+                switch ($proposal->phase) {
+                    case 'phase_1':
+                        $serviceTypeIds[] = 4; // Phase 1 Rough Clean
+                        break;
+                    case 'phase_2':
+                        $serviceTypeIds[] = 5; // Phase 2 Final Clean
+                        break;
+                    case 'phase_3':
+                        $serviceTypeIds[] = 6; // Phase 3 Touch up Clean
+                        break;
+                    case 'all_in_one':
+                        $serviceTypeIds = [4, 5, 6]; // Create ALL three
+                        break;
+                }
+
+                // Loop through and create the projects
+                foreach ($serviceTypeIds as $sId) {
+                    Project::create([
+                        'proposal_id' => $proposal->id,
+                        'service_type_id' => $sId,
+                        'area_ids' => json_encode([39]), // 👈 Hardcoded requirement: always [39]
+                        'is_recurring' => 0,             // 👈 Hardcoded: always One-Time
+                        'frequency_id' => 1,             // 👈 Hardcoded
+                        'per' => 'once',                 // 👈 Hardcoded
+                    ]);
+                }
+            }
             return response()->json(['success' => true, 'proposal' => $proposal], 201);
         } catch (\Exception $e) {
             DB::rollBack();

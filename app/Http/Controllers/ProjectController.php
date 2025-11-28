@@ -7,6 +7,7 @@ use App\Models\ProposalAreaType; // Assuming you have a ProposalAreaType model
 use App\Models\Project; // Assuming you have a Project model
 use App\Models\Task;
 use App\Models\ProjectTask;
+use App\Models\Proposal;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -110,6 +111,8 @@ class ProjectController extends Controller
 
     public function getProjectsAndTasks(int $proposalId)
     {
+        $proposal = Proposal::findOrFail($proposalId);
+
         $projects = Project::where('proposal_id', $proposalId)
         ->with('projectTasks')
         ->get();
@@ -153,6 +156,9 @@ class ProjectController extends Controller
             'availableTasks' => $tasks->map(function($task) {
                 return ['id' => $task->id, 'description' => $task->description];
             }),
+            'proposal_category' => $proposal->proposal_type == 'commercial' 
+            ? $proposal->commercial_category 
+            : $proposal->residential_category,
         ]);
     }
 
