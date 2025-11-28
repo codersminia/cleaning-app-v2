@@ -8,22 +8,13 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProposalTasksController;   
 use App\Http\Controllers\ProjectController;   
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-| These routes do not require the user to be logged in.
-*/
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [LoginController::class, 'register']);
 
-/*
-|--------------------------------------------------------------------------
-| Protected Routes
-|--------------------------------------------------------------------------
-| These routes require the user to be logged in. 
-| Sanctum will check for a Session Cookie (Web) or a Bearer Token (API Client).
-*/
+// PUBLIC ROUTES (No Auth Middleware)
+Route::get('proposal/{token}', [ProposalController::class, 'getPublicProposal']);
+Route::post('proposal/{token}/sign', [ProposalController::class, 'signProposal']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     // --- User Management ---
@@ -66,6 +57,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('area-tasks', [ProposalTasksController::class, 'storeAreaTask']);
         Route::delete('area-tasks/{areaTask}', [ProposalTasksController::class, 'deleteAreaTask']);
         Route::put('area-tasks/{areaTask}', [ProposalTasksController::class, 'updateAreaTask']);
+
+        Route::post('finalize-and-send', [ProposalController::class, 'finalizeAndSend']);
     });
 
 });

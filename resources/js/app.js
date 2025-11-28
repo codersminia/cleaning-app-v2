@@ -2,6 +2,7 @@
 import './bootstrap';
 import { createApp } from 'vue';
 import router from './router';
+import VueSignaturePad from 'vue-signature-pad';
 
 const app = createApp({});
 
@@ -23,5 +24,6 @@ app.component('Tracking', require('./components/Tracking.vue').default);
 
 // Mount Vue app
 app.use(router);
+app.use(VueSignaturePad);
 app.mount('#app');
 

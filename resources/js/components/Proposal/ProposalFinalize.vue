@@ -122,7 +122,16 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import axios from 'axios'
 import html2pdf from 'html2pdf.js'
+import SendProposalModal from './Modals/SendProposalModal.vue' 
+
+const props = defineProps({
+	proposalId: {
+		type: [Number, String],
+		required: true
+	}
+})
 
 // 1. DATA CONFIGURATION
 const PROPOSAL_SECTIONS = [
@@ -176,7 +185,21 @@ To ensure your satisfaction we invite you to thoroughly inspect our work. Once y
 const toggleExpandedSection = (id) => expandedSections.value[id] = !expandedSections.value[id]
 const openSendProposalModal = () => showSendProposalModal.value = true
 const closeSendProposalModal = () => showSendProposalModal.value = false
-const handleProposalSent = (email) => console.log(email)
+
+const handleProposalSent = async (email) => {
+    try {
+        // props.proposalId is now valid
+        await axios.post(`/api/proposals/${props.proposalId}/finalize-and-send`, {
+            email: email,
+            content_data: sectionContent.value 
+        })
+        alert("Proposal Sent Successfully!")
+        closeSendProposalModal()
+    } catch (error) {
+        console.error(error)
+        alert("Failed to send proposal")
+    }
+}
 
 // HELPER: Convert text with newlines to bullet points HTML
 const formatBullets = (text) => {
