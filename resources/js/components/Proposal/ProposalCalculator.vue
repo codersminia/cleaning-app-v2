@@ -74,7 +74,7 @@
       </div>
     </div> -->
     <!-- Payroll Cost Factors Section -->
-        <div v-if="payrollExpanded && selectedOption === '1'" class="payroll-section mt-4">
+        <div v-if="payrollExpanded && selectedOption === '1' && showJanitorialSection" class="payroll-section mt-4">
             <!-- Header with Toggle Button -->
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h5 class="fw-bold mb-0">Payroll Cost Factors</h5>
@@ -130,7 +130,7 @@
               </div>
             </div>
         </div>
-        <div class="labor-section bg-light py-4" v-if="selectedOption === '1'">
+        <div class="labor-section bg-light py-4" v-if="selectedOption === '1' && showJanitorialSection">
             <div class="row align-items-center">
               <!-- Expand All Toggle -->
               <div class="col-md-3">
@@ -151,7 +151,7 @@
                     <path d="M8 32C8 25.37 13.37 20 20 20C26.63 20 32 25.37 32 32" stroke="#17a2b8" stroke-width="2" stroke-linecap="round"/>
                   </svg>
                   <div>
-                    <h4 class="mb-0 fw-bold text-dark">Janitorial Labor Costs</h4>
+                    <h4 class="mb-0 fw-bold text-dark">{{ janitorialSectionLabel }}</h4>
                   </div>
                   <button class="btn btn-link p-0" @click="payrollExpanded = !payrollExpanded" style="background: none; border: none; cursor: pointer;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -175,8 +175,7 @@
             </div>
         </div>
         <!-- Labor Cost Card Section -->
-        <!-- Labor Cost Card Section -->
-        <div class="mt-5" v-if="selectedOption === '1'">
+        <div class="mt-5" v-if="selectedOption === '1' && showJanitorialSection">
           
           <!-- Display message if no costs added yet -->
           <div v-if="laborCosts.length === 0" class="text-center text-muted py-4">
@@ -299,7 +298,7 @@
 
         </div>
         <!-- Pricing Summary Section -->
-        <div class="mt-5 mb-5" v-if="selectedOption === '1'">
+        <div class="mt-5 mb-5" v-if="selectedOption === '1' && showJanitorialSection">
           <div class="row g-0" style="background-color: #a8dfe1;">
             
             <!-- Left Section - Total Price Card -->
@@ -465,7 +464,7 @@
         </div>
 
         <!-- RECURRING PROJECTS SECTION -->
-        <div class="mt-5" v-if="selectedOption === '1' && recurringProjects.length > 0">
+        <div class="mt-5" v-if="selectedOption === '1' && recurringProjects.length > 0 && showRecurringSection">
           
           <!-- Header -->
           <div class="text-center mb-4">
@@ -718,7 +717,7 @@
         </div>
 
         <!-- COMBINED TOTAL CARD (Janitorial + Recurring Projects) -->
-        <div class="container mt-5 mb-5" v-if="selectedOption === '1'">
+        <div class="container mt-5 mb-5" v-if="selectedOption === '1' && showCombinedTotalCard">
           <div class="d-flex align-items-center rounded shadow-sm text-white position-relative overflow-hidden" style="background-color: #5c6b7f; min-height: 120px;">
             
             <!-- Decorative slants (Optional css polish to match image background style) -->
@@ -743,7 +742,7 @@
             <!-- Text Section -->
             <div class="flex-grow-1 px-3 position-relative">
               <p class="mb-0" style="font-size: 1.1rem; line-height: 1.4;">
-                Combine <span class="fw-bold">Janitorial Expenses</span> with <span class="fw-bold">Recurring Projects</span> to give me <br>
+                Combine <span class="fw-bold">{{ janitorialSectionLabel }} Expenses</span> with <span class="fw-bold">Recurring Projects</span> to give me <br>
                 a monthly cost to charge Client
               </p>
             </div>
@@ -1245,6 +1244,8 @@ export default {
       recurringMarginDollar: 0,
       recurringSalesTaxPercent: 0,
       addRecurringSalesTax: false,
+      proposalType: '',     
+      proposalCategory: '',
     };
   },
   computed: {
@@ -1330,6 +1331,53 @@ export default {
     // Count of projects
     recurringProjectCount() {
       return this.recurringProjects.length;
+    },
+
+    isJanitorial() {
+      return this.proposalCategory == 'janitorial_projects' || 
+             this.proposalCategory == 'janitorial_cleaning' || // DB value might differ
+             this.proposalCategory == 'cleaning_projects';
+    },
+
+    isConstruction() {
+      return this.proposalCategory == 'construction_cleaning';
+    },
+
+    isProjectsOnly() {
+      return this.proposalCategory == 'projects_only' || 
+             this.proposalCategory == 'projects'; // Handle potential DB variations
+    },
+
+    // CASE 1 & Logic: Show Janitorial Section?
+    // Show for Janitorial. Hide for Construction & Projects Only.
+    showJanitorialSection() {
+      return this.isJanitorial;
+    },
+
+    // CASE 1 Dynamic Label:
+    janitorialSectionLabel() {
+      if (this.proposalType == 'residential' && this.proposalCategory == 'cleaning_projects') {
+        return 'Cleaning Labor Costs';
+      }
+      return 'Janitorial Labor Costs'; // Default
+    },
+
+    // CASE 2 & 3: Show Recurring Projects?
+    // Hide for Construction. Show for Janitorial and Projects Only.
+    showRecurringSection() {
+      return !this.isConstruction; 
+    },
+
+    // CASE 2 & 3: Show One-Time Projects?
+    // Always show if they exist (Your requirements imply showing them in all cases if they exist)
+    showOneTimeSection() {
+      return this.oneTimeProjects.length > 0;
+    },
+
+    // Summary Card Visibility
+    showCombinedTotalCard() {
+       // Only show if we are showing Janitorial AND Recurring sections
+       return this.showJanitorialSection;
     }
   },
   watch: {
@@ -1515,6 +1563,8 @@ export default {
       try {
         const proposalId = this.$route.params.id; 
         const response = await axios.get(`/api/proposals/${proposalId}/projects-for-calculator`);
+        this.proposalType = response.data.proposal_type;
+        this.proposalCategory = response.data.category;
         const projects = response.data.projects; 
 
         this.recurringProjects = [];

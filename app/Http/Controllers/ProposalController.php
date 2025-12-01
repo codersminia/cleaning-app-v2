@@ -143,7 +143,13 @@ class ProposalController extends Controller
             ];
         });
 
-        return response()->json(['projects' => $transformedProjects]);
+        return response()->json([
+            'projects' => $transformedProjects,
+            'proposal_type' => $proposal->proposal_type,
+            'category' => $proposal->proposal_type == 'commercial' 
+                ? $proposal->commercial_category 
+                : $proposal->residential_category
+            ]);
     }
 
     public function saveCalculation(Request $request, $id)
