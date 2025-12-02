@@ -266,4 +266,40 @@ class ProposalController extends Controller
         }
     }
 
+    public function getFinalizeData($id)
+    {
+        $proposal = Proposal::with([
+            'prospect', 
+            'calculations', 
+            // Load Scope of Work (Step 1 Data)
+            'proposalAreas.areaType',
+            'proposalAreas.areaTasks.task.defaultFrequency', 
+            'proposalAreas.areaTasks.customFrequency'
+        ])->findOrFail($id);
+
+        // Load Projects (Step 2 Data)
+        $projects = Project::where('proposal_id', $id)
+            ->with('serviceType', 'projectTasks.task') // Load tasks inside projects if needed
+            ->get();
+
+        return response()->json([
+            'proposal' => $proposal,
+            'projects' => $projects,
+            // Helper flags for UI logic
+            'is_janitorial' => in_array($proposal->commercial_category, ['janitorial_projects', 'janitorial_cleaning']) || 
+                               in_array($proposal->residential_category, ['cleaning_projects']),
+            'is_construction' => $proposal->commercial_category == 'construction_cleaning' || 
+                                 $proposal->residential_category == 'construction_cleaning',
+        ]);
+    }
+
+    // Helper to calculate project total (needs to match Vue logic roughly)
+    // private function calculateProjectGrandTotal($project) {
+    //     // Simple reconstruction of total for display
+    //     $sub = ($project['staff'] ?? 0) * ($project['rateOfPay'] ?? 0) * ($project['hours'] ?? 0);
+    //     // Add overhead/margin logic here if needed for server-side precision, 
+    //     // OR just trust the frontend sent correct totals if you saved them explicitly.
+    //     // For now, assuming you might want to save the calculated totals directly in step 3 to avoid re-math here.
+    //     return $project['marginDollar'] ? ($sub + $project['marginDollar']) : $sub; 
+    // }
 }

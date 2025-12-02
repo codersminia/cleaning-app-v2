@@ -44,6 +44,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/proposals/{proposalId}/projects-and-tasks', [ProjectController::class, 'getProjectsAndTasks']);
     Route::post('/project-tasks/toggle', [ProjectController::class, 'toggleTask']);
 
+    Route::get('/proposals/{id}/finalize-data', [ProposalController::class, 'getFinalizeData']);
+
     // --- Proposal Tasks (Nested Group for Clarity) ---
     Route::prefix('proposals/{proposal}')->group(function () {
         Route::get('data-for-tasks', [ProposalTasksController::class, 'getDataForTasks']);
