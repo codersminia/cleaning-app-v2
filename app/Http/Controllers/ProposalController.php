@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ProposalSentMail;
 use App\Models\ProposalSignature;
+use App\Models\ProposalRecipient;
 
 class ProposalController extends Controller
 {
@@ -176,32 +177,70 @@ class ProposalController extends Controller
     }
 
     // 1. Save Content (Sidebar text), Generate Token, Send Email
+    // public function finalizeAndSend(Request $request, $id)
+    // {
+    //     $proposal = Proposal::findOrFail($id);
+        
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'content_data' => 'required|array' // The text from your Vue sidebar
+    //     ]);
+
+    //     // Generate a token if one doesn't exist
+    //     if (!$proposal->url_token) {
+    //         $proposal->url_token = Str::random(64);
+    //     }
+
+    //     $proposal->status = 'sent';
+    //     $proposal->sent_to_email = $request->email;
+    //     $proposal->sent_at = now();
+    //     $proposal->content_data = json_encode($request->content_data); // Save the customized text
+    //     $proposal->save();
+
+    //     // Development fix — works instantly
+    //     $link = (app()->environment('local') 
+    //         ? "http://localhost:8000" 
+    //         : url('')) . "/view-proposal?token=" . $proposal->url_token;
+        
+    //     Mail::to($request->email)->send(new ProposalSentMail($proposal, $link));
+
+    //     return response()->json(['success' => true, 'message' => 'Proposal sent successfully!']);
+    // }
+
     public function finalizeAndSend(Request $request, $id)
     {
         $proposal = Proposal::findOrFail($id);
         
         $request->validate([
-            'email' => 'required|email',
-            'content_data' => 'required|array' // The text from your Vue sidebar
+            'email' => 'required|string', // Changed to string to handle commas
+            'content_data' => 'required|array'
         ]);
 
-        // Generate a token if one doesn't exist
-        if (!$proposal->url_token) {
-            $proposal->url_token = Str::random(64);
-        }
-
+        // 1. Update Proposal Main Info
+        if (!$proposal->url_token) $proposal->url_token = Str::random(64);
         $proposal->status = 'sent';
-        $proposal->sent_to_email = $request->email;
         $proposal->sent_at = now();
-        $proposal->content_data = json_encode($request->content_data); // Save the customized text
+        $proposal->content_data = json_encode($request->content_data);
         $proposal->save();
 
-        // Development fix — works instantly
-        $link = (app()->environment('local') 
-            ? "http://localhost:8000" 
-            : url('')) . "/view-proposal?token=" . $proposal->url_token;
-        
-        Mail::to($request->email)->send(new ProposalSentMail($proposal, $link));
+        // 2. Handle Recipients (Split by comma)
+        $emails = array_map('trim', explode(',', $request->email));
+
+        foreach ($emails as $email) {
+            // Create a unique tracking record for this specific email
+            $recipient = ProposalRecipient::create([
+                'proposal_id' => $proposal->id,
+                'email' => $email,
+                'unique_token' => Str::random(32) // Unique ID for this person
+            ]);
+
+            // 3. Generate Unique Link
+            // We append ?rid={id} so we know WHO opened it
+            $link = url("/view-proposal?token={$proposal->url_token}&rid={$recipient->unique_token}");
+            
+            // Send Email
+            Mail::to($email)->send(new ProposalSentMail($proposal, $link));
+        }
 
         return response()->json(['success' => true, 'message' => 'Proposal sent successfully!']);
     }
@@ -257,6 +296,72 @@ class ProposalController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    // 1. GET: Fetch data for the Tracking List Page
+    public function getTrackingList() {
+        $proposals = Proposal::with(['recipients', 'prospect']) // Assuming relationships exist
+            ->whereIn('status', ['sent', 'accepted'])
+            ->orderBy('sent_at', 'desc')
+            ->get()
+            ->map(function($p) {
+                // Logic to find first open date
+                $firstOpen = $p->recipients->whereNotNull('opened_at')->sortBy('opened_at')->first();
+                return [
+                    'id' => $p->id,
+                    'prospect_name' => $p->prospect ? $p->prospect->company_name : 'Unknown', // Adjust based on your Prospect model
+                    'location' => 'Detroit, MI', // Fetch real location from prospect
+                    'proposal_name' => $p->proposal_name,
+                    'sent_at' => $p->sent_at,
+                    'opened_at' => $firstOpen ? $firstOpen->opened_at : null,
+                    'status' => $p->signed_at ? 'signed' : 'sent',
+                    'signed_by_email' => $p->signed_at ? $p->sent_to_email : null // Simplification
+                ];
+            });
+        return response()->json($proposals);
+    }
+
+    // 2. GET: Fetch Recipients for a specific proposal
+    public function getTrackingDetails($id) {
+        $proposal = Proposal::with('recipients')->findOrFail($id);
+        return response()->json([
+            'proposal' => $proposal,
+            'recipients' => $proposal->recipients
+        ]);
+    }
+
+    // 3. GET: Fetch Time Logs for a recipient
+    public function getRecipientActivity($recipientToken) {
+        $recipient = ProposalRecipient::where('unique_token', $recipientToken)->firstOrFail();
+        $logs = DB::table('proposal_tracking_logs')
+                ->where('recipient_id', $recipient->id)
+                ->get();
+        
+        return response()->json($logs);
+    }
+
+    // 4. POST: Record Time (Called from Client View)
+    public function trackActivity(Request $request) {
+        $recipient = ProposalRecipient::where('unique_token', $request->rid)->first();
+        
+        if($recipient) {
+            // Mark as opened if not already
+            if(!$recipient->opened_at) {
+                $recipient->update(['opened_at' => now()]);
+            }
+
+            // Save time log
+            DB::table('proposal_tracking_logs')->updateOrInsert(
+                [
+                    'proposal_id' => $recipient->proposal_id,
+                    'recipient_id' => $recipient->id,
+                    'section_name' => $request->section
+                ],
+                [
+                    'duration_seconds' => DB::raw("duration_seconds + " . intval($request->seconds))
+                ]
+            );
         }
     }
 

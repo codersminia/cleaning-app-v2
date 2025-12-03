@@ -15,6 +15,8 @@ Route::post('/register', [LoginController::class, 'register']);
 Route::get('proposal/{token}', [ProposalController::class, 'getPublicProposal']);
 Route::post('proposal/{token}/sign', [ProposalController::class, 'signProposal']);
 
+Route::post('/track-activity', [ProposalController::class, 'trackActivity']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     // --- User Management ---
@@ -60,5 +62,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('finalize-and-send', [ProposalController::class, 'finalizeAndSend']);
     });
+
+    Route::get('/proposals/tracking-list', [ProposalController::class, 'getTrackingList']);
+    Route::get('/proposals/{id}/details', [ProposalController::class, 'getTrackingDetails']);
+    Route::get('/recipients/{token}/activity', [ProposalController::class, 'getRecipientActivity']);
 
 });

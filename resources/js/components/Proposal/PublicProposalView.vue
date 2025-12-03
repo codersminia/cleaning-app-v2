@@ -34,40 +34,100 @@
   </div>
 </template>
 
+
+
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue' // Added imports
 import { useRoute } from 'vue-router'
 import axios from 'axios'
-import SignProposalModal from './Modals/SignProposalModal.vue' // Adjust path
+import SignProposalModal from './Modals/SignProposalModal.vue'
 
 const route = useRoute()
-const token = route.query.token // Read ?token=xyz from URL
+// We need BOTH the proposal token (to fetch data) AND the recipient token (to track who is watching)
+const token = route.query.token 
+const recipientToken = route.query.rid // Ensure your email link includes &rid=...
 
 const loading = ref(true)
 const proposal = ref(null)
-const sectionContent = ref({}) // Will fill from API
+const sectionContent = ref({})
 const showSignModal = ref(false)
 const isSigned = ref(false)
 const signatureData = ref(null)
 
-// 1. Fetch Public Data
+// --- TRACKING STATE ---
+let trackingInterval = null
+let observer = null
+const currentSection = ref('Cover Letter') // Default start
+
+// 1. Fetch Public Data & Initialize Tracking
 onMounted(async () => {
     try {
         const res = await axios.get(`/api/proposal/${token}`)
         proposal.value = res.data.proposal
-        // Load the customized text from DB, or fallback to defaults if empty
         sectionContent.value = res.data.proposal.content_data || getDefaultContent()
         
         if(res.data.signature) {
             isSigned.value = true
             signatureData.value = res.data.signature
         }
+
+        // Initialize Tracking after DOM is rendered
+        await nextTick()
+        setupIntersectionObserver()
+        startTrackingTimer()
+
     } catch (e) {
+        console.error(e)
         alert("Invalid Link")
     } finally {
         loading.value = false
     }
 })
+
+// Clean up when user leaves page
+onBeforeUnmount(() => {
+    if (trackingInterval) clearInterval(trackingInterval)
+    if (observer) observer.disconnect()
+})
+
+// --- TRACKING LOGIC ---
+
+// A. Watch which page is currently on screen
+const setupIntersectionObserver = () => {
+    // Select all elements with class 'page'
+    const pages = document.querySelectorAll('.page')
+    
+    if (pages.length === 0) return
+
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                // Get the section name from the data attribute we will add to HTML
+                const sectionName = entry.target.getAttribute('data-section')
+                if (sectionName) {
+                    currentSection.value = sectionName
+                }
+            }
+        })
+    }, { threshold: 0.5 }) // Trigger when 50% of the page is visible
+
+    pages.forEach((page) => observer.observe(page))
+}
+
+// B. Send data to backend every 5 seconds
+const startTrackingTimer = () => {
+    // Only track if we have a recipient token (rid)
+    if (!recipientToken) return 
+
+    trackingInterval = setInterval(() => {
+        // Send a ping to the database
+        axios.post('/api/track-activity', {
+            rid: recipientToken,
+            section: currentSection.value,
+            seconds: 5
+        }).catch(err => console.error("Tracking failed", err)) // Silent fail
+    }, 5000)
+}
 
 // 2. Handle Signing
 const openSignModal = () => showSignModal.value = true
@@ -83,7 +143,6 @@ const handleSigned = async (data) => {
         if(res.data.success) {
             isSigned.value = true
             showSignModal.value = false
-            // Refresh to show signature on doc
             window.location.reload()
         }
     } catch (e) {
@@ -95,6 +154,10 @@ const handleSigned = async (data) => {
 const formatBullets = (text) => {
     if(!text) return '';
     return text.split('\n').filter(line => line.trim() !== '').map(line => `<li>${line}</li>`).join('');
+}
+
+const getDefaultContent = () => {
+    return { 'cover-letter': '...', 'agreement': '...' } 
 }
 
 // 4. HTML GENERATION (Copy your existing fullPdfHtml logic here)
@@ -263,7 +326,7 @@ const fullPdfHtml = computed(() => {
         <body>
 
         <!-- PAGE 1: COVER -->
-        <div class="page" style="height:9in">
+        <div class="page" data-section="Cover Letter" style="height:9in">
             <img src="/images/cover10.jpg" class="cover-image" alt="Cover">
             <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="cover-overlay"></div>
@@ -277,7 +340,7 @@ const fullPdfHtml = computed(() => {
         </div>
 
             <!-- PAGE 2: INTRODUCTION -->
-            <div class="page">
+            <div class="page" data-section="Introduction">
             <div class="header-wave"></div>
             <div class="logo">
                 <img src="/images/logo.png" alt="Logo" width="70px" />
@@ -315,7 +378,7 @@ const fullPdfHtml = computed(() => {
             </div>
 
             <!-- PAGE 3: AGREEMENT INTRO -->
-            <div class="page">
+            <div class="page" data-section="Agreement">
             <div class="header-wave"></div>
             <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
             <div class="content">
@@ -350,7 +413,7 @@ const fullPdfHtml = computed(() => {
             </div>
 
             <!-- PAGE 4: JANITORIAL -->
-            <div class="page">
+            <div class="page" data-section="Compensation">
             <div class="header-wave"></div>
             <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
             <div class="content">
@@ -377,7 +440,7 @@ const fullPdfHtml = computed(() => {
             </div>
 
             <!-- PAGE 5: TERMINATION -->
-            <div class="page">
+            <div class="page" data-section="Legal">
             <div class="header-wave"></div>
             <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
             <div class="content">
@@ -398,7 +461,7 @@ const fullPdfHtml = computed(() => {
             </div>
 
             <!-- PAGE 6: INDEMNIFICATION -->
-            <div class="page">
+            <div class="page" data-section="Legal Continued">
             <div class="header-wave"></div>
             <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
             <div class="content">
@@ -423,7 +486,7 @@ const fullPdfHtml = computed(() => {
             </div>
 
             <!-- PAGE 7: INSURANCE -->
-            <div class="page">
+            <div class="page" data-section="Insurance">
             <div class="header-wave"></div>
             <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
             <div class="content">
@@ -447,7 +510,7 @@ const fullPdfHtml = computed(() => {
             </div>
 
             <!-- PAGE 8: SIGNATURE -->
-            <div class="page">
+            <div class="page" data-section="Signature">
             <div class="header-wave"></div>
             <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
             <div class="content">
@@ -462,7 +525,7 @@ const fullPdfHtml = computed(() => {
             </div>
 
             <!-- PAGE 10: EXHIBIT A - BREAK ROOM PART 1 -->
-            <div class="page">
+            <div class="page" data-section="Exhibits">
             <div class="header-wave"></div>
             <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
             <div class="content">
@@ -534,10 +597,7 @@ const fullPdfHtml = computed(() => {
     `
 })
 
-const getDefaultContent = () => {
-    // Return your default text strings here so it doesn't crash if content_data is null
-    return { 'cover-letter': '...', 'agreement': '...' } 
-}
+
 </script>
 
 <style>
