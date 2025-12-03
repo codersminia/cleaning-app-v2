@@ -252,22 +252,63 @@ class ProposalController extends Controller
     }
 
     // 2. Public View (No Auth)
+    // public function getPublicProposal($token)
+    // {
+    //     $proposal = Proposal::where('url_token', $token)->with('calculations', 'prospect')->firstOrFail();
+        
+    //     // Decode the saved content data
+    //     $proposal->content_data = json_decode($proposal->content_data, true);
+        
+    //     // Check if already signed
+    //     $signature = DB::table('proposal_signatures')->where('proposal_id', $proposal->id)->first();
+
+    //     return response()->json([
+    //         'proposal' => $proposal,
+    //         'signature' => $signature
+    //     ]);
+    // }
     public function getPublicProposal($token)
     {
-        $proposal = Proposal::where('url_token', $token)->with('calculations', 'prospect')->firstOrFail();
+        // 1. Fetch Proposal with ALL relationships needed for dynamic HTML
+        $proposal = Proposal::where('url_token', $token)
+            ->with([
+                'prospect',
+                'calculations',
+                // Scope of Work Data
+                'proposalAreas.areaType',
+                'proposalAreas.areaTasks.task.defaultFrequency', 
+                'proposalAreas.areaTasks.customFrequency'
+            ])
+            ->firstOrFail();
         
-        // Decode the saved content data
-        $proposal->content_data = json_decode($proposal->content_data, true);
+        // 2. Fetch Projects associated with this proposal
+        $projects = Project::where('proposal_id', $proposal->id)
+            ->with('serviceType', 'projectTasks.task')
+            ->get();
+
+        // 3. Decode content_data if string
+        if (is_string($proposal->content_data)) {
+            $proposal->content_data = json_decode($proposal->content_data, true);
+        }
         
-        // Check if already signed
+        // 4. Check Signature
         $signature = DB::table('proposal_signatures')->where('proposal_id', $proposal->id)->first();
+
+        // 5. Determine Logic Flags (Same as admin)
+        $is_janitorial = in_array($proposal->commercial_category, ['janitorial_projects', 'janitorial_cleaning']) || 
+                         in_array($proposal->residential_category, ['cleaning_projects']);
+                         
+        $is_construction = $proposal->commercial_category === 'construction_cleaning' || 
+                           $proposal->residential_category === 'construction_cleaning';
 
         return response()->json([
             'proposal' => $proposal,
-            'signature' => $signature
+            'projects' => $projects,
+            'signature' => $signature,
+            'is_janitorial' => $is_janitorial,
+            'is_construction' => $is_construction
         ]);
     }
-
     // 3. Process Signature (No Auth)
     public function signProposal(Request $request, $token)
     {
@@ -342,7 +383,7 @@ class ProposalController extends Controller
     //     return $project['marginDollar'] ? ($sub + $project['marginDollar']) : $sub; 
     // }
     // 1. GET: Fetch data for the Tracking List Page
-    
+
     public function getTrackingList() {
         $proposals = Proposal::with(['recipients', 'prospect']) // Assuming relationships exist
             ->whereIn('status', ['sent', 'accepted'])

@@ -1,7 +1,7 @@
 <template>
   <div class="bg-light min-vh-100">
     
-    <!-- PUBLIC HEADER -->
+    <!-- PUBLIC HEADER (Kept Intact) -->
     <div class="bg-white border-bottom py-3 px-4 shadow-sm sticky-top d-flex justify-content-between align-items-center">
         <div>
             <h5 class="fw-bold mb-0 text-teal" v-if="proposal">Proposal for: {{ proposal.prospect?.company_name }}</h5>
@@ -18,13 +18,16 @@
         </div>
     </div>
 
-    <!-- DOCUMENT PREVIEW (Reuse your HTML Logic) -->
-    <div v-if="loading" class="text-center p-5">Loading Proposal...</div>
+    <!-- DOCUMENT PREVIEW -->
+    <div v-if="loading" class="text-center p-5">
+        <div class="spinner-border text-teal" role="status"></div>
+        <p class="mt-2 text-muted">Loading Proposal...</p>
+    </div>
     
     <div v-else class="container py-5 d-flex justify-content-center">
-        <div class="bg-white shadow-lg" style="width: 8.5in; min-height: 11in; overflow: hidden;">
-            <!-- INJECT YOUR HTML HERE. IMPORTANT: Modify your HTML to accept data from 'sectionContent' -->
-            <div v-html="fullPdfHtml"></div>
+        <!-- Render the Dynamic HTML -->
+        <div class="bg-dark rounded shadow p-4 d-flex flex-column align-items-center gap-4" style="height: 90vh; overflow-y: auto;">
+             <div id="pdf-content" v-html="fullPdfHtml"></div>
         </div>
     </div>
 
@@ -34,138 +37,216 @@
   </div>
 </template>
 
-
-
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue' // Added imports
+import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import SignProposalModal from './Modals/SignProposalModal.vue'
 
 const route = useRoute()
-// We need BOTH the proposal token (to fetch data) AND the recipient token (to track who is watching)
 const token = route.query.token 
-const recipientToken = route.query.rid // Ensure your email link includes &rid=...
+const recipientToken = route.query.rid 
 
+// --- STATE ---
 const loading = ref(true)
 const proposal = ref(null)
-const sectionContent = ref({})
+const projects = ref([]) // Dynamic Projects
+const calcData = ref({}) // Calculator Data
+const sectionContent = ref({}) // Text Content
+const isJanitorial = ref(false)
+const isConstruction = ref(false)
+
+// Signature State
 const showSignModal = ref(false)
 const isSigned = ref(false)
 const signatureData = ref(null)
 
-// --- TRACKING STATE ---
+// Tracking State
 let trackingInterval = null
 let observer = null
-const currentSection = ref('Cover Letter') // Default start
+const currentSection = ref('Cover Letter')
 
-// 1. Fetch Public Data & Initialize Tracking
+// --- 1. FETCH DATA ---
 onMounted(async () => {
     try {
         const res = await axios.get(`/api/proposal/${token}`)
-        proposal.value = res.data.proposal
-        sectionContent.value = res.data.proposal.content_data || getDefaultContent()
         
+        // 1. Basic Data
+        proposal.value = res.data.proposal
+        projects.value = res.data.projects
+        isJanitorial.value = res.data.is_janitorial
+        isConstruction.value = res.data.is_construction
+        
+        // 2. Content Data (Text Sections)
+        sectionContent.value = res.data.proposal.content_data || {}
+
+        // 3. Calculator Data (Pricing)
+        if (proposal.value.calculations && proposal.value.calculations.calculator_data) {
+             calcData.value = typeof proposal.value.calculations.calculator_data === 'string' 
+                ? JSON.parse(proposal.value.calculations.calculator_data) 
+                : proposal.value.calculations.calculator_data;
+        }
+        
+        // 4. Signature Check
         if(res.data.signature) {
             isSigned.value = true
             signatureData.value = res.data.signature
         }
 
-        // Initialize Tracking after DOM is rendered
+        // 5. Tracking Init
         await nextTick()
         setupIntersectionObserver()
         startTrackingTimer()
 
     } catch (e) {
         console.error(e)
-        alert("Invalid Link")
+        // alert("Invalid Link") 
     } finally {
         loading.value = false
     }
 })
 
-// Clean up when user leaves page
+// Cleanup
 onBeforeUnmount(() => {
     if (trackingInterval) clearInterval(trackingInterval)
     if (observer) observer.disconnect()
 })
 
-// --- TRACKING LOGIC ---
+// --- 2. CALCULATION LOGIC (Exact copy from Finalize) ---
 
-// A. Watch which page is currently on screen
-const setupIntersectionObserver = () => {
-    // Select all elements with class 'page'
-    const pages = document.querySelectorAll('.page')
-    
-    if (pages.length === 0) return
-
-    observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                // Get the section name from the data attribute we will add to HTML
-                const sectionName = entry.target.getAttribute('data-section')
-                if (sectionName) {
-                    currentSection.value = sectionName
-                }
-            }
-        })
-    }, { threshold: 0.5 }) // Trigger when 50% of the page is visible
-
-    pages.forEach((page) => observer.observe(page))
-}
-
-// B. Send data to backend every 5 seconds
-const startTrackingTimer = () => {
-    // Only track if we have a recipient token (rid)
-    if (!recipientToken) return 
-
-    trackingInterval = setInterval(() => {
-        // Send a ping to the database
-        axios.post('/api/track-activity', {
-            rid: recipientToken,
-            section: currentSection.value,
-            seconds: 5
-        }).catch(err => console.error("Tracking failed", err)) // Silent fail
-    }, 5000)
-}
-
-// 2. Handle Signing
-const openSignModal = () => showSignModal.value = true
-
-const handleSigned = async (data) => {
-    try {
-        const res = await axios.post(`/api/proposal/${token}/sign`, {
-            signer_name: data.name,
-            signer_title: data.title,
-            signature_image: data.signatureImage
-        })
-        
-        if(res.data.success) {
-            isSigned.value = true
-            showSignModal.value = false
-            window.location.reload()
-        }
-    } catch (e) {
-        alert("Error signing")
-    }
-}
-
-// 3. Helpers
+// Helpers
+const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 const formatBullets = (text) => {
     if(!text) return '';
     return text.split('\n').filter(line => line.trim() !== '').map(line => `<li>${line}</li>`).join('');
 }
 
-const getDefaultContent = () => {
-    return { 'cover-letter': '...', 'agreement': '...' } 
-}
+// Janitorial Total
+const janitorialMonthlyTotal = computed(() => {
+    if (!calcData.value.laborCosts) return 0;
+    const laborSum = calcData.value.laborCosts.reduce((sum, cost) => {
+        const base = (parseFloat(cost.staff)||0) * (parseFloat(cost.rateOfPay)||0) * (parseFloat(cost.hours)||0);
+        const payrollTotal = (parseFloat(calcData.value.payrollTaxes)||0) + (parseFloat(calcData.value.insurance)||0) + (parseFloat(calcData.value.overhead)||0);
+        const costPerClean = base * (1 + (payrollTotal / 100));
+        let monthly = 0;
+        const freq = parseFloat(cost.frequency)||0;
+        const per = cost.per;
+        if(per === 'Week') monthly = costPerClean * (freq * 4.333);
+        else if(per === 'Month') monthly = costPerClean * freq;
+        else if(per === 'Quarter') monthly = costPerClean * (freq / 3);
+        else if(per === 'Year') monthly = costPerClean * (freq / 12);
+        else monthly = costPerClean * freq;
+        return sum + monthly;
+    }, 0);
+    const expensesSum = (calcData.value.additionalExpenses || []).reduce((sum, item) => sum + (parseFloat(item.cost)||0), 0);
+    const subTotal = laborSum + expensesSum;
+    const profit = parseFloat(calcData.value.marginDollar) || 0;
+    let tax = 0;
+    if (calcData.value.addSalesTax) tax = (subTotal + profit) * ((parseFloat(calcData.value.salesTaxPercent)||0) / 100);
+    return subTotal + profit + tax;
+});
 
-// 4. HTML GENERATION (Copy your existing fullPdfHtml logic here)
-// IMPORTANT: Add logic to inject the Signature Image at the bottom if isSigned is true
+// Project Total
+const calculateProjectTotal = (proj, isRecurring) => {
+    const base = (parseFloat(proj.staff)||0) * (parseFloat(proj.rateOfPay)||0) * (parseFloat(proj.hours)||0);
+    const payrollTotal = (parseFloat(calcData.value.payrollTaxes)||0) + (parseFloat(calcData.value.insurance)||0) + (parseFloat(calcData.value.overhead)||0);
+    const laborCost = base * (1 + (payrollTotal / 100));
+    let finalLabor = laborCost;
+    if (isRecurring) {
+         const freq = parseFloat(proj.frequency)||0;
+         const per = proj.per ? proj.per.toLowerCase() : '';
+         if(per === 'week') finalLabor = laborCost * (freq * 4.333);
+         else if(per === 'month') finalLabor = laborCost * freq;
+         else if(per === 'quarter') finalLabor = laborCost * (freq / 3);
+         else if(per === 'year') finalLabor = laborCost * (freq / 12);
+         else finalLabor = laborCost * freq; 
+    }
+    const expenses = (proj.expenses || []).reduce((sum, e) => sum + (parseFloat(e.cost)||0), 0);
+    const sub = finalLabor + expenses;
+    const profit = parseFloat(proj.marginDollar) || 0;
+    let tax = 0;
+    if (proj.addSalesTax) tax = (sub + profit) * ((parseFloat(proj.salesTaxPercent)||0) / 100);
+    return sub + profit + tax;
+};
+
+const recurringGlobalTotal = computed(() => {
+    if (!calcData.value.recurringProjects) return 0;
+    return calcData.value.recurringProjects.reduce((sum, proj) => sum + calculateProjectTotal(proj, true), 0);
+});
+
+const grandMonthlyTotal = computed(() => janitorialMonthlyTotal.value + recurringGlobalTotal.value);
+
+// --- 3. DYNAMIC HTML GENERATORS ---
+
+const clientName = computed(() => proposal.value?.prospect?.company_name || 'Client Name');
+const clientEmail = computed(() => proposal.value?.prospect?.email || 'Email');
+const clientAddress = computed(() => {
+    const p = proposal.value?.prospect;
+    if(!p) return 'Client Address';
+    return `${p.address}, ${p.city}, ${p.state}, ${p.zip}`;
+});
+const currentDate = computed(() => new Date().toLocaleDateString());
+
+// Tables
+const recurringProjectRows = computed(() => {
+    const projs = calcData.value.recurringProjects || [];
+    if (projs.length === 0) return '';
+    return projs.map(proj => `<tr><td style="text-align:left; padding:12px; border:1px solid #ddd;">${proj.name}</td><td style="text-align:center; padding:12px; border:1px solid #ddd;">${proj.frequency} x ${proj.per}</td><td class="price" style="text-align:center; padding:12px; border:1px solid #ddd; font-weight:bold; color:#22c55e;">${formatCurrency(calculateProjectTotal(proj, true))}</td></tr>`).join('');
+});
+
+const oneTimeProjectRows = computed(() => {
+    const projs = calcData.value.oneTimeProjects || [];
+    if (projs.length === 0) return '';
+    return projs.map(proj => `<tr><td style="text-align:left; padding:12px; border:1px solid #ddd;">${proj.name}</td><td style="text-align:center; padding:12px; border:1px solid #ddd;">1 Time</td><td class="price" style="text-align:center; padding:12px; border:1px solid #ddd; font-weight:bold; color:#22c55e;">${formatCurrency(calculateProjectTotal(proj, false))}</td></tr>`).join('');
+});
+
+const exhibitARows = computed(() => {
+    if (!proposal.value?.proposal_areas || proposal.value.proposal_areas.length === 0) return '<tr><td colspan="3" style="text-align:center;">No Janitorial Areas</td></tr>';
+    let rows = '';
+    proposal.value.proposal_areas.forEach(area => {
+        const areaName = area.area_type?.name || 'Area';
+        area.area_tasks.forEach(at => {
+            const desc = at.custom_description || at.task?.description || '';
+            let freq = at.custom_frequency ? at.custom_frequency.label : (at.task?.default_frequency?.label || 'Daily');
+            rows += `<tr><td style="padding:10px; border:1px solid #ddd;"><strong>${areaName}</strong></td><td style="padding:10px; border:1px solid #ddd;">${desc}</td><td style="padding:10px; border:1px solid #ddd;">${freq}</td></tr>`;
+        });
+    });
+    return rows;
+});
+
+// Exhibits B & C
+const getProjectExhibitHtml = (isRecurring) => {
+    const relevantProjects = projects.value.filter(p => !!p.is_recurring === isRecurring);
+    if (relevantProjects.length === 0) return '';
+    let html = '';
+    relevantProjects.forEach(proj => {
+        const projName = proj.service_type?.name || 'Project';
+        const tasks = proj.project_tasks || [];
+        html += `<h4 style="color:#22c55e; margin-top:20px;">${projName}</h4>
+                 <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+                    <thead><tr><th style="background:#f0f0f0; color:#333; border:1px solid #ddd;">Task Description</th></tr></thead>
+                    <tbody>`;
+        if (tasks.length > 0) {
+            tasks.forEach(pt => {
+                const desc = pt.task_description || pt.task?.description || 'No Description';
+                html += `<tr><td style="padding:10px; border:1px solid #ddd;">${desc}</td></tr>`;
+            });
+        } else {
+            html += `<tr><td style="padding:10px; border:1px solid #ddd;">See Exhibit C standard procedures.</td></tr>`;
+        }
+        html += `</tbody></table>`;
+    });
+    return html;
+}
+const exhibitBContent = computed(() => getProjectExhibitHtml(true));
+const exhibitCContent = computed(() => getProjectExhibitHtml(false));
+
+
+// --- 4. MASTER HTML GENERATOR ---
 const fullPdfHtml = computed(() => {
     if(!proposal.value) return '';
-    
-    // 1. THE MANUAL SIGNATURE BLOCK (Shows when NOT signed)
+
+    // 4a. Manual Signature Block
     const manualSignatureHtml = `
         <div class="signature-section">
             <div class="section-title"><div class="circle-num">24</div><h3>IN WITNESS WHEREOF.</h3></div>
@@ -183,7 +264,7 @@ const fullPdfHtml = computed(() => {
                 </div>
                 <div style="flex: 1;">
                     <div class="signature-box">
-                        <h4 style="color: #22c55e; margin-bottom: 20px;">GALLAGHER AND ALSTON TRADERS</h4>
+                        <h4 style="color: #22c55e; margin-bottom: 20px;">${clientName.value}</h4>
                         <p style="font-weight: bold;">Client</p>
                         <p>By: __________________________</p>
                         <p>Name (printed): __________________________</p>
@@ -195,40 +276,26 @@ const fullPdfHtml = computed(() => {
         </div>
     `;
 
-    // 2. THE DIGITAL SIGNATURE BLOCK (Shows when IS signed)
+    // 4b. Digital Signature Block
     const digitalSignatureHtml = `
         <div class="signature-section" style="border: 3px solid #22c55e; background-color: #f0fff4; margin-top: 60px; padding: 40px; border-radius: 16px;">
             <div class="section-title"><div class="circle-num" style="background: #22c55e;">✔</div><h3>AGREEMENT EXECUTED.</h3></div>
-            
             <div style="display: flex; gap: 60px; margin-top: 30px;">
-                <!-- COMPANY SIDE (Static) -->
                 <div style="flex: 1;">
-                    <div class="signature-box" style="background: white; border: 1px solid #22c55e;">
+                    <div class="signature-box" style="background: white; border: 1px solid #22c55e; padding: 20px; text-align:center;">
                         <h4 style="color: #22c55e; margin-bottom: 10px;">BELIEVE 313 STAFFING</h4>
                         <p style="margin: 0;"><strong>MARIO KELLY</strong> (CEO)</p>
                         <p style="color: #666; font-size: 0.9rem;">Auto-Signed upon acceptance</p>
                     </div>
                 </div>
-
-                <!-- CLIENT SIDE (Dynamic Data) -->
                 <div style="flex: 1;">
-                    <div class="signature-box" style="background: white; border: 2px solid #22c55e; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);">
+                    <div class="signature-box" style="background: white; border: 2px solid #22c55e; padding: 20px; text-align:center;">
                         <h4 style="color: #22c55e; margin-bottom: 5px;">ACCEPTED BY CLIENT</h4>
-                        
-                        <!-- The Signature Image -->
-                        <img src="${signatureData.value?.signature_image}" style="max-height: 80px; margin: 10px 0; display: block; margin-left: auto; margin-right: auto;" alt="Client Signature" />
-                        
-                        <div style="text-align: left; padding: 0 20px;">
-                            <p style="margin: 5px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;">
-                                Name: <strong>${signatureData.value?.signer_name}</strong>
-                            </p>
-                            <p style="margin: 5px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;">
-                                Title: <strong>${signatureData.value?.signer_title}</strong>
-                            </p>
-                            <p style="margin: 5px 0; font-size: 0.8rem; color: #888;">
-                                Date: ${new Date(signatureData.value?.signed_at).toLocaleString()}<br>
-                                IP Address: ${signatureData.value?.ip_address}
-                            </p>
+                        <img src="${signatureData.value?.signature_image}" style="max-height: 80px; margin: 10px 0;" alt="Signature" />
+                        <div style="text-align: left; font-size: 0.9rem;">
+                            <p>Name: <strong>${signatureData.value?.signer_name}</strong></p>
+                            <p>Title: <strong>${signatureData.value?.signer_title}</strong></p>
+                            <p>Date: ${new Date(signatureData.value?.signed_at).toLocaleString()}</p>
                         </div>
                     </div>
                 </div>
@@ -236,8 +303,7 @@ const fullPdfHtml = computed(() => {
         </div>
     `;
 
-    // Return your huge HTML string, but replace the signature section with `signatureHtml`
-    // and use `sectionContent.value['agreement']` etc.
+    // 4c. The Document
     return `
         <!DOCTYPE html>
         <html lang="en">
@@ -245,369 +311,289 @@ const fullPdfHtml = computed(() => {
         <meta charset="UTF-8">
         <style>
             @page { margin: 0; size: letter; }
-        body { margin:0; padding:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f8f9fa; }
-        
-        /* ALL PAGES - exact Letter size */
-        .page {
-            width: 100%;
-            height: auto;
-            background: white;
-            position: relative;
-            page-break-after: always;
-            overflow: visible !important;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-            margin: 0 auto 60px auto;
-            box-sizing: border-box;
-        }
-
-        /* COVER PAGE */
-        .cover-image {
-            width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index:1;
-        }
-        .cover-overlay {
-            position: absolute; bottom:0; left:0; width:100%; height:340px;
-            background: linear-gradient(to top, #22c55e 0%, transparent 100%);
-            border-radius: 120px 0 0 0; z-index:2;
-        }
-        .cover-text {
-            position: absolute; bottom:70px; left:50%; transform:translateX(-50%);
-            text-align:center; color:white; width:90%; z-index:5;
-        }
-        .cover-text h2 { font-size:3.2rem; margin:0 0 12px; font-weight:900; }
-        .cover-text p { font-size:1.15rem; line-height:1.6; margin-bottom:30px; }
-        .btn-website {
-            background:#f39c12; color:white; padding:16px 50px; border-radius:50px;
-            font-weight:bold; font-size:1.3rem; border:none; box-shadow:0 6px 20px rgba(243,156,18,0.4);
-        }
-
-        /* INTERNAL PAGES */
-        .header-wave {
-            position: absolute; top:0; left:0; right:0; height:120px;
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            border-radius: 0 0 100px 0;
-        }
-        .logo {
-            position: absolute; top:18px; right:40px; z-index:10;
-        }
-        .logo img { width:82px; }
-
-        .content {
-            padding: 160px 80px 80px 80px;
-            line-height: 1.7;
-            color: #333;
-            font-size: 0.95rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .page-number {
-            position: absolute;
-            bottom: 50px;
-            right: 80px;
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-            .circle-num { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#22c55e; color:white; font-weight:bold; font-size:1.3rem; margin-right:15px; flex-shrink:0; }
-            .section-title { display:flex; align-items:center; margin:40px 0 20px; }
-            .section-title h3 { margin:0; color:#333; font-size:1.4rem; }
-            table { width:100%; border-collapse:collapse; margin:25px 0; font-size:0.95rem; }
-            th { background:#22c55e; color:white; padding:15px; text-align:center; font-weight:bold; }
-            td { padding:13px 15px; border:1px solid #ddd; text-align:center; }
-            .price { font-weight:bold; color:#22c55e; font-size:1.2rem; }
-            .page-number { position:absolute; bottom:50px; right:80px; color:#888; font-size:1rem; }
-            .exhibit-table td { text-align:left; vertical-align:top; padding:10px 0; }
-            .exhibit-table td:first-child { width:30%; font-weight:bold; }
-            .exhibit-table td:last-child { text-align:right; font-weight:bold; }
-            .signature-section { margin-top:60px; padding:40px; border:2px solid #22c55e; border-radius:16px; background:#f8fff8; }
-            .signature-box { border:1px solid #ddd; border-radius:8px; padding:30px; margin:20px 0; text-align:center; background:#fafafa; }
+            body { margin:0; padding:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f8f9fa; }
+            .page { width: 8.5in; height: 11in; background: white; position: relative; page-break-after: always; margin: 0 auto 30px auto; overflow: hidden; }
+            /* Graphics */
+            .header-wave { position: absolute; top:0; left:0; right:0; height:140px; background: #22c55e; border-radius: 0 0 100% 0; z-index:1; }
+            .logo { position: absolute; top:30px; right:50px; z-index:10; }
+            .logo img { width:100px; }
+            /* Content */
+            .content { padding: 180px 60px 80px 60px; line-height: 1.6; color: #333; font-size: 14px; }
+            /* Components */
+            .section-title { display:flex; align-items:center; margin:25px 0 10px; }
+            .circle-num { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:#22c55e; color:white; font-weight:bold; font-size:1rem; margin-right:15px; }
+            .section-title h3 { margin:0; color:#333; font-size:1.2rem; }
+            table { width:100%; border-collapse:collapse; margin:15px 0; font-size:13px; }
+            th { background:#22c55e; color:white; padding:10px; text-align:center; font-weight:bold; text-transform:uppercase; }
+            td { padding:10px; border:1px solid #ddd; }
+            .price { font-weight:bold; color:#22c55e; font-size:1.1rem; }
+            .page-number { position:absolute; bottom:40px; right:60px; color:#888; font-size:12px; }
+            /* Cover */
+            .cover-overlay { position: absolute; bottom:0; left:0; width:100%; height:35%; background: linear-gradient(to top, #22c55e 0%, transparent 100%); border-radius: 100% 0 0 0; }
+            .cover-text { position: absolute; bottom:80px; left:50%; transform:translateX(-50%); text-align:center; color:white; width:90%; z-index:5; }
+            .btn-website { background:#f39c12; color:white; padding:15px 40px; border-radius:50px; font-weight:bold; font-size:1.2rem; border:none; margin-top:20px; }
         </style>
         </head>
         <body>
 
         <!-- PAGE 1: COVER -->
-        <div class="page" data-section="Cover Letter" style="height:9in">
-            <img src="/images/cover10.jpg" class="cover-image" alt="Cover">
+        <div class="page" data-section="Cover">
+            <img src="/images/cover10.jpg" style="width:100%; height:100%; object-fit:cover; position:absolute;" alt="Cover">
             <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="cover-overlay"></div>
             <div class="cover-text">
-            <h3>Believe313staffing.com</h3>
-            <p>For Gallagher And Alston Traders 11/26/2025<br>
-            ea dolorem voluptatem soluta, Hic dolore ex iure nisi alias id<br>
-            eum sapiente ips, 91850</p>
+            <h3>${clientEmail.value}</h3>
+            <p>Prepared For: ${clientName.value}<br>${currentDate.value}<br>${clientAddress.value}</p>
             <button class="btn-website">believe313staffing.com</button>
             </div>
         </div>
 
-            <!-- PAGE 2: INTRODUCTION -->
-            <div class="page" data-section="Introduction">
+        <!-- PAGE 2: INTRO -->
+        <div class="page" data-section="Intro">
             <div class="header-wave"></div>
-            <div class="logo">
-                <img src="/images/logo.png" alt="Logo" width="70px" />
-            </div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <h3 style="color: #22c55e; font-size: 2rem; margin-bottom: 30px;">GALLAGHER AND ALSTON TRADERS</h3>
-                
-                <!-- DYNAMIC COVER LETTER -->
-                <p style="text-align: justify; margin-bottom: 30px;">
-                ${sectionContent.value['cover-letter']}
-                </p>
-
-                <div style="display: flex; gap: 60px; margin-bottom: 40px;">
+                <h3 style="color:#22c55e; font-size:2.2rem; margin-bottom:30px;">${clientName.value}</h3>
+                <p>${sectionContent.value['cover-letter']}</p>
+                <div style="display: flex; gap: 40px; margin-top:30px;">
                 <div style="flex: 1;">
-                    <h4 style="color: #22c55e; margin-bottom: 10px;">CUSTOMER SERVICE.</h4>
-                    <p>Regular on site quality control is designed to anticipate the client's needs; and a call from a client at any time of the day or night will be answered by immediate action to correct a problem or fulfill a special request.</p>
-                    <h4 style="color: #22c55e; margin-top: 30px; margin-bottom: 10px;">CONSISTENT QUALITY.</h4>
-                    <p>Consistency and Quality are the pillars of our service standards. We hold ourselves accountable by performing thorough and Routine Quality Control Inspections.</p>
+                    <h4>CUSTOMER SERVICE.</h4><p>Regular on site quality control is designed to anticipate the client's needs...</p>
+                    <h4>CONSISTENT QUALITY.</h4><p>Consistency and Quality are the pillars of our service standards...</p>
                 </div>
                 <div style="flex: 1;">
-                    <h4 style="color: #22c55e; margin-bottom: 10px;">EXPERIENCE.</h4>
-                    <p>Over the years we worked hard at not just solving existing problems for our clients, but we've learned how to predict and prevent most recurring challenges as well.</p>
-                    <h4 style="color: #22c55e; margin-top: 30px; margin-bottom: 10px;">RESOURCES.</h4>
-                    <p>Since we serve facilities and buildings just like yours throughout the area, we have the equipment and personnel ready to deal with any contingency and provide continuity of service.</p>
+                    <h4>EXPERIENCE.</h4><p>Over the years we worked hard at not just solving existing problems...</p>
+                    <h4>RESOURCES.</h4><p>Since we serve facilities and buildings just like yours...</p>
                 </div>
                 </div>
-                <div style="margin-top: 50px; text-align: center;">
-                <h4 style="color: #22c55e; margin-bottom: 15px;">HUMBLY SUBMITTED</h4>
-                <p style="font-weight: bold; font-size: 1.2rem;">
-                    Mario Kelly<br>Ceo<br>Believe 313 staffing<br>313-656-8730
-                </p>
+                <div style="margin-top: 60px; text-align: center;">
+                <h4 style="color:#22c55e;">HUMBLY SUBMITTED</h4>
+                <p style="font-weight: bold; font-size: 1.2rem;">Mario Kelly<br>CEO<br>Believe 313 staffing</p>
                 </div>
                 <div class="page-number">Page 1</div>
             </div>
-            </div>
+        </div>
 
-            <!-- PAGE 3: AGREEMENT INTRO -->
-            <div class="page" data-section="Agreement">
+        <!-- PAGE 3: AGREEMENT -->
+        <div class="page" data-section="Agreement">
             <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <div class="section-title">
-                <div class="circle-num">1</div>
-                <h3>THIS CLEANING SERVICES AGREEMENT</h3>
-                </div>
-                <!-- DYNAMIC AGREEMENT -->
-                <p style="text-align: justify;">
-                ${sectionContent.value['agreement']}
-                </p>
-                
-                <div class="section-title">
-                <div class="circle-num">2</div>
-                <h3>CLEANING SERVICES & LOCATION</h3>
-                </div>
-                <p><strong>2.1 CLEANING SERVICES</strong> Company shall provide the cleaning services (collectively the “Services”) as provided in , EXHIBIT A (“Scope of Services”) and EXHIBIT C (“ONE TIME PROJECT WORK”)</p>
-                <p><strong>2.2 THE PREMISES</strong> Company shall provide the Services at the following location(s): Praesentium quia animi iusto quasi aut tempor hic commodi in blanditiis eum, Unit 245, Id quos voluptate in ea dolorem voluptatem soluta , Hic dolore ex iure nisi alias id eum sapiente ips, 91850.</p>
-                
-                <div class="section-title">
-                <div class="circle-num">3</div>
-                <h3>SERVICE COMPENSATION</h3>
-                </div>
-                <!-- DYNAMIC COMPENSATION -->
-                <p>
-                    ${sectionContent.value['compensation']}
-                </p>
-                
-                <p><strong>3.1 PRICING.</strong> Client shall compensate Company for the following Services (See EXHIBIT A for specific services to be rendered) at the prices listed below.</p>
+                <div class="section-title"><div class="circle-num">1</div><h3>THIS CLEANING SERVICES AGREEMENT</h3></div>
+                <p>${sectionContent.value['agreement']}</p>
+                <div class="section-title"><div class="circle-num">2</div><h3>CLEANING SERVICES & LOCATION</h3></div>
+                <p><strong>2.1 SERVICES:</strong> See EXHIBIT A (Scope of Services) and EXHIBIT C (Projects).</p>
+                <p><strong>2.2 LOCATION:</strong> ${clientAddress.value}</p>
+                <div class="section-title"><div class="circle-num">3</div><h3>SERVICE COMPENSATION</h3></div>
+                <p>${sectionContent.value['compensation']}</p>
+                <p><strong>3.1 PRICING.</strong> Client shall compensate Company for the following Services at the prices listed below.</p>
                 <div class="page-number">Page 2</div>
             </div>
-            </div>
+        </div>
 
-            <!-- PAGE 4: JANITORIAL -->
-            <div class="page" data-section="Compensation">
+        <!-- PAGE 4: PRICING -->
+        <div class="page" data-section="Pricing">
             <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <p><strong>JANITORIAL SERVICES</strong><br>See EXHIBIT A for specific services to be rendered</p>
-                <table>
-                <thead><tr><th>AREA SERVICED</th><th>FREQUENCY</th><th>MONTHLY PRICE</th></tr></thead>
-                <tbody><tr><td>SEE EXHIBIT A</td><td>2 x week</td><td class="price">$3456.00</td></tr></tbody>
-                </table>
-                <div class="section-title"><div class="circle-num">4</div><h3>ONE TIME PROJECT WORK COMPENSATION.</h3></div>
-                <p>Client shall compensate Company for the following Service(s) (See EXHIBIT C for specific services to be rendered) at the one-time price of ($3105.00). These are one time projects and will be invoiced upon completion of the project work. Client shall pay the Contractor within thirty days after the receipt of the invoice.</p>
-                <p><strong>4.A One Time Project Pricing:</strong></p>
-                <p><strong>CARPET - HOT WATER EXTRACT</strong><br>See EXHIBIT C for specific services to be rendered</p>
-                <table>
-                <thead><tr><th>AREA SERVICED</th><th>FREQUENCY</th><th>PRICE PER SERVICE</th></tr></thead>
-                <tbody><tr><td>Whole Building</td><td>1 time</td><td class="price">$3105.00</td></tr></tbody>
-                </table>
+                ${ (isJanitorial.value || !isConstruction.value) ? `
+                    <p><strong>JANITORIAL SERVICES</strong><br>See EXHIBIT A for specific services to be rendered</p>
+                    <table>
+                    <thead><tr><th>AREA SERVICED</th><th>FREQUENCY</th><th>MONTHLY PRICE</th></tr></thead>
+                    <tbody><tr><td>Whole Facility (See Exhibit A)</td><td>Various</td><td class="price">${formatCurrency(janitorialMonthlyTotal.value)}</td></tr></tbody>
+                    </table>
+                ` : '' }
+
+                ${ recurringProjectRows.value ? `
+                    <p><strong>RECURRING PROJECT SERVICES (See EXHIBIT B)</strong></p>
+                    <table>
+                    <thead><tr><th>PROJECT SERVICE</th><th>FREQUENCY</th><th>MONTHLY PRICE</th></tr></thead>
+                    <tbody>${recurringProjectRows.value}</tbody>
+                    </table>
+                ` : '' }
+
+                ${ (isJanitorial.value && recurringProjectRows.value) ? `
+                    <div style="text-align:right; margin-bottom:20px;">
+                        <span style="font-weight:bold; font-size:1.1rem;">TOTAL MONTHLY CHARGE: <span style="color:#22c55e;">${formatCurrency(grandMonthlyTotal.value)}</span></span>
+                    </div>
+                ` : '' }
+
+                ${ oneTimeProjectRows.value ? `
+                    <div class="section-title"><div class="circle-num">4</div><h3>ONE TIME PROJECT WORK COMPENSATION</h3></div>
+                    <p>Client shall compensate Company for the following project work as invoiced.</p>
+                    <table>
+                    <thead><tr><th>PROJECT TYPE</th><th>FREQUENCY</th><th>PRICE</th></tr></thead>
+                    <tbody>${oneTimeProjectRows.value}</tbody>
+                    </table>
+                ` : '' }
+
                 <div class="section-title"><div class="circle-num">5</div><h3>EQUIPMENT & SUPPLIES</h3></div>
-                <p><strong>5.1 EQUIPMENT</strong> Company will furnish all labor, transportation, equipment and cleaning chemicals requisite to the performance of these Services, except as otherwise specified in the attached exhibits and listed supplies below.</p>
-                <p><strong>5.2 SUPPLIES</strong> Client will provide consumable products such as, but not limited to, toilet paper, paper towels, hand soap and trash liners</p>
-                <div class="section-title"><div class="circle-num">6</div><h3>TERM & TERMINATION.</h3></div>
-                <p><strong>6.1 TERM</strong> This Agreement shall be effective upon execution by Client for a period of twelve (12) months, unless sooner terminated under the terms set forth below.</p>
+                <p><strong>5.1 EQUIPMENT</strong> Company will furnish all labor, transportation, equipment...</p>
+                <p><strong>5.2 SUPPLIES</strong> Client will provide consumable products...</p>
+                
+                <div class="section-title"><div class="circle-num">6</div><h3>TERM & TERMINATION</h3></div>
+                <p><strong>6.1 TERM</strong> This Agreement shall be effective upon execution...</p>
                 <div class="page-number">Page 3</div>
             </div>
-            </div>
+        </div>
 
-            <!-- PAGE 5: TERMINATION -->
-            <div class="page" data-section="Legal">
+        <!-- PAGE 5-6: LEGAL -->
+        <div class="page" data-section="Legal 1">
             <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <p><strong>6.2 TERMINATION</strong> This Agreement may be terminated by either Party hereto upon a thirty (30) day written notice to the non-terminating party.</p>
-                <p><strong>6.3 AUTOMATIC RENEWAL</strong> After the natural expiration of the term of this twelve (12) month Agreement, this Agreement will automatically convert to a month-to-month agreement between Client and Company. All the Services will be subject to the terms and conditions of this Agreement, but will be terminable upon either Party giving one (1) month's written notice to the other Party.</p>
-                <div class="section-title"><div class="circle-num">7</div><h3>KEYS.</h3></div>
-                <p>Client shall issue essential keys upon award of the Agreement for all service locations. Company shall sign for said keys. Company shall return all issued keys at the termination of this Agreement.</p>
-                <div class="section-title"><div class="circle-num">8</div><h3>ACCESS</h3></div>
-                <p>The hours of service shall be after 6:00 p.m., unless otherwise specified. All federal holidays are excluded from service unless otherwise specified.</p>
-                <div class="section-title"><div class="circle-num">9</div><h3>PHOTO IDENTIFICATION</h3></div>
-                <p>Company's employees will wear a photo identification (“ID”) badge, a professional uniform and will have completed Company's employee training program.</p>
-                <div class="section-title"><div class="circle-num">10</div><h3>INDEPENDENT CONTRACTOR.</h3></div>
-                <p>Neither Party shall, for any purpose, be deemed to be an agent of the other Party and the relationship between the Parties shall only be that of independent contractors. Neither Party shall have any right or authority to assume or create any obligations or to make any representations or warranties on behalf of any other Party, whether express or implied, or to bind the other Party in any respect whatsoever.</p>
-                <div class="section-title"><div class="circle-num">11</div><h3>NON-SOLICITATION OF EMPLOYEES</h3></div>
-                <p>Client agrees and covenants not to directly or indirectly solicit, hire, recruit, attempt to hire or recruit, or induce the termination of employment of any employee and/or contractor of the Company during the effective term of this Agreement and for a period of one (1) year after the termination of this Agreement.</p>
+                <p><strong>6.2 TERMINATION</strong>...</p>
+                <div class="section-title"><div class="circle-num">7</div><h3>KEYS</h3></div><p>Client shall issue essential keys...</p>
+                <div class="section-title"><div class="circle-num">8</div><h3>ACCESS</h3></div><p>The hours of service shall be...</p>
+                <div class="section-title"><div class="circle-num">9</div><h3>PHOTO IDENTIFICATION</h3></div><p>Employees wear ID badges...</p>
+                <div class="section-title"><div class="circle-num">10</div><h3>INDEPENDENT CONTRACTOR</h3></div><p>Neither Party shall...</p>
+                <div class="section-title"><div class="circle-num">11</div><h3>NON-SOLICITATION</h3></div><p>Client agrees not to...</p>
                 <div class="page-number">Page 4</div>
             </div>
-            </div>
+        </div>
 
-            <!-- PAGE 6: INDEMNIFICATION -->
-            <div class="page" data-section="Legal Continued">
+        <div class="page" data-section="Legal 2">
             <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <div class="section-title"><div class="circle-num">12</div><h3>INDEMNIFICATION.</h3></div>
-                <!-- DYNAMIC LEGAL -->
-                <p>
-                    ${sectionContent.value['legal']}
-                </p>
-
-                <div class="section-title"><div class="circle-num">13</div><h3>WARRANTY.</h3></div>
-                <p>The Company shall provide its services and meet its obligations under this Agreement in a timely and workmanlike manner, using knowledge and recommendations for performing the Services which meet generally acceptable standards in the Company's industry.</p>
-                <div class="section-title"><div class="circle-num">14</div><h3>COMPLIANCE WITH LAW.</h3></div>
-                <p>All work and services rendered hereunder shall be provided in accordance with all applicable ordinances, resolutions, statutes, rules and regulations of the City and any Federal, State or local governmental agency of competent jurisdiction.</p>
-                <div class="section-title"><div class="circle-num">15</div><h3>ENTIRE AGREEMENT.</h3></div>
-                <p>This Agreement contains the entire agreement of the Parties, and there are no other promises or conditions in any other agreement whether oral or written concerning the subject matter of this Agreement. This Agreement supersedes any prior written or oral agreements between the Parties.</p>
-                <div class="section-title"><div class="circle-num">16</div><h3>FORCE MAJEURE.</h3></div>
-                <p>In the event that the performance of any of the covenants of this Agreement shall be prevented by an act of God, acts and regulations of public authorities, or labor disputes, acts of the public enemy, acts of superior governmental authority, or other circumstances, or cause beyond their or its reasonable control, the Client and Company shall be respectively relieved of their obligations hereunder with respect to the performance(s) so prevented. In the above-mentioned event, Company grants Client the right to reschedule the performance(s) under the same terms and conditions of this Agreement.</p>
-                <div class="section-title"><div class="circle-num">17</div><h3>AMENDMENT.</h3></div>
-                <p>This Agreement may be modified or amended in writing, if the writing is signed by the Party obligated under the amendment.</p>
+                <div class="section-title"><div class="circle-num">12</div><h3>INDEMNIFICATION</h3></div><p>${sectionContent.value['legal']}</p>
+                <div class="section-title"><div class="circle-num">13</div><h3>WARRANTY</h3></div><p>Services performed in workmanlike manner...</p>
+                <div class="section-title"><div class="circle-num">14</div><h3>COMPLIANCE WITH LAW</h3></div><p>Work performed in accordance...</p>
+                <div class="section-title"><div class="circle-num">15</div><h3>ENTIRE AGREEMENT</h3></div><p>Contains entire agreement...</p>
+                <div class="section-title"><div class="circle-num">16</div><h3>FORCE MAJEURE</h3></div><p>Performance excused by acts of God...</p>
+                <div class="section-title"><div class="circle-num">17</div><h3>AMENDMENT</h3></div><p>Modifications must be in writing.</p>
                 <div class="page-number">Page 5</div>
             </div>
-            </div>
+        </div>
 
-            <!-- PAGE 7: INSURANCE -->
-            <div class="page" data-section="Insurance">
+        <!-- PAGE 7: SIGNATURE -->
+        <div class="page" data-section="Signature">
             <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <div class="section-title"><div class="circle-num">18</div><h3>GOVERNING LAW.</h3></div>
-                <p>This Agreement shall be construed in accordance with the laws of the State of Hic dolore ex iure nisi alias id eum sapiente ips.</p>
-                <div class="section-title"><div class="circle-num">19</div><h3>SEVERABILITY.</h3></div>
-                <p>The phrases, clauses, sentences, paragraphs or sections of these conditions are severable. If any phrase, clause, sentence, paragraph, or section of these conditions should be declared invalid by the final decree or judgment of any court of competent jurisdiction, such invalidity shall not affect any of the remaining phrases, clauses, sentences, paragraphs and sections of these conditions.</p>
-                <div class="section-title"><div class="circle-num">20</div><h3>ATTORNEYS' FEES.</h3></div>
-                <p>In case of failure to faithfully perform the terms and covenants herein set forth, the defaulting Party shall pay all costs, expenses, and reasonable attorneys' fees resulting from the enforcement of this Agreement or any right arising out of such breach.</p>
-                <div class="section-title"><div class="circle-num">21</div><h3>ASSIGNMENT.</h3></div>
-                <p>Neither Party hereto may assign its rights or delegate its obligations hereunder without the written consent of the other Party.</p>
-                <div class="section-title"><div class="circle-num">22</div><h3>WAIVER.</h3></div>
-                <p>The failure of either party to enforce any provision of this Agreement shall not be construed as a waiver or limitation of that party's right to subsequently enforce and compel strict compliance with every provision of this Agreement.</p>
+                <div class="section-title"><div class="circle-num">18</div><h3>GOVERNING LAW</h3></div>
+                <div class="section-title"><div class="circle-num">19</div><h3>SEVERABILITY</h3></div>
+                <div class="section-title"><div class="circle-num">20</div><h3>ATTORNEYS' FEES</h3></div>
+                <div class="section-title"><div class="circle-num">21</div><h3>ASSIGNMENT</h3></div>
+                <div class="section-title"><div class="circle-num">22</div><h3>WAIVER</h3></div>
                 <div class="section-title"><div class="circle-num">23</div><h3>INSURANCE CONTRACT</h3></div>
-                <!-- DYNAMIC INSURANCE -->
-                <p>
-                    ${sectionContent.value['insurance']}
-                </p>
+                <p>${sectionContent.value['insurance']}</p>
+                
+                ${ isSigned.value ? digitalSignatureHtml : manualSignatureHtml }
+                
                 <div class="page-number">Page 6</div>
             </div>
-            </div>
+        </div>
 
-            <!-- PAGE 8: SIGNATURE -->
-            <div class="page" data-section="Signature">
+        <!-- PAGE 8: EXHIBIT A -->
+        <div class="page" data-section="Exhibit A">
             <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <!-- DYNAMIC SIGNATURE -->
-                <p>
-                    ${sectionContent.value['signature']}
-                </p>
-                ${ isSigned.value ? digitalSignatureHtml : manualSignatureHtml }
-            
+                <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT A: SCOPE OF SERVICES</h2>
+                ${ (isJanitorial.value || !isConstruction.value) ? `
+                    <table><thead><tr><th width="30%">AREA</th><th width="50%">TASK DESCRIPTION</th><th width="20%">FREQUENCY</th></tr></thead><tbody>${exhibitARows.value}</tbody></table>
+                ` : '<p style="text-align:center;">No Janitorial Services.</p>' }
                 <div class="page-number">Page 7</div>
             </div>
-            </div>
+        </div>
 
-            <!-- PAGE 10: EXHIBIT A - BREAK ROOM PART 1 -->
-            <div class="page" data-section="Exhibits">
+        <!-- PAGE 9: EXHIBIT B -->
+        <div class="page" data-section="Exhibit B">
             <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <h2 style="color: #22c55e; text-align: center; font-size: 1.8rem; margin-bottom: 40px;">EXHIBIT A SCOPE OF SERVICES</h2>
-                <h3 style="color: #22c55e; margin-bottom: 20px;">BREAK ROOM</h3>
-                <table class="exhibit-table">
-                <tr><td>Air Vents & Fans</td><td>Remove dust from Ceiling fans, air returns and vents.</td><td>1XMONTH</td></tr>
-                <tr><td>Buss dishes</td><td>Remove dishes and buss to designated locations</td><td>2XWEEK</td></tr>
-                <tr><td>Coffee & Beverage Stations</td><td>Clean the exterior of coffee crafts, clean, empty, and rinse coffee pots, empty coffee grounds, rinse and clean all other beverage crafts</td><td>2XWEEK</td></tr>
-                <tr><td>Dispenser</td><td>Replenish paper supplies, soap and hand cleaner. Wipe clean outside surface of dispensers.</td><td>2XWEEK</td></tr>
-                <tr><td>Doors</td><td>Wipe Doors, Doors Knobs, Kick Plates, Push Plates, and Frames.</td><td>1XWEEK</td></tr>
-                <tr><td>Exterior of Drawers and Cabinets</td><td>Spot clean Outside of Shelves, Drawers/face, Cabinets/face, Credenzas, display case, and apply polish if needed</td><td>1XWEEK</td></tr>
-                <tr><td>Interior Microwave</td><td>Thoroughly Clean and degrease interior of microwave removing all food, splashes, and spills</td><td>2XWEEK</td></tr>
-                <tr><td>Kitchen Appliances</td><td>Clean exterior surfaces of Ice Machines, Microwaves, Ovens, refrigerators, toasters, Stove tops, dishwashers. grills, mixers, Vending Machines and other designated appliances with food safe cleaning agent.</td><td>2XWEEK</td></tr>
-                <tr><td>Routine Dusting</td><td>Routine dusting will be performed on all unobstructed horizontal surfaces between 3' and 8' of height. Personal items will not be moved or disturbed.</td><td>2XWEEK</td></tr>
-                <tr><td>Seating</td><td>Wipe or vacuum couches, recliners, loveseats, benches and chairs.</td><td>2XWEEK</td></tr>
-                </table>
+                <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT B: RECURRING PROJECT WORK</h2>
+                ${ exhibitBContent.value ? exhibitBContent.value : '<p style="text-align:center;">No Recurring Projects.</p>' }
                 <div class="page-number">Page 8</div>
             </div>
-            </div>
+        </div>
 
-            <!-- PAGE 11: EXHIBIT A - BREAK ROOM PART 2 -->
-            <div class="page">
+        <!-- PAGE 10: EXHIBIT C -->
+        <div class="page" data-section="Exhibit C">
             <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
+            <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
             <div class="content">
-                <table class="exhibit-table">
-                <tr><td>Sinks</td><td>Scrub sinks, drains and faucets with non abrasive cleaning agents to remove hard water, stains, soap scum, and rust</td><td>2XWEEK</td></tr>
-                <tr><td>Spot Clean Glass</td><td>Spot clean interior windows, door glass and partition glass using microfiber cloths or paper towels leaving glass free of splash, smudges and streaks</td><td>2XWEEK</td></tr>
-                <tr><td>Tables & Counters</td><td>Wipe tables and counters to remove all debris or smudges, bus dishes to designated area, discard any trash</td><td>2XWEEK</td></tr>
-                <tr><td>Trash & Recycling</td><td>Empty and remove trash and recycling keep seperate; and deposit into appropriate disposal containers. Replace can liners as needed</td><td>2XWEEK</td></tr>
-                <tr><td>Trash Splash</td><td>Wipe walls adjacent to trash cans</td><td>2XWEEK</td></tr>
-                <tr><td>Walls</td><td>Spot clean Walls, Light Switches, and Electrical outlets to remove smudges and scuff marks</td><td>BI MONTHLY</td></tr>
-                </table>
+                <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT C: ONE-TIME PROJECT WORK</h2>
+                ${ exhibitCContent.value ? exhibitCContent.value : '<p style="text-align:center;">No One-Time Projects.</p>' }
+                ${ oneTimeProjectRows.value ? `
+                    <h3 style="color:#22c55e; margin-top:40px;">Pricing Summary</h3>
+                    <table><thead><tr><th>AREAS SERVICED</th><th>FREQUENCY</th><th>PRICE</th></tr></thead><tbody>${oneTimeProjectRows.value}</tbody></table>
+                ` : '' }
                 <div class="page-number">Page 9</div>
             </div>
-            </div>
-
-            <!-- PAGE 12: EXHIBIT C - CARPET CLEANING -->
-            <div class="page">
-            <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
-            <div class="content">
-                <h2 style="color: #22c55e; text-align: center; font-size: 1.8rem; margin-bottom: 40px;">EXHIBIT C ONE-TIME PROJECT WORK</h2>
-                <h3 style="color: #22c55e; margin-bottom: 20px;">CARPET - HOT WATER EXTRACT</h3>
-                <!-- DYNAMIC EXHIBITS (Bulleted List) -->
-                <ul>
-                    ${formatBullets(sectionContent.value['exhibits'])}
-                </ul>
-                <div class="page-number">Page 10</div>
-            </div>
-            </div>
-
-            <!-- PAGE 13: EXHIBIT C TABLE -->
-            <div class="page">
-            <div class="header-wave"></div>
-            <div class="logo"><img src="/images/logo.png" alt="Logo" width="70px"/></div>
-            <div class="content">
-                <table>
-                <thead><tr><th>AREAS SERVICED</th><th>FREQUENCY</th></tr></thead>
-                <tbody><tr><td>Whole Building</td><td>1 time</td></tr></tbody>
-                </table>
-                <div class="page-number">Page 11</div>
-            </div>
-            </div>
         </div>
+
         </body>
         </html>
     `
 })
 
+// --- 5. FUNCTIONALITY (Signature & Tracking) ---
 
+const openSignModal = () => showSignModal.value = true
+
+const handleSigned = async (data) => {
+    try {
+        const res = await axios.post(`/api/proposal/${token}/sign`, {
+            signer_name: data.name,
+            signer_title: data.title,
+            signature_image: data.signatureImage
+        })
+        
+        if(res.data.success) {
+            isSigned.value = true
+            showSignModal.value = false
+            signatureData.value = {
+                signer_name: data.name,
+                signer_title: data.title,
+                signature_image: data.signatureImage,
+                signed_at: new Date().toISOString(),
+                ip_address: '127.0.0.1' // Server fills this
+            }
+            window.location.reload()
+        }
+    } catch (e) {
+        alert("Error signing proposal")
+    }
+}
+
+// Tracking Observer
+const setupIntersectionObserver = () => {
+    const pages = document.querySelectorAll('.page')
+    if (pages.length === 0) return
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const sectionName = entry.target.getAttribute('data-section')
+                if (sectionName) currentSection.value = sectionName
+            }
+        })
+    }, { threshold: 0.5 })
+    pages.forEach((page) => observer.observe(page))
+}
+
+const startTrackingTimer = () => {
+    if (!recipientToken) return 
+    trackingInterval = setInterval(() => {
+        axios.post('/api/track-activity', {
+            rid: recipientToken,
+            section: currentSection.value,
+            seconds: 5
+        }).catch(err => {})
+    }, 5000)
+}
 </script>
 
-<style>
+<style scoped>
 .text-teal { color: #17a2b8; }
 .btn-teal { background-color: #17a2b8; border: none; }
-.btn-teal:hover{ background-color: #17a2b8;}
+.btn-teal:hover { background-color: #138496; }
 .pulse-animation { animation: pulse 2s infinite; }
 @keyframes pulse {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(23, 162, 184, 0.7); }
     70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(23, 162, 184, 0); }
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(23, 162, 184, 0); }
 }
+/* Ensure Preview looks like pages */
+#pdf-content { background-color: #525659; padding: 20px; width: 100%; display: flex; flex-direction: column; align-items: center; }
 </style>

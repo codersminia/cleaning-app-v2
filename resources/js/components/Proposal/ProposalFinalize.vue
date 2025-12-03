@@ -220,6 +220,7 @@ const combinedMonthlyTotal = computed(() => janitorialMonthlyTotal.value + recur
 
 // --- DATA FOR HTML ---
 const clientName = computed(() => proposal.value?.prospect?.company_name || 'Client Name');
+const clientEmail = computed(() => proposal.value?.prospect?.email || 'Email');
 const clientAddress = computed(() => {
     const p = proposal.value?.prospect;
     if(!p) return 'Client Address';
@@ -338,9 +339,9 @@ const fullPdfHtml = computed(() => {
     <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
     <div class="cover-overlay"></div>
     <div class="cover-text">
-      <h3>Believe313staffing.com</h3>
+      <h3>${clientEmail.value}</h3>
       <p>Prepared For: ${clientName.value}<br>${currentDate.value}<br>${clientAddress.value}</p>
-      <button class="btn-website">believe313staffing.com</button>
+      <button class="btn-website">${clientEmail.value}</button>
     </div>
   </div>
 
