@@ -36,4 +36,14 @@ class Proposal extends Model
         // hasOne looks for 'proposal_id' in the 'proposal_calculations' table
         return $this->hasOne(ProposalCalculation::class, 'proposal_id');
     }
+
+    public function recipients()
+    {
+        return $this->hasMany(ProposalRecipient::class);
+    }
+
+    public function signatures()
+    {
+        return $this->hasMany(ProposalSignature::class);
+    }
 }
