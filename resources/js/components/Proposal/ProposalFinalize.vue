@@ -64,9 +64,25 @@
                 <div class="fw-bold text-muted small">
                   TOTAL MONTHLY: <span class="text-teal">{{ formatCurrency(combinedMonthlyTotal) }}</span>
                 </div>
-                <button @click="downloadPDF" class="btn btn-teal text-white btn-sm d-flex align-items-center gap-2 fw-bold ms-auto">
-                    DOWNLOAD PDF
-                </button>
+                <button 
+					@click="downloadPDF" 
+					:disabled="isDownloading"
+					class="btn btn-teal text-white btn-sm d-flex align-items-center gap-2 fw-bold ms-auto"
+				>
+					<!-- State 1: Loading -->
+					<span v-if="isDownloading" class="d-flex align-items-center gap-2">
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+						GENERATING PDF...
+					</span>
+
+					<!-- State 2: Default -->
+					<span v-else class="d-flex align-items-center gap-2">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+						</svg>
+						DOWNLOAD PDF
+					</span>
+				</button>
             </div>
 
         <!-- PREVIEW CONTAINER -->
@@ -99,7 +115,7 @@ const isJanitorial = ref(false)
 const isConstruction = ref(false)
 const expandedSections = ref({})
 const showSendProposalModal = ref(false)
-
+const isDownloading = ref(false)
 const PROPOSAL_SECTIONS = [
   { id: 'cover-letter', title: 'Cover Letter' },
   { id: 'agreement', title: 'Agreement' },
@@ -612,6 +628,7 @@ const handleProposalSent = async (email) => {
 }
 
 const downloadPDF = () => {
+	isDownloading.value = true;
   const element = document.getElementById('pdf-content')
   const opt = {
     margin: 0,
@@ -620,7 +637,15 @@ const downloadPDF = () => {
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
   }
-  html2pdf().set(opt).from(element).save()
+   html2pdf().set(opt).from(element).save()
+    .then(() => {
+        isDownloading.value = false;
+    })
+    .catch((err) => {
+        console.error(err);
+        isDownloading.value = false;
+    });
+
 }
 </script>
 
