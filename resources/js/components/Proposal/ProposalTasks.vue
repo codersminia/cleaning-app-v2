@@ -454,18 +454,18 @@ onMounted(fetchData);
 
 // Helper to check if an area is selected (exists in selectedAreasData)
 const isAreaSelected = (areaTypeId) => {
-  return selectedAreasData.value.some(area => area.area_type_id === areaTypeId);
+  return selectedAreasData.value.some(area => area.area_type_id == areaTypeId);
 };
 
 // Helper to get a specific property for a selected area
 const getAreaProp = (areaTypeId, propName) => {
-  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  const area = selectedAreasData.value.find(a => a.area_type_id == areaTypeId);
   return area ? area[propName] : null;
 };
 
 // Helper to get the number of selected tasks for a given area type
 const getTaskCount = (areaTypeId) => {
-  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  const area = selectedAreasData.value.find(a => a.area_type_id == areaTypeId);
   return area && area.area_tasks ? area.area_tasks.length : 0;
 };
 
@@ -479,26 +479,26 @@ const getAvailableTasksForArea = (areaTypeId) => {
 
 // Check if a specific task is selected for a given area
 const isTaskSelected = (areaTypeId, taskId) => {
-  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
-  return area && area.area_tasks ? area.area_tasks.some(at => at.task_id === taskId) : false;
+  const area = selectedAreasData.value.find(a => a.area_type_id == areaTypeId);
+  return area && area.area_tasks ? area.area_tasks.some(at => at.task_id == taskId) : false;
 };
 
 // Get the frequency ID for a task within an area (either custom or default)
 const getTaskFrequencyId = (areaTypeId, taskId) => {
-  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  const area = selectedAreasData.value.find(a => a.area_type_id == areaTypeId);
   if (area && area.area_tasks) {
-    const areaTask = area.area_tasks.find(at => at.task_id === taskId);
+    const areaTask = area.area_tasks.find(at => at.task_id == taskId);
     if (areaTask) {
       return areaTask.custom_frequency_id || areaTask.task.default_frequency_id;
     }
   }
   // If task not found in area or no frequency set, return default or first frequency
-  const taskDetails = allTasks.value.find(t => t.id === taskId);
+  const taskDetails = allTasks.value.find(t => t.id == taskId);
   return taskDetails ? taskDetails.default_frequency_id : (allFrequencies.value[0]?.id || null);
 };
 
 const getAreaNotes = (areaTypeId) => {
-    const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+    const area = selectedAreasData.value.find(a => a.area_type_id == areaTypeId);
     return area ? area.notes : '';
 }
 
@@ -519,7 +519,7 @@ const toggleView = () => {
 };
 
 const toggleArea = async (areaType) => {
-  const existingArea = selectedAreasData.value.find(a => a.area_type_id === areaType.id);
+  const existingArea = selectedAreasData.value.find(a => a.area_type_id == areaType.id);
 
   if (existingArea) {
     // Area is currently selected, so deselect it (delete from DB)
@@ -568,8 +568,8 @@ const toggleTaskList = (areaTypeId) => {
 
 
 const updateAreaProp = async (areaTypeId, propName, value) => {
-  const areaIndex = selectedAreasData.value.findIndex(a => a.area_type_id === areaTypeId);
-  if (areaIndex === -1) return;
+  const areaIndex = selectedAreasData.value.findIndex(a => a.area_type_id == areaTypeId);
+  if (areaIndex == -1) return;
 
   const currentArea = selectedAreasData.value[areaIndex];
   // Convert value to appropriate type if needed (e.g., numbers from inputs)
@@ -611,10 +611,10 @@ const decrementRooms = (areaTypeId) => {
 };
 
 const toggleAreaTask = async (areaTypeId, task) => {
-  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  const area = selectedAreasData.value.find(a => a.area_type_id == areaTypeId);
   if (!area) return;
 
-  const existingAreaTask = area.area_tasks.find(at => at.task_id === task.id);
+  const existingAreaTask = area.area_tasks.find(at => at.task_id == task.id);
 
   if (existingAreaTask) {
     // Task is selected, deselect it (delete from DB)
@@ -645,10 +645,10 @@ const toggleAreaTask = async (areaTypeId, task) => {
 };
 
 const updateTaskFrequency = async (areaTypeId, taskId, newFrequencyId) => {
-  const area = selectedAreasData.value.find(a => a.area_type_id === areaTypeId);
+  const area = selectedAreasData.value.find(a => a.area_type_id == areaTypeId);
   if (!area) return;
 
-  const areaTask = area.area_tasks.find(at => at.task_id === taskId);
+  const areaTask = area.area_tasks.find(at => at.task_id == taskId);
   if (!areaTask) return; // Should not happen if dropdown is shown for selected task
 
   // Optimistically update UI

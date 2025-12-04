@@ -117,16 +117,16 @@ export default {
       const type = this.formData.per;
       let monthly = 0;
 
-      if (type === 'Week') {
+      if (type == 'Week') {
         // Freq * 4.333
         monthly = perClean * (freq * 4.333);
-      } else if (type === 'Month') {
+      } else if (type == 'Month') {
         // Freq (No scaling)
         monthly = perClean * freq;
-      } else if (type === 'Quarter') {
+      } else if (type == 'Quarter') {
         // Freq / 3
         monthly = perClean * (freq / 3);
-      } else if (type === 'Year') {
+      } else if (type == 'Year') {
         // Freq / 12
         monthly = perClean * (freq / 12);
       }

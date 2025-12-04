@@ -22,7 +22,7 @@ class DashboardController extends Controller
 
     public function getProspects()
     {
-        $prospects = Prospect::select('id', 'company_name')->orderBy('id', 'desc')->get();
+        $prospects = Prospect::select('id', 'company_name')->whereUserId(auth()->id())->orderBy('id', 'desc')->get();
         return response()->json($prospects);
     }
 
@@ -43,7 +43,7 @@ class DashboardController extends Controller
             'state' => 'required|string|max:100',
             'zip' => 'required|string|max:20',
         ]);
-
+        $validated['user_id'] = auth()->id();
         $prospect = Prospect::create($validated);
 
          return response()->json([

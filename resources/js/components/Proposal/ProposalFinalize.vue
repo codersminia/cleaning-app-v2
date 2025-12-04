@@ -136,7 +136,7 @@ const fetchData = async () => {
         
         // Parse Calculator Data
         if (proposal.value.calculations && proposal.value.calculations.calculator_data) {
-            calcData.value = typeof proposal.value.calculations.calculator_data === 'string' 
+            calcData.value = typeof proposal.value.calculations.calculator_data == 'string' 
                 ? JSON.parse(proposal.value.calculations.calculator_data) 
                 : proposal.value.calculations.calculator_data;
         }
@@ -171,10 +171,10 @@ const janitorialMonthlyTotal = computed(() => {
         let monthly = 0;
         const freq = parseFloat(cost.frequency)||0;
         const per = cost.per;
-        if(per === 'Week') monthly = costPerClean * (freq * 4.333);
-        else if(per === 'Month') monthly = costPerClean * freq;
-        else if(per === 'Quarter') monthly = costPerClean * (freq / 3);
-        else if(per === 'Year') monthly = costPerClean * (freq / 12);
+        if(per == 'Week') monthly = costPerClean * (freq * 4.333);
+        else if(per == 'Month') monthly = costPerClean * freq;
+        else if(per == 'Quarter') monthly = costPerClean * (freq / 3);
+        else if(per == 'Year') monthly = costPerClean * (freq / 12);
         else monthly = costPerClean * freq;
         return sum + monthly;
     }, 0);
@@ -195,10 +195,10 @@ const calculateProjectTotal = (proj, isRecurring) => {
     if (isRecurring) {
          const freq = parseFloat(proj.frequency)||0;
          const per = proj.per ? proj.per.toLowerCase() : '';
-         if(per === 'week') finalLabor = laborCost * (freq * 4.333);
-         else if(per === 'month') finalLabor = laborCost * freq;
-         else if(per === 'quarter') finalLabor = laborCost * (freq / 3);
-         else if(per === 'year') finalLabor = laborCost * (freq / 12);
+         if(per == 'week') finalLabor = laborCost * (freq * 4.333);
+         else if(per == 'month') finalLabor = laborCost * freq;
+         else if(per == 'quarter') finalLabor = laborCost * (freq / 3);
+         else if(per == 'year') finalLabor = laborCost * (freq / 12);
          else finalLabor = laborCost * freq; 
     }
     const expenses = (proj.expenses || []).reduce((sum, e) => sum + (parseFloat(e.cost)||0), 0);
@@ -231,18 +231,18 @@ const currentDate = computed(() => new Date().toLocaleDateString());
 // ROWS FOR TABLES
 const recurringProjectRows = computed(() => {
     const projs = calcData.value.recurringProjects || [];
-    if (projs.length === 0) return '';
+    if (projs.length == 0) return '';
     return projs.map(proj => `<tr><td style="text-align:left; padding:12px; border:1px solid #ddd;">${proj.name}</td><td style="text-align:center; padding:12px; border:1px solid #ddd;">${proj.frequency} x ${proj.per}</td><td class="price" style="text-align:center; padding:12px; border:1px solid #ddd; font-weight:bold; color:#22c55e;">${formatCurrency(calculateProjectTotal(proj, true))}</td></tr>`).join('');
 });
 
 const oneTimeProjectRows = computed(() => {
     const projs = calcData.value.oneTimeProjects || [];
-    if (projs.length === 0) return '';
+    if (projs.length == 0) return '';
     return projs.map(proj => `<tr><td style="text-align:left; padding:12px; border:1px solid #ddd;">${proj.name}</td><td style="text-align:center; padding:12px; border:1px solid #ddd;">1 Time</td><td class="price" style="text-align:center; padding:12px; border:1px solid #ddd; font-weight:bold; color:#22c55e;">${formatCurrency(calculateProjectTotal(proj, false))}</td></tr>`).join('');
 });
 
 const exhibitARows = computed(() => {
-    if (!proposal.value?.proposal_areas || proposal.value.proposal_areas.length === 0) return '<tr><td colspan="3" style="text-align:center;">No Janitorial Areas</td></tr>';
+    if (!proposal.value?.proposal_areas || proposal.value.proposal_areas.length == 0) return '<tr><td colspan="3" style="text-align:center;">No Janitorial Areas</td></tr>';
     let rows = '';
     proposal.value.proposal_areas.forEach(area => {
         const areaName = area.area_type?.name || 'Area';
@@ -257,8 +257,8 @@ const exhibitARows = computed(() => {
 
 // Helper for Project Exhibits (B and C)
 const getProjectExhibitHtml = (isRecurring) => {
-    const relevantProjects = projects.value.filter(p => !!p.is_recurring === isRecurring);
-    if (relevantProjects.length === 0) return '';
+    const relevantProjects = projects.value.filter(p => !!p.is_recurring == isRecurring);
+    if (relevantProjects.length == 0) return '';
 
     let html = '';
     relevantProjects.forEach(proj => {

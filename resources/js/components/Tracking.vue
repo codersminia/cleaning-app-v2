@@ -14,7 +14,7 @@
     </div>
 
     <!-- 2. HEADER -->
-    <div class="text-center mb-5" v-if="viewState === 'list'">
+    <div class="text-center mb-5" v-if="viewState == 'list'">
       <div class="mb-3">
         <svg width="50" height="50" viewBox="0 0 50 50" fill="none" stroke="#17a2b8" stroke-width="2">
             <rect x="8" y="6" width="34" height="38" rx="2" />

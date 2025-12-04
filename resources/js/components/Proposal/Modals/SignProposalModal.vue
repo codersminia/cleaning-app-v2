@@ -4,12 +4,12 @@
       
       <!-- HEADER -->
       <div class="modal-header bg-teal text-white p-3 d-flex justify-content-between">
-        <h5 class="m-0 fw-bold">{{ step === 1 ? 'Enter Your Information' : 'Add E-Signature' }}</h5>
+        <h5 class="m-0 fw-bold">{{ step == 1 ? 'Enter Your Information' : 'Add E-Signature' }}</h5>
         <button @click="$emit('close')" class="btn-close btn-close-white"></button>
       </div>
 
       <!-- STEP 1: INFO -->
-      <div v-if="step === 1" class="modal-body p-4">
+      <div v-if="step == 1" class="modal-body p-4">
         <div class="mb-3">
           <label class="fw-bold text-muted small">Name</label>
           <input v-model="signerInfo.name" type="text" class="form-control border-bottom-only">
@@ -28,25 +28,25 @@
       </div>
 
       <!-- STEP 2: SIGNATURE -->
-      <div v-if="step === 2" class="modal-body p-4">
+      <div v-if="step == 2" class="modal-body p-4">
         <!-- Tabs -->
         <div class="d-flex mb-3 border rounded">
-          <button class="btn flex-fill" :class="tab === 'draw' ? 'btn-teal text-white' : 'bg-light'" @click="tab = 'draw'">Draw It</button>
-          <button class="btn flex-fill" :class="tab === 'type' ? 'btn-teal text-white' : 'bg-light'" @click="tab = 'type'">Type It</button>
+          <button class="btn flex-fill" :class="tab == 'draw' ? 'btn-teal text-white' : 'bg-light'" @click="tab = 'draw'">Draw It</button>
+          <button class="btn flex-fill" :class="tab == 'type' ? 'btn-teal text-white' : 'bg-light'" @click="tab = 'type'">Type It</button>
         </div>
 
         <!-- Draw Pad -->
-        <div v-show="tab === 'draw'" class="border rounded" style="height: 200px; background: #f8f9fa;">
+        <div v-show="tab == 'draw'" class="border rounded" style="height: 200px; background: #f8f9fa;">
            <VueSignaturePad ref="signaturePad" width="100%" height="200px" :options="{ penColor: '#000' }" />
         </div>
 
         <!-- Type Pad -->
-        <div v-show="tab === 'type'" class="border rounded d-flex align-items-center justify-content-center" style="height: 200px; background: #f8f9fa;">
+        <div v-show="tab == 'type'" class="border rounded d-flex align-items-center justify-content-center" style="height: 200px; background: #f8f9fa;">
            <h2 style="font-family: 'Brush Script MT', cursive; font-size: 3rem;">{{ signerInfo.name }}</h2>
         </div>
 
         <div class="d-flex justify-content-between mt-4">
-             <button v-if="tab === 'draw'" @click="clearPad" class="btn btn-outline-secondary btn-sm">Clear</button>
+             <button v-if="tab == 'draw'" @click="clearPad" class="btn btn-outline-secondary btn-sm">Clear</button>
              <div></div> <!-- Spacer -->
              <div class="d-flex gap-2">
                  <button @click="step = 1" class="btn btn-light">Back</button>
@@ -82,7 +82,7 @@ const clearPad = () => signaturePad.value.clearSignature();
 const submitSignature = () => {
     let signatureImage = null;
 
-    if (tab.value === 'draw') {
+    if (tab.value == 'draw') {
         const { isEmpty, data } = signaturePad.value.saveSignature();
         if (isEmpty) return alert("Please sign first");
         signatureImage = data;

@@ -33,9 +33,9 @@
         :to="{ name: step.name, params: { id: proposalId } }"
         class="stepper-step text-decoration-none"
         :class="{
-          active: $route.name === step.name,
-          first: index === 0,
-          last: index === steps.length - 1
+          active: $route.name == step.name,
+          first: index == 0,
+          last: index == steps.length - 1
         }"
       >
         <div class="step-content">
@@ -130,7 +130,7 @@ const calculateSteps = () => {
     // 🛡️ SECURITY REDIRECT
     // If the user manually typed the URL for 'Cleaning Tasks' but it's supposed to be hidden,
     // redirect them to the first available step (Special Projects).
-    if (route.name === 'proposal.tasks') {
+    if (route.name == 'proposal.tasks') {
         router.replace({ name: 'proposal.projects', params: { id: proposalId } });
     }
   }

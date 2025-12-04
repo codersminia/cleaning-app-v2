@@ -30,7 +30,7 @@
         <div class="col-md-2"></div>
         <!-- Option 1 Card 
         <div class="col-md-4">
-          <div class="card border-0 option-card bg-info text-white" :class="{ 'shadow-lg': selectedOption === '1' }">
+          <div class="card border-0 option-card bg-info text-white" :class="{ 'shadow-lg': selectedOption == '1' }">
             <div class="card-body">
               <div class="d-flex gap-3">
                 <!-- Icon Circle 
@@ -51,7 +51,7 @@
         </div>
         <!-- Option 2 Card 
         <div class="col-md-4">
-          <div class="card border-0 option-card bg-info text-white" :class="{ 'shadow-lg': selectedOption === '2' }">
+          <div class="card border-0 option-card bg-info text-white" :class="{ 'shadow-lg': selectedOption == '2' }">
             <div class="card-body">
               <div class="d-flex gap-3">
                 <!-- Icon Circle 
@@ -74,7 +74,7 @@
       </div>
     </div> -->
     <!-- Payroll Cost Factors Section -->
-        <div v-if="payrollExpanded && selectedOption === '1' && showJanitorialSection" class="payroll-section mt-4">
+        <div v-if="payrollExpanded && selectedOption == '1' && showJanitorialSection" class="payroll-section mt-4">
             <!-- Header with Toggle Button -->
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h5 class="fw-bold mb-0">Payroll Cost Factors</h5>
@@ -130,7 +130,7 @@
               </div>
             </div>
         </div>
-        <div class="labor-section bg-light py-4" v-if="selectedOption === '1' && showJanitorialSection">
+        <div class="labor-section bg-light py-4" v-if="selectedOption == '1' && showJanitorialSection">
             <div class="row align-items-center">
               <!-- Expand All Toggle -->
               <div class="col-md-3">
@@ -175,10 +175,10 @@
             </div>
         </div>
         <!-- Labor Cost Card Section -->
-        <div class="mt-5" v-if="selectedOption === '1' && showJanitorialSection">
+        <div class="mt-5" v-if="selectedOption == '1' && showJanitorialSection">
           
           <!-- Display message if no costs added yet -->
-          <div v-if="laborCosts.length === 0" class="text-center text-muted py-4">
+          <div v-if="laborCosts.length == 0" class="text-center text-muted py-4">
             <p>No labor costs added yet. Click "ADD A NEW LABOR COST" to begin.</p>
           </div>
 
@@ -298,7 +298,7 @@
 
         </div>
         <!-- Pricing Summary Section -->
-        <div class="mt-5 mb-5" v-if="selectedOption === '1' && showJanitorialSection">
+        <div class="mt-5 mb-5" v-if="selectedOption == '1' && showJanitorialSection">
           <div class="row g-0" style="background-color: #a8dfe1;">
             
             <!-- Left Section - Total Price Card -->
@@ -464,7 +464,7 @@
         </div>
 
         <!-- RECURRING PROJECTS SECTION -->
-        <div class="mt-5" v-if="selectedOption === '1' && recurringProjects.length > 0 && showRecurringSection">
+        <div class="mt-5" v-if="selectedOption == '1' && recurringProjects.length > 0 && showRecurringSection">
           
           <!-- Header -->
           <div class="text-center mb-4">
@@ -717,7 +717,7 @@
         </div>
 
         <!-- COMBINED TOTAL CARD (Janitorial + Recurring Projects) -->
-        <div class="container mt-5 mb-5" v-if="selectedOption === '1' && showCombinedTotalCard">
+        <div class="container mt-5 mb-5" v-if="selectedOption == '1' && showCombinedTotalCard">
           <div class="d-flex align-items-center rounded shadow-sm text-white position-relative overflow-hidden" style="background-color: #5c6b7f; min-height: 120px;">
             
             <!-- Decorative slants (Optional css polish to match image background style) -->
@@ -760,7 +760,7 @@
 
         <!-- One Time PRojects Section-->
 
-        <div class="mt-5" v-if="selectedOption === '1' && oneTimeProjects.length > 0">
+        <div class="mt-5" v-if="selectedOption == '1' && oneTimeProjects.length > 0">
           
           <!-- Header -->
           <div class="text-center mb-4">
@@ -986,14 +986,14 @@
           </div>
         </div>
 
-    <!-- <div class="border-card mt-5" v-if="selectedOption === '2'">
+    <!-- <div class="border-card mt-5" v-if="selectedOption == '2'">
       <!-- Tabs Header 
       <div class="tab-header">
-        <div class="tab-item" :class="{ active: activeTab === 'account' }" @click="activeTab = 'account'">
+        <div class="tab-item" :class="{ active: activeTab == 'account' }" @click="activeTab = 'account'">
           <span class="tab-badge">1</span>
           Account Info
         </div>
-        <div class="tab-item" :class="{ active: activeTab === 'cost' }" @click="activeTab = 'cost'">
+        <div class="tab-item" :class="{ active: activeTab == 'cost' }" @click="activeTab = 'cost'">
           <span class="tab-badge">2</span>
           Cost Info
         </div>
@@ -1002,7 +1002,7 @@
       <!-- Form Content 
       <div class="container">
         <!-- ACCOUNT INFO TAB 
-        <div v-if="activeTab === 'account'">
+        <div v-if="activeTab == 'account'">
           <!-- Building Types Dropdown 
           <div class="form-group-custom">
             <label class="form-label fw-bold text-teal" style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Building Types</label>
@@ -1072,7 +1072,7 @@
         </div>
 
         <!-- COST INFO TAB 
-        <div v-if="activeTab === 'cost'">
+        <div v-if="activeTab == 'cost'">
           <!-- Will you use Employees? 
           <div class="form-group-custom">
             <label class="form-label fw-bold text-teal" style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Will you use Employees?</label>
@@ -1292,7 +1292,7 @@ export default {
     // 6. Price Per Sq Ft (Calculated Result)
     calculatedPerSqFt() {
       const sqFt = parseFloat(this.buildingSqFt) || 0;
-      if (sqFt === 0) return 0;
+      if (sqFt == 0) return 0;
       return (this.finalMonthlyCharge / sqFt).toFixed(2);
     },
     totalRecurringProjectsCost() {
@@ -1428,13 +1428,13 @@ export default {
         const type = cost.per;
         let monthly = 0;
 
-        if (type === 'Week') {
+        if (type == 'Week') {
           monthly = perClean * (freq * 4.333);
-        } else if (type === 'Month') {
+        } else if (type == 'Month') {
           monthly = perClean * freq;
-        } else if (type === 'Quarter') {
+        } else if (type == 'Quarter') {
           monthly = perClean * (freq / 3);
-        } else if (type === 'Year') {
+        } else if (type == 'Year') {
           monthly = perClean * (freq / 12);
         }
         return monthly;
@@ -1551,7 +1551,7 @@ export default {
     updateMarginFromDollar() {
       // Logic: % = (Dollar / SubTotal) * 100
       const dollar = parseFloat(this.marginDollar) || 0;
-      if (this.subTotal === 0) {
+      if (this.subTotal == 0) {
         this.marginPercent = 0;
         return;
       }
@@ -1631,10 +1631,10 @@ export default {
       const freq = parseFloat(project.frequency) || 0;
       const per = project.per ? project.per.toLowerCase() : '';
       
-      if (per === 'week') return base * (freq * 4.333);
-      if (per === 'month') return base * freq;
-      if (per === 'quarter') return base * (freq / 3);
-      if (per === 'year') return base * (freq / 12);
+      if (per == 'week') return base * (freq * 4.333);
+      if (per == 'month') return base * freq;
+      if (per == 'quarter') return base * (freq / 3);
+      if (per == 'year') return base * (freq / 12);
       return base * freq;
     },
 
@@ -1679,7 +1679,7 @@ export default {
     updateProjectMarginDollar(project) {
       const sub = this.getProjectSubTotal(project);
       const dol = parseFloat(project.marginDollar) || 0;
-      if(sub === 0) { project.marginPercent = 0; return; }
+      if(sub == 0) { project.marginPercent = 0; return; }
       project.marginPercent = ((dol / sub) * 100).toFixed(2);
     },
 
@@ -1700,7 +1700,7 @@ export default {
     getProjectPerSqFt(project) {
       const total = this.getProjectGrandTotal(project);
       const sqFt = parseFloat(project.sqFt) || 0;
-      if (sqFt === 0) return '0.00';
+      if (sqFt == 0) return '0.00';
       return (total / sqFt).toFixed(2);
     },
     // --- STEP 2: CALCULATION FORMULAS ---
@@ -1715,10 +1715,10 @@ export default {
       const per = project.per ? project.per.toLowerCase() : '';
 
       let monthly = 0;
-      if (per === 'week') monthly = baseCost * (freq * 4.333);
-      else if (per === 'month') monthly = baseCost * freq;
-      else if (per === 'quarter') monthly = baseCost * (freq / 3);
-      else if (per === 'year') monthly = baseCost * (freq / 12);
+      if (per == 'week') monthly = baseCost * (freq * 4.333);
+      else if (per == 'month') monthly = baseCost * freq;
+      else if (per == 'quarter') monthly = baseCost * (freq / 3);
+      else if (per == 'year') monthly = baseCost * (freq / 12);
       // fallback
       else monthly = baseCost * freq; 
 
@@ -1762,7 +1762,7 @@ export default {
     },
     updateRecurringMarginFromDollar() {
       const dollar = parseFloat(this.recurringMarginDollar) || 0;
-      if (this.recurringSubTotal === 0) {
+      if (this.recurringSubTotal == 0) {
         this.recurringMarginPercent = 0;
         return;
       }
@@ -1814,7 +1814,7 @@ export default {
         const response = await axios.get(`/api/proposals/${proposalId}/calculator`);
         const data = response.data;
 
-        if (Object.keys(data).length === 0) return; // No data saved yet
+        if (Object.keys(data).length == 0) return; // No data saved yet
 
         // 1. Restore Global Settings
         this.payrollTaxes = data.payrollTaxes || 0;
@@ -1849,10 +1849,10 @@ export default {
 
     // Helper to merge saved project inputs (staff, rate, etc) into the fresh DB list
     mergeProjectData(currentList, savedList) {
-      if (!savedList || savedList.length === 0) return;
+      if (!savedList || savedList.length == 0) return;
 
       currentList.forEach(currentProj => {
-        const savedProj = savedList.find(s => s.id === currentProj.id);
+        const savedProj = savedList.find(s => s.id == currentProj.id);
         if (savedProj) {
           // Restore inputs
           currentProj.staff = savedProj.staff;

@@ -100,9 +100,9 @@ async handleSubmit() {
 
       } catch (error) {
         console.error(error);
-        if (error.response && error.response.status === 419) {
+        if (error.response && error.response.status == 419) {
             this.errorMessage = "Security token expired. Please refresh the page.";
-        } else if (error.response && error.response.status === 401) {
+        } else if (error.response && error.response.status == 401) {
           this.errorMessage = "Invalid email or password.";
         } else {
           this.errorMessage = "An unexpected error occurred.";

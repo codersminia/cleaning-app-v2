@@ -252,7 +252,7 @@ const toggleProjectTask = async (project, task, isSelected) => {
     
     // --- Optimistic UI Update ---
     const projectsArray = project.is_recurring ? recurringProjects.value : oneTimeProjects.value;
-    const projectIndex = projectsArray.findIndex(p => p.id === project.id);
+    const projectIndex = projectsArray.findIndex(p => p.id == project.id);
     
     if (projectIndex !== -1) {
         const selectedIds = projectsArray[projectIndex].selected_task_ids;

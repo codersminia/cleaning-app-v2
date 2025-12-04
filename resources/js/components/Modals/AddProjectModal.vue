@@ -3,7 +3,7 @@
     <div class="modal-dialog-custom">
       <!-- Modal Header -->
       <div class="modal-header-custom">
-        <h5 class="modal-title-custom">Add New {{ projectType === 'one-time' ? 'One-Time' : 'Recurring' }} Project</h5>
+        <h5 class="modal-title-custom">Add New {{ projectType == 'one-time' ? 'One-Time' : 'Recurring' }} Project</h5>
         <button class="btn-close-modal" @click="closeModal">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
@@ -39,7 +39,7 @@
           <label class="form-label fw-bold text-teal">Add Specific Area Here <span class="text-danger">*</span></label>
           <div class="multi-select-wrapper">
             <div class="selected-areas-display form-control" @click="toggleAreaDropdown" :class="{ 'is-disabled': isLoading }">
-              <span v-if="formData.area_ids.length === 0" class="placeholder-text">Select Area(s)</span>
+              <span v-if="formData.area_ids.length == 0" class="placeholder-text">Select Area(s)</span>
               <div v-else class="area-tags">
                 <span v-for="areaId in formData.area_ids" :key="areaId" class="area-tag">
                   {{ getAreaName(areaId) }}
@@ -68,7 +68,7 @@
         </div>
 
         <!-- Frequency and Per Row (Conditionally rendered) -->
-        <div v-if="projectType === 'recurring'" class="row g-3 mb-4">
+        <div v-if="projectType == 'recurring'" class="row g-3 mb-4">
           <div class="col-md-6">
             <label class="form-label fw-bold text-teal">Frequency</label>
             <div class="select-wrapper">
@@ -169,7 +169,7 @@ export default {
     projectType: { // Watch projectType to set default frequency/per
       immediate: true, // Run immediately on component mount
       handler(newType) {
-        if (newType === 'one-time') {
+        if (newType == 'one-time') {
           this.formData.frequency_id = 1; // Default for one-time
           this.formData.per = 'once'; // Default for one-time (ensure 'once' in enum)
         } else {
@@ -181,7 +181,7 @@ export default {
   },
   methods: {
     getAreaName(areaId) {
-      const area = this.availableProposalAreaTypes.find(a => a.value === areaId);
+      const area = this.availableProposalAreaTypes.find(a => a.value == areaId);
       return area ? area.text : `ID: ${areaId}`;
     },
     closeModal() {
@@ -204,7 +204,7 @@ export default {
           // You might want to pre-select the first one or leave empty
           // this.formData.serviceType_id = this.availableServiceTypes[0].value;
         }
-        if (this.projectType === 'recurring') {
+        if (this.projectType == 'recurring') {
             // Ensure frequency and per are cleared for selection in recurring
             this.formData.frequency_id = '';
             this.formData.per = '';
@@ -227,10 +227,10 @@ export default {
       if (!this.formData.serviceType_id) {
         this.errors.serviceType_id = ['Service Type is required.'];
       }
-      if (this.formData.area_ids.length === 0) {
+      if (this.formData.area_ids.length == 0) {
         this.errors.area_ids = ['At least one area is required.'];
       }
-      if (this.projectType === 'recurring') {
+      if (this.projectType == 'recurring') {
         if (!this.formData.frequency_id) {
           this.errors.frequency_id = ['Frequency is required for recurring projects.'];
         }
@@ -249,7 +249,7 @@ export default {
           proposal_id: this.proposalId,
           serviceType_id: this.formData.serviceType_id,
           area_ids: this.formData.area_ids,
-          is_recurring: this.projectType === 'recurring',
+          is_recurring: this.projectType == 'recurring',
           frequency_id: this.formData.frequency_id,
           per: this.formData.per,
           // You might want to add a 'name' field to the form if you need it for the projects table
@@ -267,7 +267,7 @@ export default {
 
       } catch (error) {
         console.error('Error adding project:', error);
-        if (error.response && error.response.status === 422) {
+        if (error.response && error.response.status == 422) {
           this.errors = error.response.data.errors; // Display validation errors
         } else {
           alert('Failed to add project. Please try again.');
@@ -284,7 +284,7 @@ export default {
         per: ''           // Reset to empty for proper selection in recurring
       };
       // Re-apply one-time defaults if projectType is one-time
-      if (this.projectType === 'one-time') {
+      if (this.projectType == 'one-time') {
         this.formData.frequency_id = 1;
         this.formData.per = 'once';
       }

@@ -23,5 +23,6 @@ class Prospect extends Model
         'city',
         'state',
         'zip',
+        'user_id',
     ];
 }

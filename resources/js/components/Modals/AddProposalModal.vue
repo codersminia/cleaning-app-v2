@@ -169,7 +169,7 @@
           </div>
 
           <!-- Projects Only -->
-          <div v-if="form.category === 'projects_only'" class="alert alert-info mt-4">
+          <div v-if="form.category == 'projects_only'" class="alert alert-info mt-4">
             <p class="m-0">
               <strong>Projects are special jobs.</strong><br />
               Example: Carpet Cleaning, Window Washing, Scrubbing Floors.
@@ -265,7 +265,7 @@ export default {
         if (!this.form.frequency) {
           this.errors.frequency = 'Please select a frequency.';
         } else if (this.showWeekdays) {
-          if (this.form.selectedDays.length === 0) {
+          if (this.form.selectedDays.length == 0) {
             this.errors.selectedDays = 'Please select at least one weekday.';
           } else if (this.form.selectedDays.length !== this.requiredDays) {
             this.errors.selectedDays = 'Selected days must match the frequency.';
@@ -277,7 +277,7 @@ export default {
         this.errors.phase = 'Please select a cleaning phase.';
       }
 
-      return Object.keys(this.errors).length === 0;
+      return Object.keys(this.errors).length == 0;
     },
 
     async submitForm() {

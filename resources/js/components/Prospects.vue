@@ -32,6 +32,13 @@
           <h1 class="display-5 fw-bold mb-2">Prospects</h1>
           <p class="text-muted mb-1">Prospect contact information listed below</p>
           <p class="text-muted">Click card for details</p>
+          <button
+            style="background-color: #20b2aa;"
+            @click="openAddProspectModal"
+            class="btn text-white fw-bold px-4 py-2"
+          >
+            ADD PROSPECTS
+          </button>
         </div>
 
         <!-- Filter Icon -->
@@ -117,7 +124,7 @@ export default {
     const params = new URLSearchParams(window.location.search)
     const shouldOpen = params.get('openModal')
 
-    this.showModal = shouldOpen === '1'
+    this.showModal = shouldOpen == '1'
   },
 
   methods: {
@@ -147,7 +154,10 @@ export default {
 
     goToLocation(id) {
         window.location.href = `/location/${id}`;
-    }
+    },
+      openAddProspectModal() {
+      this.showModal = true
+    },
   },
 }
 </script>

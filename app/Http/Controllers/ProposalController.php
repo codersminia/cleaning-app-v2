@@ -17,6 +17,25 @@ use App\Models\ProposalRecipient;
 
 class ProposalController extends Controller
 {
+
+    public function getProposalsByProspect($id)
+    {
+        $proposals = Proposal::where('prospect_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($proposals);
+    }
+
+    public function destroy($id)
+    {
+        $proposal = Proposal::findOrFail($id);
+        
+        $proposal->delete();
+
+        return response()->json(['message' => 'Proposal deleted successfully']);
+    }
+
     // ✅ Store a new proposal
     public function store(Request $request)
     {
@@ -298,8 +317,8 @@ class ProposalController extends Controller
         $is_janitorial = in_array($proposal->commercial_category, ['janitorial_projects', 'janitorial_cleaning']) || 
                          in_array($proposal->residential_category, ['cleaning_projects']);
                          
-        $is_construction = $proposal->commercial_category === 'construction_cleaning' || 
-                           $proposal->residential_category === 'construction_cleaning';
+        $is_construction = $proposal->commercial_category == 'construction_cleaning' || 
+                           $proposal->residential_category == 'construction_cleaning';
 
         return response()->json([
             'proposal' => $proposal,

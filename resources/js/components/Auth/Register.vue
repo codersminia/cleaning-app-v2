@@ -96,7 +96,7 @@ export default {
         }
 
       } catch (error) {
-        if (error.response && error.response.status === 422) {
+        if (error.response && error.response.status == 422) {
           // Validation Errors (e.g. email taken, passwords don't match)
           this.errors = error.response.data.errors;
         } else {
