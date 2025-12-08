@@ -7,9 +7,9 @@
       <div class="modal-header-custom">
         <h5 class="m-0 text-white fw-bold">Add a New Proposal</h5>
         <div class="d-flex align-items-center gap-3">
-          <button class="btn btn-outline-light rounded-pill px-3 py-2 text-white fw-bold">
+          <!-- <button class="btn btn-outline-light rounded-pill px-3 py-2 text-white fw-bold">
             Your Saved Templates <span class="ms-2">▼</span>
-          </button>
+          </button> -->
           <button class="btn-close-custom" @click="closeModal">×</button>
         </div>
       </div>

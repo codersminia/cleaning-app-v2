@@ -27,7 +27,8 @@
 
       <!-- Modal Footer -->
       <div class="modal-footer p-4 bg-light border-top d-flex gap-3">
-        <button class="btn btn-teal text-white px-4 py-2 fw-bold" @click="saveForm">SEND PROPOSAL</button>
+        <button class="btn btn-teal text-white px-4 py-2 fw-bold" :disabled="loading" @click="saveForm"><span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  {{ loading ? 'SENDING...' : 'SEND PROPOSAL' }}</button>
         <button class="btn text-muted" @click="closeModal">CANCEL</button>
       </div>
     </div>
@@ -41,7 +42,11 @@ export default {
     isOpen: {
       type: Boolean,
       required: true
-    }
+    },
+     loading: {
+    type: Boolean,
+    default: false
+  }
   },
   data() {
     return {

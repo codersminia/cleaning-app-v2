@@ -8,23 +8,23 @@
         <h6 class="fw-bold text-dark mb-3">TASKS BELOW BEFORE CONTINUING</h6>
         <div class="d-flex justify-content-center align-items-center gap-3">
           <span class="badge-selected">{{ selectedAreasData.length }} AREAS SELECTED</span>
-          <a href="#" class="text-info text-decoration-none small fw-semibold">
+          <!-- <a href="#" class="text-info text-decoration-none small fw-semibold">
             Im done here next step →
-          </a>
+          </a> -->
         </div>
       </div>
 
       <!-- Area Builder Section -->
       <div class="area-builder-card p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <button class="btn-add-area">
+          <!-- <button class="btn-add-area">
             <i class="bi bi-grid-3x3-gap me-2"></i>ADD CUSTOM AREA
-          </button>
+          </button> -->
 
           <div class="text-center">
-            <div class="building-icon-wrapper">
+            <!-- <div class="building-icon-wrapper">
               <i class="bi bi-building"></i>
-            </div>
+            </div> -->
             <h6 class="fw-bold mt-2 mb-0">Area Builder</h6>
           </div>
 
@@ -368,17 +368,17 @@
 
 
         <!-- Bottom Links -->
-        <div class="bottom-links mt-4 pt-3">
+        <!-- <div class="bottom-links mt-4 pt-3">
           <a href="#" class="text-info text-decoration-none small fw-semibold">Hide Unused Areas/Tasks</a>
-        </div>
+        </div> -->
       </div>
 
       <!-- Bottom Add Button -->
-      <div class="text-end mb-4">
+      <!-- <div class="text-end mb-4">
         <button class="btn-add-area">
           <i class="bi bi-grid-3x3-gap me-2"></i>ADD CUSTOM AREA
         </button>
-      </div>
+      </div> -->
     </div>
 
     <!-- Footer -->
@@ -387,9 +387,9 @@
         Great! You've have <span class="highlight">{{ selectedAreasData.length }} areas</span>
         and selected <span class="highlight">{{ getTotalSelectedTasks() }} tasks</span>.
       </p>
-      <button class="btn-projects">
+      <!-- <button class="btn-projects">
         Projects <i class="bi bi-arrow-right ms-2"></i>
-      </button>
+      </button> -->
     </div>
   </div>
 </template>

@@ -406,6 +406,7 @@ class ProposalController extends Controller
     public function getTrackingList() {
         $proposals = Proposal::with(['recipients', 'prospect']) // Assuming relationships exist
             ->whereIn('status', ['sent', 'accepted'])
+            ->whereCreatedBy(auth()->id())
             ->orderBy('sent_at', 'desc')
             ->get()
             ->map(function($p) {

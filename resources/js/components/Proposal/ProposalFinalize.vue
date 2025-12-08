@@ -5,8 +5,8 @@
       <div class="d-none d-md-flex align-items-center justify-content-between gap-4">
         <div class="bg-white rounded p-3 d-flex align-items-center gap-2">
           <router-link :to="{ name: 'proposal.calculator', params: { id: proposalId } }" class="btn btn-link text-decoration-none d-flex align-items-center gap-2 p-0 text-dark">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            <span class="fw-bold">Go Back</span>
+            <!-- <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span class="fw-bold">Go Back</span> -->
           </router-link>
         </div>
 
@@ -62,9 +62,9 @@
       <!-- We remove column sizing during print to use full width -->
       <div class="col-lg-8 print-full-width">
             <div class="d-flex align-items-center justify-content-between mb-3 d-print-none">
-                <div class="fw-bold text-muted small">
+                <!-- <div class="fw-bold text-muted small">
                   TOTAL MONTHLY: <span class="text-teal">{{ formatCurrency(combinedMonthlyTotal) }}</span>
-                </div>
+                </div> -->
                 <!-- CHANGED FUNCTION TO triggerNativePrint -->
                 <button 
 					@click="triggerNativePrint" 
@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <SendProposalModal :isOpen="showSendProposalModal" @close="closeSendProposalModal" @next="handleProposalSent" />
+    <SendProposalModal :isOpen="showSendProposalModal" :loading="isSending"  @close="closeSendProposalModal" @next="handleProposalSent" />
   </div>
 </template>
 
@@ -107,6 +107,7 @@ const calcData = ref({})
 const isJanitorial = ref(false)
 const isConstruction = ref(false)
 const expandedSections = ref({})
+const isSending = ref(false)
 const showSendProposalModal = ref(false)
 
 const PROPOSAL_SECTIONS = [
@@ -545,6 +546,7 @@ const openSendProposalModal = () => showSendProposalModal.value = true
 const closeSendProposalModal = () => showSendProposalModal.value = false
 
 const handleProposalSent = async (email) => {
+	isSending.value = true
     try {
         await axios.post(`/api/proposals/${props.proposalId}/finalize-and-send`, {
             email: email,
@@ -555,6 +557,8 @@ const handleProposalSent = async (email) => {
     } catch (error) {
         console.error(error)
         alert("Failed to send proposal")
+    } finally {
+        isSending.value = false // 2. Stop loading regardless of success/fail
     }
 }
 

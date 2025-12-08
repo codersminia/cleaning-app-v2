@@ -15,13 +15,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto d-flex gap-3">
           <!-- Chat Button -->
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <button class="btn btn-outline-info" style="border-color: #14b8a6; color: #14b8a6; font-weight: 500;">
               Chat
             </button>
           </li>
 
-          <!-- Help Dropdown -->
+          <!-- Help Dropdown 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="helpDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white; font-weight: 500;">
               Help
@@ -31,7 +31,7 @@
               <li><a class="dropdown-item" href="#" style="color: white;">Support</a></li>
               <li><a class="dropdown-item" href="#" style="color: white;">FAQ</a></li>
             </ul>
-          </li>
+          </li> -->
 
           <!-- Menu Dropdown -->
           <li class="nav-item dropdown">
@@ -39,8 +39,8 @@
               Menu
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown" style="background-color: #334155;">
-              <li><a class="dropdown-item" href="#" style="color: white;">Profile</a></li>
-              <li><a class="dropdown-item" href="#" style="color: white;">Settings</a></li>
+              <!-- <li><a class="dropdown-item" href="#" style="color: white;">Profile</a></li>
+              <li><a class="dropdown-item" href="#" style="color: white;">Settings</a></li> -->
             <li><a class="dropdown-item" @click.prevent="logout" href="#" style="color: white;">Logout</a></li>
             </ul>
           </li>

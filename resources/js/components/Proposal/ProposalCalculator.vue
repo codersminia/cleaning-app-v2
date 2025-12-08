@@ -6,9 +6,9 @@
         <div class="row align-items-center">
           <!-- Go Back Button -->
           <div class="col-md-3">
-            <button class="btn btn-outline-secondary btn-sm">
+            <!-- <button class="btn btn-outline-secondary btn-sm">
               <span class="text-info">←</span> Go Back
-            </button>
+            </button> -->
           </div>
           <!-- Center Title -->
           <div class="col-md-6 text-center">
@@ -17,9 +17,9 @@
           </div>
           <!-- Next Step Button -->
           <div class="col-md-3 text-end">
-            <button class="btn btn-outline-secondary btn-sm">
+            <!-- <button class="btn btn-outline-secondary btn-sm">
               Im done here <span class="text-info">→</span>
-            </button>
+            </button> -->
           </div>
         </div>
       </div>
@@ -135,12 +135,12 @@
               <!-- Expand All Toggle -->
               <div class="col-md-3">
                 <div class="d-flex align-items-center gap-2">
-                  <div class="form-check form-switch">
+                  <!-- <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="expandAll">
-                  </div>
-                  <label class="form-check-label" for="expandAll">
+                  </div> -->
+                  <!-- <label class="form-check-label" for="expandAll">
                     Expand all
-                  </label>
+                  </label> -->
                 </div>
               </div>
               <!-- Title Section -->
@@ -318,14 +318,14 @@
                     </svg>
                     <label class="fw-bold text-dark">Building Sq Ft.</label>
                   </div>
-                  <input type="number" class="form-control border-0 border-bottom text-center fw-bold" placeholder="0" v-model="buildingSqFt">
+                  <input type="number" disabled class="form-control border-0 border-bottom text-center fw-bold" placeholder="0" v-model="buildingSqFt">
                 </div>
                 
                 <!-- Per Sq Ft Section (Read Only Calculation) -->
                 <div class="mb-4">
                   <label class="fw-bold mb-2 d-block" style="color: #17a2b8;">$ Per Sq Ft</label>
                   <!-- Display calculated per sq ft -->
-                  <div class="bg-white p-2 fw-bold text-center rounded">
+                  <div aria-disabled="true" class="bg-white p-2 fw-bold text-center rounded">
                     ${{ calculatedPerSqFt }}
                   </div>
                 </div>
@@ -595,12 +595,12 @@
                   <div class="col-md-5 border-end">
                     <div class="mb-4 text-center">
                       <label class="fw-bold text-dark"><i class="bi bi-rulers text-teal me-2"></i>Project Sq Ft.</label>
-                      <input type="number" class="form-control border-0 border-bottom bg-transparent text-center fw-bold fs-5" placeholder="0" v-model="project.sqFt">
+                      <input type="number" disabled class="form-control border-0 border-bottom bg-transparent text-center fw-bold fs-5" placeholder="0" v-model="project.sqFt">
                     </div>
 
                     <div class="d-flex align-items-center justify-content-center gap-3 mb-5">
                       <label class="fw-bold text-teal">$ Per Sq Ft</label>
-                      <div class="bg-white px-3 py-2 rounded border fw-bold">{{ getProjectPerSqFt(project) }}</div>
+                      <div aria-disabled="true" class="bg-white px-3 py-2 rounded border fw-bold">{{ getProjectPerSqFt(project) }}</div>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-center gap-2">
@@ -889,13 +889,13 @@
                   <div class="col-md-5 border-end">
                     <div class="mb-4 text-center">
                       <label class="fw-bold text-dark"><i class="bi bi-rulers text-teal me-2"></i>Project Sq Ft.</label>
-                      <input type="number" class="form-control border-0 border-bottom bg-transparent text-center fw-bold fs-5" placeholder="0" v-model="project.sqFt">
+                      <input type="number" disabled class="form-control border-0 border-bottom bg-transparent text-center fw-bold fs-5" placeholder="0" v-model="project.sqFt">
                       <small class="text-muted">0 / 8</small>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-center gap-3 mb-5">
                       <label class="fw-bold text-teal">$ Per Sq Ft</label>
-                      <div class="bg-white px-3 py-2 rounded border fw-bold">{{ getProjectPerSqFt(project) }}</div>
+                      <div aria-disabled="true" class="bg-white px-3 py-2 rounded border fw-bold">{{ getProjectPerSqFt(project) }}</div>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-center gap-2">

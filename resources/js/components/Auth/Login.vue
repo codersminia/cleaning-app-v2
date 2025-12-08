@@ -41,18 +41,18 @@
       </div> -->
 
       <!-- Login Button -->
-      <button class="login-btn" @click.prevent="handleSubmit">
-        <span class="btn-icon">👤</span> Login
+      <button class="login-btn" @click.prevent="handleSubmit" :disabled="isLoading">
+        <span class="btn-icon">👤</span> {{ isLoading ? 'Loading...' : 'Login' }}
       </button>
 
-      <div class="mt-3" style="margin-top: 20px;">
+      <!-- <div class="mt-3" style="margin-top: 20px;">
         <p style="font-size: 14px; color: gray;">
           Don't have an account? 
           <a href="/register" style="color: #20b2aa; text-decoration: none; font-weight: bold;">
             Register here
           </a>
         </p>
-      </div>
+      </div> -->
 
       <!-- Message -->
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -71,13 +71,14 @@ export default {
       email: "",
       password: "",
       errorMessage: "",
+      isLoading: false,
     };
   },
 
   methods: {
 async handleSubmit() {
       this.errorMessage = "";
-
+      this.isLoading = true;
       try {
         // 👇 THIS IS REQUIRED. 
         // It sets the XSRF-TOKEN cookie in your browser.
@@ -100,6 +101,7 @@ async handleSubmit() {
 
       } catch (error) {
         console.error(error);
+        this.isLoading = false;
         if (error.response && error.response.status == 419) {
             this.errorMessage = "Security token expired. Please refresh the page.";
         } else if (error.response && error.response.status == 401) {

@@ -42,14 +42,14 @@
         </div>
 
         <!-- Filter Icon -->
-        <div class="d-flex justify-content-end mb-4 position-relative">
+        <!-- <div class="d-flex justify-content-end mb-4 position-relative">
           <button class="btn btn-link text-muted p-0" @click="showFilter = !showFilter">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
             </svg>
           </button>
 
-          <!-- Filter dropdown menu -->
+          <!-- Filter dropdown menu 
           <div v-if="showFilter" class="position-absolute top-100 end-0 mt-2 bg-white border rounded p-4" style="width: 350px; z-index: 1000;">
             <div class="mb-3">
               <div class="form-check mb-3">
@@ -71,7 +71,7 @@
               <button class="btn btn-link p-0 text-info text-decoration-none" @click="clearFilters">Clear Filters</button>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- Prospects List -->

@@ -9,7 +9,7 @@ use App\Http\Controllers\ProposalTasksController;
 use App\Http\Controllers\ProjectController;   
 
 Route::post('/login', [LoginController::class, 'login']);
-Route::post('/register', [LoginController::class, 'register']);
+// Route::post('/register', [LoginController::class, 'register']);
 
 // PUBLIC ROUTES (No Auth Middleware)
 Route::get('proposal/{token}', [ProposalController::class, 'getPublicProposal']);

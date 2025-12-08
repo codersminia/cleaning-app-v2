@@ -3,11 +3,11 @@
     <!-- Top Navigation -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <router-link :to="{ name: 'proposal.tasks', params: { id: proposalId } }" class="btn btn-link text-decoration-none text-muted">
-        <i class="bi bi-arrow-left"></i> Go Back
+        <!-- <i class="bi bi-arrow-left"></i> Go Back -->
       </router-link>
       <h3 class="mb-0 text-dark fw-bold">PROJECTS</h3>
       <router-link :to="{ name: 'proposal.calculator', params: { id: proposalId } }" class="btn btn-link text-decoration-none text-muted">
-        I'm done here next step <i class="bi bi-arrow-right"></i>
+        <!-- I'm done here next step <i class="bi bi-arrow-right"></i> -->
       </router-link>
     </div>
     <p class="text-center text-muted small mb-5">Create projects to fit your plan</p>
