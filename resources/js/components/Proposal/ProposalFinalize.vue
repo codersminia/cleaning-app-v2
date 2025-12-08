@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid p-0">
-    <!-- Header -->
-    <header class="bg-light border-bottom py-4 px-3 px-md-4">
+    <!-- Header (Hidden during print) -->
+    <header class="bg-light border-bottom py-4 px-3 px-md-4 d-print-none">
       <div class="d-none d-md-flex align-items-center justify-content-between gap-4">
         <div class="bg-white rounded p-3 d-flex align-items-center gap-2">
           <router-link :to="{ name: 'proposal.calculator', params: { id: proposalId } }" class="btn btn-link text-decoration-none d-flex align-items-center gap-2 p-0 text-dark">
@@ -25,10 +25,10 @@
     </header>
 
     <!-- Main Content -->
-    <div class="row g-4 p-4">
+    <div class="row g-4 p-4 m-0">
       
-      <!-- LEFT SIDEBAR (Editable Sections) -->
-      <div class="col-lg-4">
+      <!-- LEFT SIDEBAR (Hidden during print) -->
+      <div class="col-lg-4 d-print-none">
         <div class="bg-white border rounded-3 p-4">
             <div v-if="loading" class="text-center py-5">
                 <div class="spinner-border text-info" role="status"></div>
@@ -59,35 +59,28 @@
       </div>
 
       <!-- RIGHT SIDE - PREVIEW -->
-      <div class="col-lg-8">
-            <div class="d-flex align-items-center justify-content-between mb-3">
+      <!-- We remove column sizing during print to use full width -->
+      <div class="col-lg-8 print-full-width">
+            <div class="d-flex align-items-center justify-content-between mb-3 d-print-none">
                 <div class="fw-bold text-muted small">
                   TOTAL MONTHLY: <span class="text-teal">{{ formatCurrency(combinedMonthlyTotal) }}</span>
                 </div>
+                <!-- CHANGED FUNCTION TO triggerNativePrint -->
                 <button 
-					@click="downloadPDF" 
-					:disabled="isDownloading"
+					@click="triggerNativePrint" 
 					class="btn btn-teal text-white btn-sm d-flex align-items-center gap-2 fw-bold ms-auto"
 				>
-					<!-- State 1: Loading -->
-					<span v-if="isDownloading" class="d-flex align-items-center gap-2">
-						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-						GENERATING PDF...
-					</span>
-
-					<!-- State 2: Default -->
-					<span v-else class="d-flex align-items-center gap-2">
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-						</svg>
-						DOWNLOAD PDF
-					</span>
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+					</svg>
+					PRINT / SAVE AS PDF
 				</button>
             </div>
 
         <!-- PREVIEW CONTAINER -->
-        <div class="bg-light rounded-3 shadow" style="height: 90vh; overflow-y: auto; padding: 40px 20px; display: flex; flex-direction: column; align-items: center;">
-            <div id="pdf-content" v-html="fullPdfHtml" style="width: 100%"></div>
+        <!-- We add a specialized class 'print-container' -->
+        <div class="print-container bg-light rounded-3 shadow">
+            <div id="pdf-content" v-html="fullPdfHtml"></div>
         </div>
       </div>
     </div>
@@ -99,7 +92,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
-import html2pdf from 'html2pdf.js'
+// Removed html2pdf import
 import SendProposalModal from './Modals/SendProposalModal.vue'
 
 const props = defineProps({
@@ -109,13 +102,13 @@ const props = defineProps({
 // --- STATE ---
 const loading = ref(true)
 const proposal = ref(null)
-const projects = ref([]) // Full project objects with tasks
-const calcData = ref({}) // Calculator JSON
+const projects = ref([]) 
+const calcData = ref({}) 
 const isJanitorial = ref(false)
 const isConstruction = ref(false)
 const expandedSections = ref({})
 const showSendProposalModal = ref(false)
-const isDownloading = ref(false)
+
 const PROPOSAL_SECTIONS = [
   { id: 'cover-letter', title: 'Cover Letter' },
   { id: 'agreement', title: 'Agreement' },
@@ -150,7 +143,6 @@ const fetchData = async () => {
         isJanitorial.value = res.data.is_janitorial;
         isConstruction.value = res.data.is_construction;
         
-        // Parse Calculator Data
         if (proposal.value.calculations && proposal.value.calculations.calculator_data) {
             calcData.value = typeof proposal.value.calculations.calculator_data == 'string' 
                 ? JSON.parse(proposal.value.calculations.calculator_data) 
@@ -170,14 +162,8 @@ onMounted(() => {
 
 // --- HELPER FUNCTIONS ---
 const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
-const formatBullets = (text) => {
-    if(!text) return '';
-    return text.split('\n').filter(line => line.trim() !== '').map(line => `<li>${line}</li>`).join('');
-}
 
 // --- EXACT CALCULATIONS ---
-
-// 1. Janitorial Total
 const janitorialMonthlyTotal = computed(() => {
     if (!calcData.value.laborCosts) return 0;
     const laborSum = calcData.value.laborCosts.reduce((sum, cost) => {
@@ -202,7 +188,6 @@ const janitorialMonthlyTotal = computed(() => {
     return subTotal + profit + tax;
 });
 
-// 2. Project Total Calculator
 const calculateProjectTotal = (proj, isRecurring) => {
     const base = (parseFloat(proj.staff)||0) * (parseFloat(proj.rateOfPay)||0) * (parseFloat(proj.hours)||0);
     const payrollTotal = (parseFloat(calcData.value.payrollTaxes)||0) + (parseFloat(calcData.value.insurance)||0) + (parseFloat(calcData.value.overhead)||0);
@@ -225,13 +210,11 @@ const calculateProjectTotal = (proj, isRecurring) => {
     return sub + profit + tax;
 };
 
-// 3. Recurring Global Total
 const recurringGlobalTotal = computed(() => {
     if (!calcData.value.recurringProjects) return 0;
     return calcData.value.recurringProjects.reduce((sum, proj) => sum + calculateProjectTotal(proj, true), 0);
 });
 
-// 4. Combined Monthly Total
 const combinedMonthlyTotal = computed(() => janitorialMonthlyTotal.value + recurringGlobalTotal.value);
 
 // --- DATA FOR HTML ---
@@ -244,7 +227,6 @@ const clientAddress = computed(() => {
 });
 const currentDate = computed(() => new Date().toLocaleDateString());
 
-// ROWS FOR TABLES
 const recurringProjectRows = computed(() => {
     const projs = calcData.value.recurringProjects || [];
     if (projs.length == 0) return '';
@@ -271,21 +253,14 @@ const exhibitARows = computed(() => {
     return rows;
 });
 
-// Helper for Project Exhibits (B and C)
 const getProjectExhibitHtml = (isRecurring) => {
     const relevantProjects = projects.value.filter(p => !!p.is_recurring == isRecurring);
     if (relevantProjects.length == 0) return '';
-
     let html = '';
     relevantProjects.forEach(proj => {
         const projName = proj.service_type?.name || 'Project';
         const tasks = proj.project_tasks || [];
-        
-        html += `<h4 style="color:#22c55e; margin-top:20px;">${projName}</h4>
-                 <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
-                    <thead><tr><th style="background:#f0f0f0; color:#333; border:1px solid #ddd;">Task Description</th></tr></thead>
-                    <tbody>`;
-        
+        html += `<h4 style="color:#22c55e; margin-top:20px;">${projName}</h4><table style="width:100%; border-collapse:collapse; margin-bottom:20px;"><thead><tr><th style="background:#f0f0f0; color:#333; border:1px solid #ddd;">Task Description</th></tr></thead><tbody>`;
         if (tasks.length > 0) {
             tasks.forEach(pt => {
                 const desc = pt.task_description || pt.task?.description || 'No Description';
@@ -303,308 +278,264 @@ const exhibitBContent = computed(() => getProjectExhibitHtml(true));
 const exhibitCContent = computed(() => getProjectExhibitHtml(false));
 
 // --- MASTER PDF HTML ---
+// Note: We removed the inline @page styles from here because we moved them to the <style> block below
 const fullPdfHtml = computed(() => {
     if (loading.value) return '';
 
     return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <style>
-    @page { margin: 0; size: letter; }
-    body { margin:0; padding:0; font-family: 'Segoe UI', sans-serif; background:#f8f9fa; -webkit-print-color-adjust: exact; }
-    .page { width: 100%; min-height: 11in; background: white; position: relative; page-break-after: always; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; }
-    
-    /* Green Graphics */
-    .header-wave { position: absolute; top:0; left:0; right:0; height:140px; background: #22c55e; border-radius: 0 0 100% 0; z-index:1; }
-    .logo { position: absolute; top:30px; right:50px; z-index:10; }
-    .logo img { width:100px; }
-    
-    /* Content Layout */
-    .content { padding: 180px 60px 80px 60px; line-height: 1.6; color: #333; font-size: 14px; }
-    
-    /* Typography */
-    h3 { color: #22c55e; font-size: 1.5rem; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; }
-    h4 { color: #22c55e; font-size: 1.1rem; margin-bottom: 5px; font-weight: 700; }
-    p { margin-bottom: 15px; text-align: justify; }
-    
-    /* Titles & Tables */
-    .section-title { display:flex; align-items:center; margin:25px 0 10px; }
-    .circle-num { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:#22c55e; color:white; font-weight:bold; font-size:1rem; margin-right:15px; }
-    .section-title h3 { margin:0; color:#333; font-size:1.2rem; }
-    
-    table { width:100%; border-collapse:collapse; margin:15px 0; font-size:13px; }
-    th { background:#22c55e; color:white; padding:10px; text-align:center; font-weight:bold; text-transform:uppercase; }
-    td { padding:10px; border:1px solid #ddd; }
-    .price { font-weight:bold; color:#22c55e; font-size:1.1rem; }
-    
-    .page-number { position:absolute; bottom:40px; right:60px; color:#888; font-size:12px; }
-    
-    /* Cover Page */
-    .cover-overlay { position: absolute; bottom:0; left:0; width:100%; height:35%; background: linear-gradient(to top, #22c55e 0%, transparent 100%); border-radius: 100% 0 0 0; }
-    .cover-text { position: absolute; bottom:80px; left:50%; transform:translateX(-50%); text-align:center; color:white; width:90%; z-index:5; }
-    .btn-website { background:#f39c12; color:white; padding:15px 40px; border-radius:50px; font-weight:bold; font-size:1.2rem; border:none; margin-top:20px; }
-  </style>
-</head>
-<body>
-
-  <!-- PAGE 1: COVER -->
-  <div class="page">
-    <img src="/images/cover10.jpg" style="width:100%; height:100%; object-fit:cover; position:absolute;" alt="Cover">
-    <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-    <div class="cover-overlay"></div>
-    <div class="cover-text">
-      <h3>${clientEmail.value}</h3>
-      <p>Prepared For: ${clientName.value}<br>${currentDate.value}<br>${clientAddress.value}</p>
-      <button class="btn-website">${clientEmail.value}</button>
-    </div>
-  </div>
-
-  <!-- PAGE 2: INTRO -->
-  <div class="page">
-     <div class="header-wave"></div>
-     <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-     <div class="content">
-        <h3 style="color:#22c55e; font-size:2.2rem; margin-bottom:30px;">${clientName.value}</h3>
-        <p>${sectionContent.value['cover-letter']}</p>
-        
-        <div style="display: flex; gap: 40px; margin-top:30px;">
-          <div style="flex: 1;">
-            <h4>CUSTOMER SERVICE.</h4>
-            <p>Regular on site quality control is designed to anticipate the client's needs; and a call from a client at any time of the day or night will be answered by immediate action to correct a problem or fulfill a special request.</p>
-            <h4>CONSISTENT QUALITY.</h4>
-            <p>Consistency and Quality are the pillars of our service standards. We hold ourselves accountable by performing thorough and Routine Quality Control Inspections.</p>
-          </div>
-          <div style="flex: 1;">
-            <h4>EXPERIENCE.</h4>
-            <p>Over the years we worked hard at not just solving existing problems for our clients, but we've learned how to predict and prevent most recurring challenges as well.</p>
-            <h4>RESOURCES.</h4>
-            <p>Since we serve facilities and buildings just like yours throughout the area, we have the equipment and personnel ready to deal with any contingency and provide continuity of service.</p>
-          </div>
+      <!-- PAGE 1: COVER -->
+      <div class="page">
+        <img src="/images/cover10.jpg" class="bg-img" alt="Cover">
+        <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+        <div class="cover-overlay"></div>
+        <div class="cover-text">
+          <h3>${clientEmail.value}</h3>
+          <p>Prepared For: ${clientName.value}<br>${currentDate.value}<br>${clientAddress.value}</p>
+          <button class="btn-website">${clientEmail.value}</button>
         </div>
-        
-        <div style="margin-top: 60px; text-align: center;">
-          <h4 style="color:#22c55e;">HUMBLY SUBMITTED</h4>
-          <p style="font-weight: bold; font-size: 1.2rem;">Mario Kelly<br>CEO<br>Believe 313 staffing</p>
-        </div>
-        <div class="page-number">Page 1</div>
-     </div>
-  </div>
-
-  <!-- PAGE 3: AGREEMENT -->
-  <div class="page">
-      <div class="header-wave"></div>
-      <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-      <div class="content">
-        <div class="section-title"><div class="circle-num">1</div><h3>THIS CLEANING SERVICES AGREEMENT</h3></div>
-        <p>THIS AGREEMENT is made on <strong>${currentDate.value}</strong> between Believe 313 Staffing and <strong>${clientName.value}</strong> located at ${clientAddress.value}.</p>
-        <p>${sectionContent.value['agreement']}</p>
-
-        <div class="section-title"><div class="circle-num">2</div><h3>CLEANING SERVICES & LOCATION</h3></div>
-        <p><strong>2.1 SERVICES:</strong> See EXHIBIT A (Scope of Services) and EXHIBIT C (Projects).</p>
-        <p><strong>2.2 LOCATION:</strong> ${clientAddress.value}</p>
-
-        <div class="section-title"><div class="circle-num">3</div><h3>SERVICE COMPENSATION</h3></div>
-        <p>${sectionContent.value['compensation']}</p>
-        <p><strong>3.1 PRICING.</strong> Client shall compensate Company for the following Services at the prices listed below.</p>
-        <div class="page-number">Page 2</div>
       </div>
-  </div>
 
-  <!-- PAGE 4: PRICING -->
-  <div class="page">
-      <div class="header-wave"></div>
-      <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-      <div class="content">
-        
-        ${ (isJanitorial.value || !isConstruction.value) ? `
-            <p><strong>JANITORIAL SERVICES</strong><br>See EXHIBIT A for specific services to be rendered</p>
-            <table>
-            <thead><tr><th>AREA SERVICED</th><th>FREQUENCY</th><th>MONTHLY PRICE</th></tr></thead>
-            <tbody><tr><td>Whole Facility (See Exhibit A)</td><td>Various</td><td class="price">${formatCurrency(janitorialMonthlyTotal.value)}</td></tr></tbody>
-            </table>
-        ` : '' }
-
-        ${ recurringProjectRows.value ? `
-            <p><strong>RECURRING PROJECT SERVICES (See EXHIBIT B)</strong></p>
-            <table>
-            <thead><tr><th>PROJECT SERVICE</th><th>FREQUENCY</th><th>MONTHLY PRICE</th></tr></thead>
-            <tbody>${recurringProjectRows.value}</tbody>
-            </table>
-        ` : '' }
-
-        ${ (isJanitorial.value && recurringProjectRows.value) ? `
-            <div style="text-align:right; margin-bottom:20px;">
-                <span style="font-weight:bold; font-size:1.1rem;">TOTAL MONTHLY CHARGE: <span style="color:#22c55e;">${formatCurrency(combinedMonthlyTotal.value)}</span></span>
+      <!-- PAGE 2: INTRO -->
+      <div class="page">
+         <div class="header-wave"></div>
+         <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+         <div class="content">
+            <h3 style="color:#22c55e; font-size:2.2rem; margin-bottom:30px;">${clientName.value}</h3>
+            <p>${sectionContent.value['cover-letter']}</p>
+            
+            <div style="display: flex; gap: 40px; margin-top:30px;">
+              <div style="flex: 1;">
+                <h4>CUSTOMER SERVICE.</h4>
+                <p>Regular on site quality control is designed to anticipate the client's needs; and a call from a client at any time of the day or night will be answered by immediate action to correct a problem or fulfill a special request.</p>
+                <h4>CONSISTENT QUALITY.</h4>
+                <p>Consistency and Quality are the pillars of our service standards. We hold ourselves accountable by performing thorough and Routine Quality Control Inspections.</p>
+              </div>
+              <div style="flex: 1;">
+                <h4>EXPERIENCE.</h4>
+                <p>Over the years we worked hard at not just solving existing problems for our clients, but we've learned how to predict and prevent most recurring challenges as well.</p>
+                <h4>RESOURCES.</h4>
+                <p>Since we serve facilities and buildings just like yours throughout the area, we have the equipment and personnel ready to deal with any contingency and provide continuity of service.</p>
+              </div>
             </div>
-        ` : '' }
-
-        ${ oneTimeProjectRows.value ? `
-            <div class="section-title"><div class="circle-num">4</div><h3>ONE TIME PROJECT WORK COMPENSATION</h3></div>
-            <p>Client shall compensate Company for the following project work as invoiced.</p>
-            <table>
-            <thead><tr><th>PROJECT TYPE</th><th>FREQUENCY</th><th>PRICE</th></tr></thead>
-            <tbody>${oneTimeProjectRows.value}</tbody>
-            </table>
-        ` : '' }
-
-        <div class="section-title"><div class="circle-num">5</div><h3>EQUIPMENT & SUPPLIES</h3></div>
-        <p><strong>5.1 EQUIPMENT</strong> Company will furnish all labor, transportation, equipment and cleaning chemicals requisite to the performance of these Services, except as otherwise specified in the attached exhibits and listed supplies below.</p>
-        <p><strong>5.2 SUPPLIES</strong> Client will provide consumable products such as, but not limited to, toilet paper, paper towels, hand soap and trash liners</p>
-        
-        <div class="section-title"><div class="circle-num">6</div><h3>TERM & TERMINATION</h3></div>
-        <p><strong>6.1 TERM</strong> This Agreement shall be effective upon execution by Client for a period of twelve (12) months, unless sooner terminated under the terms set forth below.</p>
-        
-        <div class="page-number">Page 3</div>
-      </div>
-  </div>
-
-  <!-- PAGE 5: LEGAL (Part 1) -->
-  <div class="page">
-      <div class="header-wave"></div>
-      <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-      <div class="content">
-        <p><strong>6.2 TERMINATION</strong> This Agreement may be terminated by either Party hereto upon a thirty (30) day written notice to the non-terminating party.</p>
-        <p><strong>6.3 AUTOMATIC RENEWAL</strong> After the natural expiration of the term of this twelve (12) month Agreement, this Agreement will automatically convert to a month-to-month agreement between Client and Company. All the Services will be subject to the terms and conditions of this Agreement, but will be terminable upon either Party giving one (1) month's written notice to the other Party.</p>
-        
-        <div class="section-title"><div class="circle-num">7</div><h3>KEYS.</h3></div>
-        <p>Client shall issue essential keys upon award of the Agreement for all service locations. Company shall sign for said keys. Company shall return all issued keys at the termination of this Agreement.</p>
-        
-        <div class="section-title"><div class="circle-num">8</div><h3>ACCESS</h3></div>
-        <p>The hours of service shall be after 6:00 p.m., unless otherwise specified. All federal holidays are excluded from service unless otherwise specified.</p>
-        
-        <div class="section-title"><div class="circle-num">9</div><h3>PHOTO IDENTIFICATION</h3></div>
-        <p>Company's employees will wear a photo identification (“ID”) badge, a professional uniform and will have completed Company's employee training program.</p>
-        
-        <div class="section-title"><div class="circle-num">10</div><h3>INDEPENDENT CONTRACTOR.</h3></div>
-        <p>Neither Party shall, for any purpose, be deemed to be an agent of the other Party and the relationship between the Parties shall only be that of independent contractors. Neither Party shall have any right or authority to assume or create any obligations or to make any representations or warranties on behalf of any other Party, whether express or implied, or to bind the other Party in any respect whatsoever.</p>
-        
-        <div class="section-title"><div class="circle-num">11</div><h3>NON-SOLICITATION OF EMPLOYEES</h3></div>
-        <p>Client agrees and covenants not to directly or indirectly solicit, hire, recruit, attempt to hire or recruit, or induce the termination of employment of any employee and/or contractor of the Company during the effective term of this Agreement and for a period of one (1) year after the termination of this Agreement.</p>
-        
-        <div class="page-number">Page 4</div>
-      </div>
-  </div>
-
-  <!-- PAGE 6: LEGAL (Part 2) -->
-  <div class="page">
-      <div class="header-wave"></div>
-      <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-      <div class="content">
-        <div class="section-title"><div class="circle-num">12</div><h3>INDEMNIFICATION.</h3></div>
-        <p>The Company shall be liable hereunder only for its own gross negligence, willful misconduct or bad faith. The Customer agrees to indemnify the Company and save it harmless against any and all liabilities, including judgments, costs and reasonable counsel fees, for anything done or omitted by the Company in the execution of this Agreement, except as a result of the Company's gross negligence, willful misconduct or bad faith. The Company shall not be liable for loss of, or damage to, personal property while rendering the Services unless such loss or damage is a direct result of the Company's negligence.</p>
-        
-        <div class="section-title"><div class="circle-num">13</div><h3>WARRANTY.</h3></div>
-        <p>The Company shall provide its services and meet its obligations under this Agreement in a timely and workmanlike manner, using knowledge and recommendations for performing the Services which meet generally acceptable standards in the Company's industry.</p>
-        
-        <div class="section-title"><div class="circle-num">14</div><h3>COMPLIANCE WITH LAW.</h3></div>
-        <p>All work and services rendered hereunder shall be provided in accordance with all applicable ordinances, resolutions, statutes, rules and regulations of the City and any Federal, State or local governmental agency of competent jurisdiction.</p>
-        
-        <div class="section-title"><div class="circle-num">15</div><h3>ENTIRE AGREEMENT.</h3></div>
-        <p>This Agreement contains the entire agreement of the Parties, and there are no other promises or conditions in any other agreement whether oral or written concerning the subject matter of this Agreement. This Agreement supersedes any prior written or oral agreements between the Parties.</p>
-        
-        <div class="section-title"><div class="circle-num">16</div><h3>FORCE MAJEURE.</h3></div>
-        <p>In the event that the performance of any of the covenants of this Agreement shall be prevented by an act of God, acts and regulations of public authorities, or labor disputes, acts of the public enemy, acts of superior governmental authority, or other circumstances, or cause beyond their or its reasonable control, the Client and Company shall be respectively relieved of their obligations hereunder with respect to the performance(s) so prevented. In the above-mentioned event, Company grants Client the right to reschedule the performance(s) under the same terms and conditions of this Agreement.</p>
-        
-        <div class="section-title"><div class="circle-num">17</div><h3>AMENDMENT.</h3></div>
-        <p>This Agreement may be modified or amended in writing, if the writing is signed by the Party obligated under the amendment.</p>
-        <div class="page-number">Page 5</div>
-      </div>
-  </div>
-
-  <!-- PAGE 7: INSURANCE & SIGNATURE -->
-  <div class="page">
-      <div class="header-wave"></div>
-      <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-      <div class="content">
-        <div class="section-title"><div class="circle-num">18</div><h3>GOVERNING LAW.</h3></div>
-        <p>This Agreement shall be construed in accordance with the laws of the State of Hic dolore ex iure nisi alias id eum sapiente ips.</p>
-        
-        <div class="section-title"><div class="circle-num">19</div><h3>SEVERABILITY.</h3></div>
-        <p>The phrases, clauses, sentences, paragraphs or sections of these conditions are severable. If any phrase, clause, sentence, paragraph, or section of these conditions should be declared invalid by the final decree or judgment of any court of competent jurisdiction, such invalidity shall not affect any of the remaining phrases, clauses, sentences, paragraphs and sections of these conditions.</p>
-        
-        <div class="section-title"><div class="circle-num">20</div><h3>ATTORNEYS' FEES.</h3></div>
-        <p>In case of failure to faithfully perform the terms and covenants herein set forth, the defaulting Party shall pay all costs, expenses, and reasonable attorneys' fees resulting from the enforcement of this Agreement or any right arising out of such breach.</p>
-        
-        <div class="section-title"><div class="circle-num">21</div><h3>ASSIGNMENT.</h3></div>
-        <p>Neither Party hereto may assign its rights or delegate its obligations hereunder without the written consent of the other Party.</p>
-        
-        <div class="section-title"><div class="circle-num">22</div><h3>WAIVER.</h3></div>
-        <p>The failure of either party to enforce any provision of this Agreement shall not be construed as a waiver or limitation of that party's right to subsequently enforce and compel strict compliance with every provision of this Agreement.</p>
-        
-        <div class="section-title"><div class="circle-num">23</div><h3>INSURANCE CONTRACT</h3></div>
-        <p>${sectionContent.value['insurance']}</p>
-        
-        <div class="section-title"><div class="circle-num">24</div><h3>IN WITNESS WHEREOF.</h3></div>
-        <p>${sectionContent.value['signature']}</p>
-        
-        <div style="display: flex; gap: 40px; margin-top: 40px; border: 2px solid #22c55e; padding: 30px; border-radius: 10px; background: #f0fff4;">
-            <div style="flex:1; text-align:center;">
-                <h4 style="color:#22c55e;">BELIEVE 313 STAFFING</h4>
-                <p><strong>By:</strong> Mario Kelly</p>
-                <p><strong>Title:</strong> CEO</p>
-                <p><strong>Date:</strong> ${currentDate.value}</p>
+            
+            <div style="margin-top: 60px; text-align: center;">
+              <h4 style="color:#22c55e;">HUMBLY SUBMITTED</h4>
+              <p style="font-weight: bold; font-size: 1.2rem;">Mario Kelly<br>CEO<br>Believe 313 staffing</p>
             </div>
-            <div style="flex:1; text-align:center;">
-                <h4 style="color:#22c55e;">${clientName.value}</h4>
-                <p><strong>By:</strong> ____________________</p>
-                <p><strong>Title:</strong> ____________________</p>
-                <p><strong>Date:</strong> ____________________</p>
-            </div>
+            <div class="page-number">Page 1</div>
          </div>
-         <div class="page-number">Page 6</div>
       </div>
-  </div>
 
-  <!-- PAGE 8: EXHIBIT A (JANITORIAL SCOPE) -->
-  <div class="page">
-      <div class="header-wave"></div>
-      <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-      <div class="content">
-        <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT A: SCOPE OF SERVICES</h2>
-        ${ (isJanitorial.value || !isConstruction.value) ? `
-            <table>
-                <thead><tr><th width="30%">AREA</th><th width="50%">TASK DESCRIPTION</th><th width="20%">FREQUENCY</th></tr></thead>
-                <tbody>${exhibitARows.value}</tbody>
-            </table>
-        ` : '<p style="text-align:center;">No Janitorial Services in this proposal.</p>' }
-        <div class="page-number">Page 7</div>
+      <!-- PAGE 3: AGREEMENT -->
+      <div class="page">
+          <div class="header-wave"></div>
+          <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+          <div class="content">
+            <div class="section-title"><div class="circle-num">1</div><h3>THIS CLEANING SERVICES AGREEMENT</h3></div>
+            <p>THIS AGREEMENT is made on <strong>${currentDate.value}</strong> between Believe 313 Staffing and <strong>${clientName.value}</strong> located at ${clientAddress.value}.</p>
+            <p>${sectionContent.value['agreement']}</p>
+
+            <div class="section-title"><div class="circle-num">2</div><h3>CLEANING SERVICES & LOCATION</h3></div>
+            <p><strong>2.1 SERVICES:</strong> See EXHIBIT A (Scope of Services) and EXHIBIT C (Projects).</p>
+            <p><strong>2.2 LOCATION:</strong> ${clientAddress.value}</p>
+
+            <div class="section-title"><div class="circle-num">3</div><h3>SERVICE COMPENSATION</h3></div>
+            <p>${sectionContent.value['compensation']}</p>
+            <p><strong>3.1 PRICING.</strong> Client shall compensate Company for the following Services at the prices listed below.</p>
+            <div class="page-number">Page 2</div>
+          </div>
       </div>
-  </div>
 
-  <!-- PAGE 9: EXHIBIT B (RECURRING PROJECTS) -->
-  <div class="page">
-      <div class="header-wave"></div>
-      <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-      <div class="content">
-        <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT B: RECURRING PROJECT WORK</h2>
-        ${ exhibitBContent.value ? exhibitBContent.value : '<p style="text-align:center;">No Recurring Projects.</p>' }
-        <div class="page-number">Page 8</div>
-      </div>
-  </div>
+      <!-- PAGE 4: PRICING -->
+      <div class="page">
+          <div class="header-wave"></div>
+          <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+          <div class="content">
+            
+            ${ (isJanitorial.value || !isConstruction.value) ? `
+                <p><strong>JANITORIAL SERVICES</strong><br>See EXHIBIT A for specific services to be rendered</p>
+                <table>
+                <thead><tr><th>AREA SERVICED</th><th>FREQUENCY</th><th>MONTHLY PRICE</th></tr></thead>
+                <tbody><tr><td>Whole Facility (See Exhibit A)</td><td>Various</td><td class="price">${formatCurrency(janitorialMonthlyTotal.value)}</td></tr></tbody>
+                </table>
+            ` : '' }
 
-  <!-- PAGE 10: EXHIBIT C (ONE-TIME PROJECTS) -->
-  <div class="page">
-      <div class="header-wave"></div>
-      <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
-      <div class="content">
-        <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT C: ONE-TIME PROJECT WORK</h2>
-        ${ exhibitCContent.value ? exhibitCContent.value : '<p style="text-align:center;">No One-Time Projects.</p>' }
-        
-        ${ oneTimeProjectRows.value ? `
-            <h3 style="color:#22c55e; margin-top:40px;">Pricing Summary</h3>
-            <table>
-                <thead><tr><th>AREAS SERVICED</th><th>FREQUENCY</th><th>PRICE</th></tr></thead>
+            ${ recurringProjectRows.value ? `
+                <p><strong>RECURRING PROJECT SERVICES (See EXHIBIT B)</strong></p>
+                <table>
+                <thead><tr><th>PROJECT SERVICE</th><th>FREQUENCY</th><th>MONTHLY PRICE</th></tr></thead>
+                <tbody>${recurringProjectRows.value}</tbody>
+                </table>
+            ` : '' }
+
+            ${ (isJanitorial.value && recurringProjectRows.value) ? `
+                <div style="text-align:right; margin-bottom:20px;">
+                    <span style="font-weight:bold; font-size:1.1rem;">TOTAL MONTHLY CHARGE: <span style="color:#22c55e;">${formatCurrency(combinedMonthlyTotal.value)}</span></span>
+                </div>
+            ` : '' }
+
+            ${ oneTimeProjectRows.value ? `
+                <div class="section-title"><div class="circle-num">4</div><h3>ONE TIME PROJECT WORK COMPENSATION</h3></div>
+                <p>Client shall compensate Company for the following project work as invoiced.</p>
+                <table>
+                <thead><tr><th>PROJECT TYPE</th><th>FREQUENCY</th><th>PRICE</th></tr></thead>
                 <tbody>${oneTimeProjectRows.value}</tbody>
-            </table>
-        ` : '' }
-        <div class="page-number">Page 9</div>
-      </div>
-  </div>
+                </table>
+            ` : '' }
 
-</body>
-</html>
+            <div class="section-title"><div class="circle-num">5</div><h3>EQUIPMENT & SUPPLIES</h3></div>
+            <p><strong>5.1 EQUIPMENT</strong> Company will furnish all labor, transportation, equipment and cleaning chemicals requisite to the performance of these Services, except as otherwise specified in the attached exhibits and listed supplies below.</p>
+            <p><strong>5.2 SUPPLIES</strong> Client will provide consumable products such as, but not limited to, toilet paper, paper towels, hand soap and trash liners</p>
+            
+            <div class="section-title"><div class="circle-num">6</div><h3>TERM & TERMINATION</h3></div>
+            <p><strong>6.1 TERM</strong> This Agreement shall be effective upon execution by Client for a period of twelve (12) months, unless sooner terminated under the terms set forth below.</p>
+            
+            <div class="page-number">Page 3</div>
+          </div>
+      </div>
+
+      <!-- PAGE 5: LEGAL -->
+      <div class="page">
+          <div class="header-wave"></div>
+          <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+          <div class="content">
+            <p><strong>6.2 TERMINATION</strong> This Agreement may be terminated by either Party hereto upon a thirty (30) day written notice to the non-terminating party.</p>
+            <p><strong>6.3 AUTOMATIC RENEWAL</strong> After the natural expiration of the term of this twelve (12) month Agreement, this Agreement will automatically convert to a month-to-month agreement between Client and Company. All the Services will be subject to the terms and conditions of this Agreement, but will be terminable upon either Party giving one (1) month's written notice to the other Party.</p>
+            
+            <div class="section-title"><div class="circle-num">7</div><h3>KEYS.</h3></div>
+            <p>Client shall issue essential keys upon award of the Agreement for all service locations. Company shall sign for said keys. Company shall return all issued keys at the termination of this Agreement.</p>
+            
+            <div class="section-title"><div class="circle-num">8</div><h3>ACCESS</h3></div>
+            <p>The hours of service shall be after 6:00 p.m., unless otherwise specified. All federal holidays are excluded from service unless otherwise specified.</p>
+            
+            <div class="section-title"><div class="circle-num">9</div><h3>PHOTO IDENTIFICATION</h3></div>
+            <p>Company's employees will wear a photo identification (“ID”) badge, a professional uniform and will have completed Company's employee training program.</p>
+            
+            <div class="section-title"><div class="circle-num">10</div><h3>INDEPENDENT CONTRACTOR.</h3></div>
+            <p>Neither Party shall, for any purpose, be deemed to be an agent of the other Party and the relationship between the Parties shall only be that of independent contractors. Neither Party shall have any right or authority to assume or create any obligations or to make any representations or warranties on behalf of any other Party, whether express or implied, or to bind the other Party in any respect whatsoever.</p>
+            
+            <div class="section-title"><div class="circle-num">11</div><h3>NON-SOLICITATION OF EMPLOYEES</h3></div>
+            <p>Client agrees and covenants not to directly or indirectly solicit, hire, recruit, attempt to hire or recruit, or induce the termination of employment of any employee and/or contractor of the Company during the effective term of this Agreement and for a period of one (1) year after the termination of this Agreement.</p>
+            
+            <div class="page-number">Page 4</div>
+          </div>
+      </div>
+
+      <!-- PAGE 6: LEGAL CONTINUED -->
+      <div class="page">
+          <div class="header-wave"></div>
+          <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+          <div class="content">
+            <div class="section-title"><div class="circle-num">12</div><h3>INDEMNIFICATION.</h3></div>
+            <p>The Company shall be liable hereunder only for its own gross negligence, willful misconduct or bad faith. The Customer agrees to indemnify the Company and save it harmless against any and all liabilities, including judgments, costs and reasonable counsel fees, for anything done or omitted by the Company in the execution of this Agreement, except as a result of the Company's gross negligence, willful misconduct or bad faith. The Company shall not be liable for loss of, or damage to, personal property while rendering the Services unless such loss or damage is a direct result of the Company's negligence.</p>
+            
+            <div class="section-title"><div class="circle-num">13</div><h3>WARRANTY.</h3></div>
+            <p>The Company shall provide its services and meet its obligations under this Agreement in a timely and workmanlike manner, using knowledge and recommendations for performing the Services which meet generally acceptable standards in the Company's industry.</p>
+            
+            <div class="section-title"><div class="circle-num">14</div><h3>COMPLIANCE WITH LAW.</h3></div>
+            <p>All work and services rendered hereunder shall be provided in accordance with all applicable ordinances, resolutions, statutes, rules and regulations of the City and any Federal, State or local governmental agency of competent jurisdiction.</p>
+            
+            <div class="section-title"><div class="circle-num">15</div><h3>ENTIRE AGREEMENT.</h3></div>
+            <p>This Agreement contains the entire agreement of the Parties, and there are no other promises or conditions in any other agreement whether oral or written concerning the subject matter of this Agreement. This Agreement supersedes any prior written or oral agreements between the Parties.</p>
+            
+            <div class="section-title"><div class="circle-num">16</div><h3>FORCE MAJEURE.</h3></div>
+            <p>In the event that the performance of any of the covenants of this Agreement shall be prevented by an act of God, acts and regulations of public authorities, or labor disputes, acts of the public enemy, acts of superior governmental authority, or other circumstances, or cause beyond their or its reasonable control, the Client and Company shall be respectively relieved of their obligations hereunder with respect to the performance(s) so prevented. In the above-mentioned event, Company grants Client the right to reschedule the performance(s) under the same terms and conditions of this Agreement.</p>
+            
+            <div class="section-title"><div class="circle-num">17</div><h3>AMENDMENT.</h3></div>
+            <p>This Agreement may be modified or amended in writing, if the writing is signed by the Party obligated under the amendment.</p>
+            <div class="page-number">Page 5</div>
+          </div>
+      </div>
+
+      <!-- PAGE 7: INSURANCE & SIGNATURE -->
+      <div class="page">
+          <div class="header-wave"></div>
+          <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+          <div class="content">
+            <div class="section-title"><div class="circle-num">18</div><h3>GOVERNING LAW.</h3></div>
+            <p>This Agreement shall be construed in accordance with the laws of the State of Hic dolore ex iure nisi alias id eum sapiente ips.</p>
+            
+            <div class="section-title"><div class="circle-num">19</div><h3>SEVERABILITY.</h3></div>
+            <p>The phrases, clauses, sentences, paragraphs or sections of these conditions are severable. If any phrase, clause, sentence, paragraph, or section of these conditions should be declared invalid by the final decree or judgment of any court of competent jurisdiction, such invalidity shall not affect any of the remaining phrases, clauses, sentences, paragraphs and sections of these conditions.</p>
+            
+            <div class="section-title"><div class="circle-num">20</div><h3>ATTORNEYS' FEES.</h3></div>
+            <p>In case of failure to faithfully perform the terms and covenants herein set forth, the defaulting Party shall pay all costs, expenses, and reasonable attorneys' fees resulting from the enforcement of this Agreement or any right arising out of such breach.</p>
+            
+            <div class="section-title"><div class="circle-num">21</div><h3>ASSIGNMENT.</h3></div>
+            <p>Neither Party hereto may assign its rights or delegate its obligations hereunder without the written consent of the other Party.</p>
+            
+            <div class="section-title"><div class="circle-num">22</div><h3>WAIVER.</h3></div>
+            <p>The failure of either party to enforce any provision of this Agreement shall not be construed as a waiver or limitation of that party's right to subsequently enforce and compel strict compliance with every provision of this Agreement.</p>
+            
+            <div class="section-title"><div class="circle-num">23</div><h3>INSURANCE CONTRACT</h3></div>
+            <p>${sectionContent.value['insurance']}</p>
+            
+            <div class="section-title"><div class="circle-num">24</div><h3>IN WITNESS WHEREOF.</h3></div>
+            <p>${sectionContent.value['signature']}</p>
+            
+            <div style="display: flex; gap: 40px; margin-top: 40px; border: 2px solid #22c55e; padding: 30px; border-radius: 10px; background: #f0fff4;">
+                <div style="flex:1; text-align:center;">
+                    <h4 style="color:#22c55e;">BELIEVE 313 STAFFING</h4>
+                    <p><strong>By:</strong> Mario Kelly</p>
+                    <p><strong>Title:</strong> CEO</p>
+                    <p><strong>Date:</strong> ${currentDate.value}</p>
+                </div>
+                <div style="flex:1; text-align:center;">
+                    <h4 style="color:#22c55e;">${clientName.value}</h4>
+                    <p><strong>By:</strong> ____________________</p>
+                    <p><strong>Title:</strong> ____________________</p>
+                    <p><strong>Date:</strong> ____________________</p>
+                </div>
+             </div>
+             <div class="page-number">Page 6</div>
+          </div>
+      </div>
+
+      <!-- PAGE 8: EXHIBIT A -->
+      <div class="page">
+          <div class="header-wave"></div>
+          <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+          <div class="content">
+            <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT A: SCOPE OF SERVICES</h2>
+            ${ (isJanitorial.value || !isConstruction.value) ? `
+                <table>
+                    <thead><tr><th width="30%">AREA</th><th width="50%">TASK DESCRIPTION</th><th width="20%">FREQUENCY</th></tr></thead>
+                    <tbody>${exhibitARows.value}</tbody>
+                </table>
+            ` : '<p style="text-align:center;">No Janitorial Services in this proposal.</p>' }
+            <div class="page-number">Page 7</div>
+          </div>
+      </div>
+
+      <!-- PAGE 9: EXHIBIT B -->
+      <div class="page">
+          <div class="header-wave"></div>
+          <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+          <div class="content">
+            <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT B: RECURRING PROJECT WORK</h2>
+            ${ exhibitBContent.value ? exhibitBContent.value : '<p style="text-align:center;">No Recurring Projects.</p>' }
+            <div class="page-number">Page 8</div>
+          </div>
+      </div>
+
+      <!-- PAGE 10: EXHIBIT C -->
+      <div class="page">
+          <div class="header-wave"></div>
+          <div class="logo"><img src="/images/logo.png" alt="Logo"></div>
+          <div class="content">
+            <h2 style="color: #22c55e; text-align: center; margin-bottom:30px;">EXHIBIT C: ONE-TIME PROJECT WORK</h2>
+            ${ exhibitCContent.value ? exhibitCContent.value : '<p style="text-align:center;">No One-Time Projects.</p>' }
+            
+            ${ oneTimeProjectRows.value ? `
+                <h3 style="color:#22c55e; margin-top:40px;">Pricing Summary</h3>
+                <table>
+                    <thead><tr><th>AREAS SERVICED</th><th>FREQUENCY</th><th>PRICE</th></tr></thead>
+                    <tbody>${oneTimeProjectRows.value}</tbody>
+                </table>
+            ` : '' }
+            <div class="page-number">Page 9</div>
+          </div>
+      </div>
     `;
 });
 
@@ -627,30 +558,126 @@ const handleProposalSent = async (email) => {
     }
 }
 
-const downloadPDF = () => {
-	isDownloading.value = true;
-  const element = document.getElementById('pdf-content')
-  const opt = {
-    margin: 0,
-    filename: `Proposal_${clientName.value.replace(/ /g, '_')}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-  }
-   html2pdf().set(opt).from(element).save()
-    .then(() => {
-        isDownloading.value = false;
-    })
-    .catch((err) => {
-        console.error(err);
-        isDownloading.value = false;
-    });
-
+// --- NEW PRINT FUNCTIONALITY ---
+const triggerNativePrint = () => {
+  window.print();
 }
 </script>
+
+<style>
+/* 
+  GLOBAL STYLES FOR V-HTML CONTENT
+  These need to be global (not scoped) to affect v-html
+*/
+
+/* 1. PDF Page Wrapper */
+.page { 
+    width: 100%; 
+    min-height: 11in; 
+    background: white; 
+    position: relative; 
+    /* Force page break after every .page div */
+    break-after: page; 
+    page-break-after: always;
+    overflow: hidden; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Nice shadow for preview */
+    margin-bottom: 2rem; /* Spacing for preview mode */
+}
+
+/* Green Graphics */
+.header-wave { position: absolute; top:0; left:0; right:0; height:140px; background: #22c55e; border-radius: 0 0 100% 0; z-index:1; }
+.logo { position: absolute; top:30px; right:50px; z-index:10; }
+.logo img { width:100px; }
+.bg-img { width:100%; height:100%; object-fit:cover; position:absolute; }
+
+/* Content Layout */
+.content { padding: 180px 60px 80px 60px; line-height: 1.6; color: #333; font-size: 14px; position:relative; z-index:2; }
+
+/* Typography inside PDF */
+.content h3 { color: #22c55e; font-size: 1.5rem; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; }
+.content h4 { color: #22c55e; font-size: 1.1rem; margin-bottom: 5px; font-weight: 700; }
+.content p { margin-bottom: 15px; text-align: justify; }
+
+/* Titles & Tables */
+.section-title { display:flex; align-items:center; margin:25px 0 10px; }
+.circle-num { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:#22c55e; color:white; font-weight:bold; font-size:1rem; margin-right:15px; }
+.section-title h3 { margin:0; color:#333; font-size:1.2rem; }
+
+.content table { width:100%; border-collapse:collapse; margin:15px 0; font-size:13px; }
+.content th { background:#22c55e; color:white; padding:10px; text-align:center; font-weight:bold; text-transform:uppercase; }
+.content td { padding:10px; border:1px solid #ddd; }
+.price { font-weight:bold; color:#22c55e; font-size:1.1rem; }
+
+.page-number { position:absolute; bottom:40px; right:60px; color:#888; font-size:12px; }
+
+/* Cover Page */
+.cover-overlay { position: absolute; bottom:0; left:0; width:100%; height:35%; background: linear-gradient(to top, #22c55e 0%, transparent 100%); border-radius: 100% 0 0 0; }
+.cover-text { position: absolute; bottom:80px; left:50%; transform:translateX(-50%); text-align:center; color:white; width:90%; z-index:5; }
+.btn-website { background:#f39c12; color:white; padding:15px 40px; border-radius:50px; font-weight:bold; font-size:1.2rem; border:none; margin-top:20px; }
+
+/* 
+  ------------------------------------------------
+  PRINT MODE STYLES (@media print) 
+  This does the magic. It hides the UI and resets the layout.
+  ------------------------------------------------
+*/
+@media print {
+    /* Hide everything by default */
+    body * { visibility: hidden; }
+    
+    /* Reveal only the PDF content container */
+    #pdf-content, #pdf-content * { 
+        visibility: visible; 
+    }
+    
+    /* Position the content at the top-left of the paper */
+    #pdf-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Reset page containers for print (remove shadows and margins) */
+    .page {
+        margin: 0 !important;
+        box-shadow: none !important;
+        /* Ensure each .page div starts on a new sheet of paper */
+        break-after: page !important;
+        page-break-after: always !important;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    /* Override Bootstrap/Custom hiding classes */
+    .d-print-none { display: none !important; }
+    
+    /* Ensure styles are printed correctly (some browsers remove background colors) */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+</style>
 
 <style scoped>
 .btn-teal { background-color: #17a2b8 !important; }
 .text-teal { color: #17a2b8; }
-#pdf-content { background-color: #525659; padding: 20px; }
+/* Scrollable preview in web mode */
+.print-container {
+    height: 90vh; 
+    overflow-y: auto; 
+    padding: 40px 20px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+}
+@media print {
+    /* Reset scroll in print mode */
+    .print-container {
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+        padding: 0 !important;
+    }
+}
 </style>
