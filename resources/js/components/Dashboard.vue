@@ -3,11 +3,10 @@
     <!-- Header Section -->
     <div class="text-center mb-5">
       <div class="mb-3">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 4L8 16V44H40V16L24 4Z" stroke="#17A2B8" stroke-width="2" fill="none"/>
-          <path d="M24 24V44" stroke="#17A2B8" stroke-width="2"/>
-          <path d="M16 32H32V44H16Z" fill="#17A2B8"/>
-        </svg>
+        <img width="120" height="120"
+          src="/images/logo.png"
+          alt="Logo"
+        />
       </div>
       <h1 class="fw-bold fs-1 mb-2">Home Page</h1>
       <p class="text-muted fs-6">Welcome to Clean Proposals</p>

@@ -1,15 +1,14 @@
 <template>
   <div class="login-container">
-    <!-- Logo -->
-    <div class="logo">
-      <img
-        src="/images/logo.png"
-        alt="Logo"
-      />
-    </div>
-
     <!-- Login Card -->
     <div class="login-card">
+		<!-- Logo -->
+		<div class="logonew">
+		<img
+			src="/images/logo.png"
+			alt="Logo"
+		/>
+		</div>
       <h2>Sign in</h2>
       <p class="subtitle">Enter your email and password</p>
 
@@ -127,7 +126,7 @@ async handleSubmit() {
 }
 
 /* Logo */
-.logo img {
+.logonew img {
   width: 80px;
   margin-bottom: 20px;
 }
