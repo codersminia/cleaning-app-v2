@@ -7,6 +7,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProposalController;   
 use App\Http\Controllers\ProposalTasksController;   
 use App\Http\Controllers\ProjectController;   
+use App\Http\Controllers\Auth\WpRegisterController;
+
+
+
+Route::post('/register-from-wp', [WpRegisterController::class, 'store']);
+
 
 Route::post('/login', [LoginController::class, 'login']);
 // Route::post('/register', [LoginController::class, 'register']);

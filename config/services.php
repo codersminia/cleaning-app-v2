@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'wp' => [
+        'key' => env('WP_API_KEY'),
+    ],
+
+
 ];
