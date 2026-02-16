@@ -2,36 +2,26 @@
   <div class="min-vh-100 bg-light">
 
     <!-- Main Content -->
-    <div class="main-content-wrapper mx-4 mb-4">
-      <div class="text-center mb-4 pt-4">
-        <h6 class="fw-bold text-dark mb-1">ADD AREAS & CLEANING</h6>
-        <h6 class="fw-bold text-dark mb-3">TASKS BELOW BEFORE CONTINUING</h6>
-        <div class="d-flex justify-content-center align-items-center gap-3">
+    <div class="main-content-wrapper mx-2 mx-md-4 mb-4">
+      <div class="text-center mb-4 pt-4 px-2">
+        <h6 class="fw-bold text-dark mb-1 fs-7 fs-md-6">ADD AREAS & CLEANING</h6>
+        <h6 class="fw-bold text-dark mb-3 fs-7 fs-md-6">TASKS BELOW BEFORE CONTINUING</h6>
+        <div class="d-flex justify-content-center align-items-center gap-2 gap-md-3">
           <span class="badge-selected">{{ selectedAreasData.length }} AREAS SELECTED</span>
-          <!-- <a href="#" class="text-info text-decoration-none small fw-semibold">
-            Im done here next step →
-          </a> -->
         </div>
       </div>
 
       <!-- Area Builder Section -->
-      <div class="area-builder-card p-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <!-- <button class="btn-add-area">
-            <i class="bi bi-grid-3x3-gap me-2"></i>ADD CUSTOM AREA
-          </button> -->
-
+      <div class="area-builder-card p-3 p-md-4 mb-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
           <div class="text-center">
-            <!-- <div class="building-icon-wrapper">
-              <i class="bi bi-building"></i>
-            </div> -->
             <h6 class="fw-bold mt-2 mb-0">Area Builder</h6>
           </div>
 
-          <div class="view-options">
+          <div class="view-options flex-wrap justify-content-center">
             <button
               @click="toggleView"
-              class="btn-view-toggle"
+              class="btn-view-toggle small"
             >
               {{ isCardView ? 'Show List View' : 'Show Card View' }}
             </button>
@@ -42,7 +32,7 @@
                   v-model="globalCarpet"
                   class="form-check-input"
                 />
-                <span>Carpet</span>
+                <span class="small">Carpet</span>
               </label>
               <span class="separator">|</span>
               <label class="checkbox-label">
@@ -51,7 +41,7 @@
                   v-model="globalHardFloor"
                   class="form-check-input"
                 />
-                <span>Hard Floor</span>
+                <span class="small">Hard Floor</span>
               </label>
             </div>
           </div>
@@ -65,33 +55,44 @@
               v-if="isCardView && isAreaSelected(areaType.id)"
               class="area-card-expanded"
             >
-              <div class="area-header">
-                <div class="area-header-left">
-                  <input
-                    type="checkbox"
-                    class="form-check-input me-3"
-                    :checked="isAreaSelected(areaType.id)"
-                    @change="toggleArea(areaType)"
-                  />
-                  <div class="area-info">
-                    <h6 class="area-title mb-0">{{ areaType.name }}</h6>
-                    <small class="area-subtitle">{{ getTaskCount(areaType.id) }} task selected</small>
+              <div class="area-header flex-column flex-lg-row">
+                <div class="area-header-left w-100 w-lg-auto justify-content-between justify-content-lg-start mb-3 mb-lg-0">
+                  <div class="d-flex align-items-center">
+                    <input
+                      type="checkbox"
+                      class="form-check-input me-3"
+                      :checked="isAreaSelected(areaType.id)"
+                      @change="toggleArea(areaType)"
+                    />
+                    <div class="area-info">
+                      <h6 class="area-title mb-0 fs-6">{{ areaType.name }}</h6>
+                      <small class="area-subtitle">{{ getTaskCount(areaType.id) }} task selected</small>
+                    </div>
+                  </div>
+                  <div class="d-lg-none">
+                    <button
+                      class="btn-task-list rounded-pill py-1 px-3 small"
+                      :class="{ 'active': expandedTasks[areaType.id] }"
+                      @click="toggleTaskList(areaType.id)"
+                    >
+                      <i :class="expandedTasks[areaType.id] ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
+                    </button>
                   </div>
                 </div>
 
-                <div class="area-header-center">
+                <div class="area-header-center mb-3 mb-lg-0 w-100 justify-content-around">
                   <button class="action-btn">
                     <i class="bi bi-file-text"></i>
                     <span>{{ getAreaNotes(areaType.id) ? '1 Note' : '0 Notes' }}</span>
                   </button>
                   <button class="action-btn">
                     <i class="bi bi-files"></i>
-                    <span>Make a Copy</span>
+                    <span>Copy</span>
                   </button>
                 </div>
 
-                <div class="area-header-right">
-                  <div class="area-checkboxes">
+                <div class="area-header-right w-100 w-lg-auto flex-column flex-md-row gap-3">
+                  <div class="area-checkboxes w-100 w-md-auto py-2">
                     <label class="area-checkbox-label">
                       <input
                         type="checkbox"
@@ -112,7 +113,7 @@
                     </label>
                   </div>
                   <div class="rooms-control">
-                    <span class="rooms-label">Rooms</span>
+                    <span class="rooms-label small">Rooms</span>
                     <div class="counter-group">
                       <button class="counter-btn" @click="decrementRooms(areaType.id)">−</button>
                       <span class="counter-value">{{ getAreaProp(areaType.id, 'rooms') }}</span>
@@ -120,7 +121,7 @@
                     </div>
                   </div>
                   <button
-                    class="btn-task-list"
+                    class="btn-task-list d-none d-lg-flex"
                     :class="{ 'active': expandedTasks[areaType.id] }"
                     @click="toggleTaskList(areaType.id)"
                   >
@@ -131,12 +132,13 @@
               </div>
 
               <!-- Task List -->
-              <div v-if="expandedTasks[areaType.id]" class="task-list-container">
+              <div v-if="expandedTasks[areaType.id]" class="task-list-container px-2 px-md-4">
+                <!-- Task Metrics -->
                 <div class="task-metrics-header">
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-clock"></i>
-                      <span>Hours</span>
+                      <span>Hrs</span>
                     </div>
                     <input
                         type="number"
@@ -149,7 +151,7 @@
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-clock"></i>
-                      <span>Minutes</span>
+                      <span>Mins</span>
                     </div>
                     <input
                         type="number"
@@ -162,7 +164,7 @@
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-building"></i>
-                      <span>Square footage (ft2)</span>
+                      <span>Sqft</span>
                     </div>
                     <input
                         type="number"
@@ -174,6 +176,7 @@
                   </div>
                 </div>
 
+                <!-- Task Items -->
                 <div
                   v-for="task in getAvailableTasksForArea(areaType.id)"
                   :key="task.id"
@@ -187,9 +190,9 @@
                       @change="toggleAreaTask(areaType.id, task)"
                       class="form-check-input me-3"
                     />
-                    <!-- <div class="task-icon">
+                    <div class="task-icon">
                       <i :class="task.icon || 'bi bi-check-circle'"></i>
-                    </div> -->
+                    </div>
                     <div class="task-details">
                       <h6 class="task-title mb-1">{{ task.name }}</h6>
                       <p class="task-description mb-0">{{ task.description }}</p>
@@ -221,13 +224,24 @@
               :class="{ 'selected': isAreaSelected(areaType.id) }"
             >
               <div class="list-left">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  :checked="isAreaSelected(areaType.id)"
-                  @change="toggleArea(areaType)"
-                />
-                <span class="list-label">{{ areaType.name }}</span>
+                <div class="list-title-group">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    :checked="isAreaSelected(areaType.id)"
+                    @change="toggleArea(areaType)"
+                  />
+                  <span class="list-label fw-bold">{{ areaType.name }}</span>
+                </div>
+                <!-- Mobile toggler for task list -->
+                <button
+                  v-if="isAreaSelected(areaType.id)"
+                  class="btn-task-list-inline mobile-toggler"
+                  :class="{ 'active': expandedTasks[areaType.id] }"
+                  @click="toggleTaskList(areaType.id)"
+                >
+                  <i :class="expandedTasks[areaType.id] ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
+                </button>
               </div>
 
               <div v-if="isAreaSelected(areaType.id)" class="list-right">
@@ -239,7 +253,7 @@
                       @change="updateAreaProp(areaType.id, 'carpet', $event.target.checked)"
                       class="form-check-input"
                     />
-                    <span>Carpet</span>
+                    <span>C</span>
                   </label>
                   <label class="area-checkbox-label-inline">
                     <input
@@ -248,11 +262,11 @@
                       @change="updateAreaProp(areaType.id, 'hardfloor', $event.target.checked)"
                       class="form-check-input"
                     />
-                    <span>Hard Floor</span>
+                    <span>HF</span>
                   </label>
                 </div>
                 <div class="rooms-control-inline">
-                  <span class="rooms-label">Rooms</span>
+                  <span class="rooms-label small">Rooms</span>
                   <div class="counter-group">
                     <button class="counter-btn" @click="decrementRooms(areaType.id)">−</button>
                     <span class="counter-value">{{ getAreaProp(areaType.id, 'rooms') }}</span>
@@ -260,11 +274,11 @@
                   </div>
                 </div>
                 <button
-                  class="btn-task-list-inline"
+                  class="btn-task-list-inline desktop-only"
                   :class="{ 'active': expandedTasks[areaType.id] }"
                   @click="toggleTaskList(areaType.id)"
                 >
-                  Task List
+                  {{ expandedTasks[areaType.id] ? 'Close Tasks' : 'Tasks' }}
                   <i :class="expandedTasks[areaType.id] ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
                 </button>
               </div>
@@ -275,7 +289,7 @@
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-clock"></i>
-                      <span>Hours</span>
+                      <span>Hrs</span>
                     </div>
                     <input
                         type="number"
@@ -288,7 +302,7 @@
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-clock"></i>
-                      <span>Minutes</span>
+                      <span>Mins</span>
                     </div>
                     <input
                         type="number"
@@ -301,7 +315,7 @@
                   <div class="metric-item">
                     <div class="metric-label">
                       <i class="bi bi-building"></i>
-                      <span>Square footage (ft2)</span>
+                      <span>Sqft</span>
                     </div>
                     <input
                         type="number"
@@ -685,19 +699,35 @@ watch(globalHardFloor, (newValue) => {
 <style scoped>
 /* Added styles for task metrics header */
 .task-metrics-header {
-  display: flex;
-  gap: 24px;
-  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 12px 15px;
   background: linear-gradient(135deg, #b8e6ea 0%, #a0dce3 100%);
   border-radius: 8px;
   margin-bottom: 16px;
-  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .task-metrics-header {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding: 16px 20px;
+    align-items: center;
+  }
 }
 
 .metric-item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .metric-item {
+    justify-content: flex-start;
+  }
 }
 
 .metric-label {
@@ -707,6 +737,7 @@ watch(globalHardFloor, (newValue) => {
   font-size: 14px;
   font-weight: 600;
   color: #2c3e50;
+  white-space: nowrap;
 }
 
 .metric-label i {
@@ -717,14 +748,22 @@ watch(globalHardFloor, (newValue) => {
 .metric-value {
   background: white;
   color: #2c3e50;
-  padding: 6px 16px;
+  padding: 6px 12px;
   border-radius: 20px;
   font-size: 14px;
   font-weight: 600;
-  min-width: 50px;
+  width: 80px;
   text-align: center;
-  border: 1px solid #ced4da; /* Add border for input field */
+  border: 1px solid #ced4da;
 }
+
+@media (min-width: 768px) {
+  .metric-value {
+    width: 100px;
+    margin-left: 8px;
+  }
+}
+
 .metric-value:focus {
     border-color: #17a2b8;
     outline: none;
@@ -957,14 +996,24 @@ watch(globalHardFloor, (newValue) => {
 /* List View Styles */
 .area-card-list {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding: 14px 16px;
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 8px;
   transition: all 0.2s;
   flex-wrap: wrap;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .area-card-list {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap; /* Ensure it can wrap to allow the task list to drop down */
+  }
 }
 
 .area-card-list.selected {
@@ -973,6 +1022,21 @@ watch(globalHardFloor, (newValue) => {
 }
 
 .list-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .list-left {
+    width: auto;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+}
+
+.list-title-group {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -986,17 +1050,36 @@ watch(globalHardFloor, (newValue) => {
 
 .list-right {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .list-right {
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    gap: 20px;
+  }
 }
 
 .area-checkboxes-inline {
   display: flex;
   align-items: center;
+  justify-content: space-around;
   gap: 12px;
   padding: 8px 16px;
   background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
   border-radius: 6px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .area-checkboxes-inline {
+    width: auto;
+    justify-content: flex-start;
+  }
 }
 
 .area-checkbox-label-inline {
@@ -1021,7 +1104,38 @@ watch(globalHardFloor, (newValue) => {
 .rooms-control-inline {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .rooms-control-inline {
+    width: auto;
+    justify-content: flex-start;
+  }
+}
+
+.desktop-only {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .desktop-only {
+    display: flex !important;
+  }
+}
+
+.mobile-toggler {
+  display: flex !important;
+  border-radius: 20px;
+  padding: 4px 12px !important;
+}
+
+@media (min-width: 768px) {
+  .mobile-toggler {
+    display: none !important;
+  }
 }
 
 .btn-task-list-inline {
@@ -1043,15 +1157,20 @@ watch(globalHardFloor, (newValue) => {
   background: #138496;
 }
 
+.btn-task-list-inline.active {
+  background: #2c3e50;
+  color: white;
+}
+
 .btn-task-list-inline i {
   font-size: 12px;
 }
 
 .task-list-container-inline {
   width: 100%;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e9ecef;
+  margin-top: 8px;
+  padding: 12px 0;
+  border-top: 1px solid #eee;
 }
 
 /* Collapsed Area Card */
@@ -1270,6 +1389,11 @@ watch(globalHardFloor, (newValue) => {
   background: #138496;
 }
 
+.btn-task-list.active {
+  background: #2c3e50;
+  color: white;
+}
+
 .btn-task-list i {
   font-size: 12px;
 }
@@ -1283,14 +1407,23 @@ watch(globalHardFloor, (newValue) => {
 
 .task-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
+  flex-direction: column;
+  padding: 12px 16px;
   background: white;
   border: 1px solid #e9ecef;
   border-radius: 8px;
   margin-bottom: 12px;
   transition: all 0.2s;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .task-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+  }
 }
 
 .task-item:last-child {
@@ -1307,6 +1440,7 @@ watch(globalHardFloor, (newValue) => {
   align-items: flex-start;
   gap: 0;
   flex: 1;
+  min-width: 0; /* Important for preventing flex children from expanding */
 }
 
 .task-icon {
@@ -1314,11 +1448,17 @@ watch(globalHardFloor, (newValue) => {
   height: 36px;
   background: #e8f4f8;
   border-radius: 6px;
-  display: flex;
+  display: none; /* Hide on mobile */
   align-items: center;
   justify-content: center;
   margin-right: 12px;
   flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .task-icon {
+    display: flex;
+  }
 }
 
 .task-icon i {
@@ -1328,29 +1468,49 @@ watch(globalHardFloor, (newValue) => {
 
 .task-details {
   flex: 1;
+  min-width: 0; /* Prevents text from squashing */
+  padding-right: 10px;
 }
 
 .task-title {
   font-size: 15px;
   font-weight: 600;
   color: #212529;
+  white-space: normal; /* Ensure text wraps */
+  word-break: break-word;
 }
 
 .task-description {
   font-size: 13px;
   color: #6c757d;
   line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .task-right {
   flex: 0 0 auto;
-  margin-left: 16px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .task-right {
+    width: auto;
+    margin-left: 16px;
+  }
 }
 
 .task-right .form-select {
+  width: 100%;
   min-width: 120px;
   border-color: #ced4da;
   font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  .task-right .form-select {
+    width: auto;
+  }
 }
 
 /* Form Controls */
@@ -1376,13 +1536,26 @@ watch(globalHardFloor, (newValue) => {
 .footer-section {
   background: #2c3e50;
   color: white;
-  padding: 32px;
+  padding: 24px 16px;
   text-align: center;
 }
 
+@media (min-width: 768px) {
+  .footer-section {
+    padding: 32px;
+  }
+}
+
 .footer-text {
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+@media (min-width: 768px) {
+  .footer-text {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
 }
 
 .footer-text .highlight {
@@ -1394,9 +1567,9 @@ watch(globalHardFloor, (newValue) => {
   background: #17a2b8;
   color: white;
   border: none;
-  padding: 12px 32px;
+  padding: 10px 24px;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
@@ -1405,9 +1578,19 @@ watch(globalHardFloor, (newValue) => {
   transition: all 0.2s;
 }
 
+@media (min-width: 768px) {
+  .btn-projects {
+    padding: 12px 32px;
+    font-size: 16px;
+  }
+}
+
 .btn-projects:hover {
   background: #138496;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
 }
+
+.fs-7 { font-size: 0.85rem; }
+.extra-small { font-size: 0.75rem; }
 </style>

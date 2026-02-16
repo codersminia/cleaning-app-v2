@@ -1,51 +1,53 @@
 <template>
-  <div class="bg-light min-vh-100 py-5 px-3">
+  <div class="bg-light min-vh-100 py-4 py-md-5 px-2 px-md-3">
     <!-- Header Section -->
-    <div class="text-center mb-5">
+    <div class="text-center mb-4 mb-md-5">
       <div class="mb-3">
-        <img width="120" height="120"
+        <img width="100" height="100" class="img-fluid"
           src="/images/logo.png"
           alt="Logo"
         />
       </div>
-      <h1 class="fw-bold fs-1 mb-2">Home Page</h1>
+      <h1 class="fw-bold fs-2 fs-md-1 mb-2">Home Page</h1>
       <p class="text-muted fs-6">Welcome to Clean Proposals</p>
     </div>
 
     <!-- Main Action Buttons -->
-    <div class="container mb-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <button class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100" @click="goToProspectsWithModal">CREATE PROPOSAL</button>
+    <div class="container mb-4 mb-md-5">
+      <div class="row justify-content-center g-3">
+        <div class="col-12 col-md-6 col-lg-4">
+          <button class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-3 py-md-5 w-100 fs-5 fs-md-4 shadow-sm" @click="goToProspectsWithModal">CREATE PROPOSAL</button>
         </div>
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <button @click="goToTracking" class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100">TRACK SENT PROPOSALS</button>
+        <div class="col-12 col-md-6 col-lg-4">
+          <button @click="goToTracking" class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-3 py-md-5 w-100 fs-5 fs-md-4 shadow-sm">TRACK SENT PROPOSALS</button>
         </div>
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <button @click="goToProposal" class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100">EDIT CLIENTS & PROPOSALS</button>
+        <div class="col-12 col-md-6 col-lg-4">
+          <button @click="goToProposal" class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-3 py-md-5 w-100 fs-5 fs-md-4 shadow-sm">EDIT CLIENTS & PROPOSALS</button>
         </div>
       </div>
     </div>
 
     <!-- Additional Features Section -->
-    <div class="container border border-dark">
-      <div class="row justify-content-center">
-        <div class="col-12 col-lg-8">
-          <div class="p-4">
-            <h2 class="fw-bold fs-5 text-center mb-4">Additional Feature</h2>
+    <div class="container border border-dark rounded-3 px-0 overflow-hidden">
+      <div class="row justify-content-center mx-0">
+        <div class="col-12 col-lg-10 px-0">
+          <div class="p-3 p-md-4 bg-white">
+            <h2 class="fw-bold fs-5 text-center mb-4">Additional Features</h2>
             
             <div class="row justify-content-center g-3">
-              <div class="col-12 col-md-6 col-lg-5">
+              <div class="col-12 col-md-6">
                 <!-- TRIGGER CALCULATOR MODAL -->
-                <button @click="openCalc" class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100">
-                  TRY THE NEW CALCULATOR PRICE ESTIMATE
-                  <span class="badge bg-transparent border border-white ms-2">BETA</span>
+                <button @click="openCalc" class="btn btn-info text-white fw-bold text-uppercase rounded-3 py-4 py-md-5 w-100 h-100">
+                  <div class="mb-2">TRY THE NEW CALCULATOR</div>
+                  <div class="fs-7 fw-normal opacity-75 mb-2">PRICE ESTIMATE</div>
+                  <span class="badge bg-transparent border border-white">BETA</span>
                 </button>
               </div>
               
-              <div class="col-12 col-md-6 col-lg-5">
-                <button @click="isVideoOpen = true" class="btn btn-info text-white fw-bold text-uppercase rounded-pill py-5 w-100">
-                  HOW TO USE CLEANPROPOSALS FOR WALK THROUGH
+              <div class="col-12 col-md-6">
+                <button @click="isVideoOpen = true" class="btn btn-info text-white fw-bold text-uppercase rounded-3 py-4 py-md-5 w-100 h-100">
+                  <div class="mb-2">HOW TO USE</div>
+                  <div class="fs-7 fw-normal opacity-75">WALK THROUGH VIDEO</div>
                 </button>
               </div>
             </div>
@@ -276,24 +278,34 @@ const goToProposal = () => { window.location.href = '/prospects?openModal=0' }
 </script>
 
 <style scoped>
-.btn-info { background-color: #20b2aa; border: none; }
+.btn-info { background-color: #20b2aa; border: none; transition: opacity 0.2s; }
+.btn-info:hover { opacity: 0.9; }
 .btn-teal { background-color: #00BFA5; border: none; }
+
+.fs-7 { font-size: 0.85rem; }
+
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 20px;
+  background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 15px;
 }
 
 /* Step 0 cards */
 .select-card {
-  background: white; border-radius: 40px; padding: 60px 60px; text-align: center; cursor: pointer;
+  background: white; border-radius: 40px; padding: 40px 20px; text-align: center; cursor: pointer;
   transition: transform 0.2s;
+}
+@media (min-width: 768px) {
+  .select-card { padding: 60px 60px; }
 }
 .select-card:hover { transform: scale(1.02); }
 
 /* Form Card */
 .calc-form-card {
-  background: white; width: 100%; max-width: 480px; border-radius: 12px; padding: 30px;
+  background: white; width: 100%; max-width: 480px; border-radius: 12px; padding: 20px;
   max-height: 90vh; overflow-y: auto;
+}
+@media (min-width: 768px) {
+  .calc-form-card { padding: 30px; }
 }
 
 /* Progress Stepper */
@@ -302,7 +314,10 @@ const goToProposal = () => { window.location.href = '/prospects?openModal=0' }
   display: flex; align-items: center; justify-content: center; font-weight: bold;
 }
 .step-dot.active { background: #000; }
-.step-line { width: 60px; height: 2px; background: #eee; margin: 0 5px; }
+.step-line { width: 40px; height: 2px; background: #eee; margin: 0 5px; }
+@media (min-width: 768px) {
+  .step-line { width: 60px; }
+}
 
 /* Custom Sliders and Elements */
 .form-range::-webkit-slider-thumb { background: #00BFA5; }
@@ -311,9 +326,15 @@ const goToProposal = () => { window.location.href = '/prospects?openModal=0' }
   background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
 }
 
-.video-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; z-index: 10000; }
+.video-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 15px; }
 .video-wrapper { position: relative; width: 100%; max-width: 900px; }
 .close-btn { position: absolute; top: -45px; right: 0; background: none; border: none; cursor: pointer; }
 .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; }
 .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+@media (max-width: 576px) {
+  .btn-info { font-size: 0.9rem !important; }
+  .select-card h2 { font-size: 1.25rem; }
+  .selection-container .row { gap: 1rem; }
+}
 </style>

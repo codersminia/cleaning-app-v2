@@ -118,23 +118,32 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: #fff;
+  min-height: 100vh;
+  padding: 20px;
+  background: #f8f9fa;
 }
 
 .logo img {
-  width: 80px;
+  width: 70px;
   margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .logo img { width: 80px; }
 }
 
 .login-card {
   background: #fff;
-  padding: 40px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  max-width: 100%;
+  padding: 30px 20px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
   text-align: center;
-  border-radius: 10px;
+  border-radius: 12px;
+}
+
+@media (min-width: 768px) {
+  .login-card { padding: 40px; }
 }
 
 .login-card h2 {

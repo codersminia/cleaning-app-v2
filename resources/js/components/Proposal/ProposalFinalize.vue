@@ -1,21 +1,23 @@
 <template>
   <div class="container-fluid p-0">
     <!-- Header (Hidden during print) -->
-    <header class="bg-light border-bottom py-4 px-3 px-md-4 d-print-none">
-      <div class="d-none d-md-flex align-items-center justify-content-between gap-4">
-        <div class="bg-white rounded p-3 d-flex align-items-center gap-2">
-          <router-link :to="{ name: 'proposal.calculator', params: { id: proposalId } }" class="btn btn-link text-decoration-none d-flex align-items-center gap-2 p-0 text-dark">
-            <!-- <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            <span class="fw-bold">Go Back</span> -->
-          </router-link>
+    <header class="bg-light border-bottom py-3 py-md-4 px-3 d-print-none">
+      <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 gap-md-4">
+        <div class="d-flex align-items-center justify-content-between w-100 d-md-none mb-2">
+           <router-link :to="{ name: 'proposal.calculator', params: { id: proposalId } }" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+             <i class="bi bi-chevron-left"></i> Back
+           </router-link>
+           <button class="btn btn-sm btn-teal text-white fw-bold" @click="openSendProposalModal">
+             Submit <i class="bi bi-send ms-1"></i>
+           </button>
         </div>
 
-        <div class="text-center flex-grow-1">
-          <h2 class="fw-bold mb-1 text-dark">FINALIZE PROPOSAL</h2>
-          <p class="text-muted mb-0">Review the generated PDF below</p>
+        <div class="text-center text-md-start flex-grow-1">
+          <h2 class="fw-bold mb-0 text-dark fs-4 fs-md-2">FINALIZE PROPOSAL</h2>
+          <p class="text-muted mb-0 small">Review the generated PDF below</p>
         </div>
 
-        <div class="bg-white rounded p-3 d-flex align-items-center gap-2">
+        <div class="d-none d-md-flex bg-white rounded p-3 align-items-center gap-2">
           <button class="btn btn-link text-decoration-none d-flex align-items-center gap-2 p-0 text-dark fw-bold" @click="openSendProposalModal">
             Add Email & Submit
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#17a2b8" stroke-width="2"><path d="M3 8l8-6 8 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
@@ -25,31 +27,31 @@
     </header>
 
     <!-- Main Content -->
-    <div class="row g-4 p-4 m-0">
+    <div class="row g-3 g-md-4 p-2 p-md-4 m-0">
       
       <!-- LEFT SIDEBAR (Hidden during print) -->
-      <div class="col-lg-4 d-print-none">
-        <div class="bg-white border rounded-3 p-4">
+      <div class="col-lg-4 d-print-none order-2 order-lg-1">
+        <div class="bg-white border rounded-3 p-3 p-md-4">
             <div v-if="loading" class="text-center py-5">
                 <div class="spinner-border text-info" role="status"></div>
                 <p class="text-muted mt-2">Loading Data...</p>
             </div>
             <div v-else>
-                <h5 class="fw-bold mb-4 text-center">Edit Text Sections</h5>
-                <div class="d-flex flex-column gap-3">
-                    <div v-for="section in PROPOSAL_SECTIONS" :key="section.id" class="border rounded-2 p-3">
-                    <button @click="toggleExpandedSection(section.id)" class="btn btn-link w-100 text-start d-flex align-items-center justify-content-between p-0 text-decoration-none mb-2">
+                <h5 class="fw-bold mb-3 mb-md-4 text-center text-lg-start fs-6 fs-md-5">Edit Text Sections</h5>
+                <div class="d-flex flex-column gap-2 gap-md-3">
+                    <div v-for="section in PROPOSAL_SECTIONS" :key="section.id" class="border rounded-2 p-2 p-md-3">
+                    <button @click="toggleExpandedSection(section.id)" class="btn btn-link w-100 text-start d-flex align-items-center justify-content-between p-0 text-decoration-none mb-0">
                         <div class="d-flex align-items-center gap-2">
                         <span class="fw-bold text-teal small">{{ section.title }}</span>
                         </div>
                         <small class="text-teal fw-bold">{{ expandedSections[section.id] ? '-' : '+' }}</small>
                     </button>
 
-                    <div v-if="expandedSections[section.id]" class="border-top pt-3 mt-3">
+                    <div v-if="expandedSections[section.id]" class="border-top pt-2 mt-2">
                         <textarea 
                             v-model="sectionContent[section.id]" 
                             class="form-control p-2 border rounded-2 mb-2" 
-                            style="min-height: 150px; font-size: 0.85rem;"
+                            style="min-height: 120px; font-size: 0.8rem;"
                         ></textarea>
                     </div>
                     </div>
@@ -60,15 +62,12 @@
 
       <!-- RIGHT SIDE - PREVIEW -->
       <!-- We remove column sizing during print to use full width -->
-      <div class="col-lg-8 print-full-width">
-            <div class="d-flex align-items-center justify-content-between mb-3 d-print-none">
-                <!-- <div class="fw-bold text-muted small">
-                  TOTAL MONTHLY: <span class="text-teal">{{ formatCurrency(combinedMonthlyTotal) }}</span>
-                </div> -->
-                <!-- CHANGED FUNCTION TO triggerNativePrint -->
+      <div class="col-lg-8 print-full-width order-1 order-lg-2">
+            <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between mb-3 d-print-none gap-2">
+                <h6 class="fw-bold text-muted small mb-0 d-block d-lg-none">PROPOSAL PREVIEW</h6>
                 <button 
 					@click="triggerNativePrint" 
-					class="btn btn-teal text-white btn-sm d-flex align-items-center gap-2 fw-bold ms-auto"
+					class="btn btn-teal text-white btn-sm d-flex align-items-center justify-content-center gap-2 fw-bold w-100 w-sm-auto ms-sm-auto"
 				>
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -78,7 +77,6 @@
             </div>
 
         <!-- PREVIEW CONTAINER -->
-        <!-- We add a specialized class 'print-container' -->
         <div class="print-container bg-light rounded-3 shadow">
             <div id="pdf-content" v-html="fullPdfHtml"></div>
         </div>

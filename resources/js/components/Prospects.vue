@@ -1,10 +1,10 @@
 <template>
-  <div class="min-vh-100 bg-light py-5">
+  <div class="min-vh-100 bg-light py-4 py-md-5 px-3">
     <!-- Loading Spinner -->
     <div 
       v-if="loading" 
       class="d-flex justify-content-center align-items-center"
-      style="height: 80vh;"
+      style="height: 60vh;"
     >
       <div class="spinner-border text-info" role="status" style="width: 3rem; height: 3rem;">
         <span class="visually-hidden">Loading...</span>
@@ -12,30 +12,33 @@
     </div>
 
     <!-- Actual Prospect Page -->
-    <div v-else>
+    <div v-else class="container px-0 px-md-3">
       <!-- Header Section -->
-      <div class="container mb-5">
+      <div class="mb-4 mb-md-5">
 
-        <div class="mb-4">
-            <a href="/dashboard" class="text-decoration-none text-muted d-flex align-items-center gap-2">
+        <div class="mb-3">
+            <a href="/dashboard" class="text-decoration-none text-muted d-flex align-items-center gap-2 small fw-bold">
                 <span>&lt;</span>
                 <span>BACK</span>
             </a>
         </div>
 
         <div class="text-center mb-4">
-          <div class="mb-3">
-            <svg class="mx-auto text-info" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="mb-2">
+            <svg class="mx-auto text-info d-none d-md-block" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9h12M6 9V4h12v5M6 9v11h12V9M9 13h6M9 17h6M9 9v8M15 9v8"></path>
+            </svg>
+            <svg class="mx-auto text-info d-block d-md-none" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 9h12M6 9V4h12v5M6 9v11h12V9M9 13h6M9 17h6M9 9v8M15 9v8"></path>
             </svg>
           </div>
-          <h1 class="display-5 fw-bold mb-2">Prospects</h1>
-          <p class="text-muted mb-1">Prospect contact information listed below</p>
-          <p class="text-muted">Click card for details</p>
+          <h1 class="fw-bold mb-2 fs-2 fs-md-1">Prospects</h1>
+          <p class="text-muted mb-1 small">Prospect contact information listed below</p>
+          <p class="text-muted small mb-3">Click card for details</p>
           <button
             style="background-color: #20b2aa;"
             @click="openAddProspectModal"
-            class="btn text-white fw-bold px-4 py-2"
+            class="btn text-white fw-bold px-4 py-2 rounded-3 shadow-sm"
           >
             ADD PROSPECTS
           </button>

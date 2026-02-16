@@ -1,16 +1,15 @@
 <template>
   <div class="projects-page">
     <!-- Top Navigation -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <router-link :to="{ name: 'proposal.tasks', params: { id: proposalId } }" class="btn btn-link text-decoration-none text-muted">
-        <!-- <i class="bi bi-arrow-left"></i> Go Back -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+      <router-link :to="{ name: 'proposal.tasks', params: { id: proposalId } }" class="btn btn-link text-decoration-none text-muted p-0 p-md-2">
+        <i class="bi bi-arrow-left d-md-none"></i>
       </router-link>
-      <h3 class="mb-0 text-dark fw-bold">PROJECTS</h3>
-      <router-link :to="{ name: 'proposal.calculator', params: { id: proposalId } }" class="btn btn-link text-decoration-none text-muted">
-        <!-- I'm done here next step <i class="bi bi-arrow-right"></i> -->
+      <h3 class="mb-0 text-dark fw-bold fs-4 fs-md-3">PROJECTS</h3>
+      <router-link :to="{ name: 'proposal.calculator', params: { id: proposalId } }" class="btn btn-link text-decoration-none text-muted p-0 p-md-2">
       </router-link>
     </div>
-    <p class="text-center text-muted small mb-5">Create projects to fit your plan</p>
+    <p class="text-center text-muted small mb-4 mb-md-5 px-3">Create projects to fit your plan</p>
     
     <!-- Loading State -->
     <div v-if="isLoading" class="text-center py-5">
@@ -21,29 +20,27 @@
     </div>
 
     <!-- No Projects State (Matches the image) -->
-    <div v-else-if="!hasProjects" class="text-center py-5 no-projects-container">
+    <div v-else-if="!hasProjects" class="text-center py-5 no-projects-container px-3">
         <div class="folder-icon-wrapper mx-auto mb-4">
             <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#17a2b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
             </svg>
         </div>
-        <h2 class="fw-bold mb-3">Create Your Projects</h2>
-        <p class="text-muted mb-5">You can choose type of project: Recurring or One-Time</p>
-        <div class="d-flex justify-content-center gap-3">
+        <h2 class="fw-bold mb-3 fs-3">Create Your Projects</h2>
+        <p class="text-muted mb-4 mb-md-5">Choose Recurring or One-Time</p>
+        <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
             <button
                 v-if="showRecurring"
-                class="btn btn-info btn-lg d-flex align-items-center py-3 px-4 rounded"
+                class="btn btn-info btn-lg d-flex align-items-center justify-content-center py-3 px-4 rounded"
                 @click="openModal('recurring')"
             >
-                <!-- Assuming you have a CSS/Bootstrap icon for arrow-repeat/sync/refresh. If not, replace with text. -->
-                <i class="bi bi-arrow-repeat me-2 fw-bold fs-5"></i> ADD A FIRST RECURRING PROJECT
+                <i class="bi bi-arrow-repeat me-2 fw-bold fs-5"></i> ADD RECURRING PROJECT
             </button>
             <button
-                class="btn btn-success btn-lg d-flex align-items-center py-3 px-4 rounded"
+                class="btn btn-success btn-lg d-flex align-items-center justify-content-center py-3 px-4 rounded"
                 @click="openModal('one-time')"
             >
-                <!-- Assuming you have a CSS/Bootstrap icon for 1-circle. If not, replace with text. -->
-                <i class="bi bi-1-circle me-2 fw-bold fs-5"></i> ADD A FIRST ONE-TIME PROJECT
+                <i class="bi bi-1-circle me-2 fw-bold fs-5"></i> ADD ONE-TIME PROJECT
             </button>
         </div>
     </div>
@@ -53,47 +50,58 @@
     <div v-else class="projects-list">
         <!-- Recurring Projects Section -->
         <div v-if="showRecurring" class="card shadow-sm mb-4">
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-folder-fill text-info fs-3 me-2"></i>
-                    <h4 class="card-title fw-bold mb-0">Recurring Projects</h4>
+            <div class="card-body p-3 p-md-4">
+                <div class="d-flex flex-column flex-md-row align-items-md-center mb-3 gap-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-folder-fill text-info fs-3 me-2"></i>
+                        <h4 class="card-title fw-bold mb-0 fs-5 fs-md-4">Recurring Projects</h4>
+                    </div>
                     <button
-                        class="btn btn-info ms-auto d-flex align-items-center py-2 px-3 rounded-pill"
+                        class="btn btn-info ms-md-auto d-flex align-items-center py-2 px-3 rounded-pill"
                         @click="openModal('recurring')"
                     >
-                        <i class="bi bi-plus me-2 fw-bold fs-5"></i> ADD A NEW RECURRING PROJECT
+                        <i class="bi bi-plus me-1 fw-bold fs-5"></i> NEW RECURRING PROJECT
                     </button>
                 </div>
 
                 <!-- Recurring Project Cards (Dynamic) -->
                 <div v-for="project in recurringProjects" :key="project.id" class="project-item p-3 mb-3 border rounded">
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2 gap-lg-3">
                         <span class="project-title fw-bold text-dark flex-grow-1">{{ project.name }}</span>
-                        <button class="btn btn-outline-secondary btn-sm me-2">0 Notes</button>
                         
-                        <span class="text-muted small me-2">Area Type:</span>
-                        <span class="fw-bold me-3">Special Areas</span>
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-2 mt-lg-0">
+                            <button class="btn btn-outline-secondary btn-sm">0 Notes</button>
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted small me-1">Area:</span>
+                                <span class="fw-bold small">Special</span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted small me-1">Freq:</span>
+                                <span class="fw-bold small">{{ project.frequency_id }} {{ project.per }}</span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted small me-1">Tasks:</span>
+                                <span class="fw-bold small">{{ project.total_tasks }}</span>
+                            </div>
+                        </div>
                         
-                        <span class="text-muted small me-2">Frequency:</span>
-                        <span class="fw-bold me-3">{{ project.frequency_id }} {{ project.per }}</span>
-                        
-                        <span class="text-muted small me-2">Tasks:</span>
-                        <span class="fw-bold me-3">{{ project.total_tasks }}</span>
-                        
-                        <button class="btn btn-link text-decoration-none text-info show-details me-2" @click="toggleProjectDetails(project.id)">
-                          {{ expandedProjects[project.id] ? 'HIDE PROJECT DETAILS' : 'SHOW PROJECT DETAILS' }}
+                        <button class="btn btn-link text-decoration-none text-info show-details p-0 mt-2 mt-lg-0 ms-lg-auto" @click="toggleProjectDetails(project.id)">
+                          {{ expandedProjects[project.id] ? 'HIDE DETAILS' : 'SHOW DETAILS' }}
                         </button>
                     </div>
                     
                     <!-- Recurring Project Details Section (Dynamic Expanded) -->
                     <div v-if="expandedProjects[project.id]" class="project-details mt-3 pt-3 border-top">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex align-items-center">
-                                <span class="text-muted small me-2">Frequency</span>
-                                <select class="form-select form-select-sm w-auto me-2"  disabled v-model="project.frequency_id">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
+                            <div class="d-flex align-items-center flex-wrap gap-2">
+                                <span class="text-muted small">Frequency</span>
+                                <select class="form-select form-select-sm w-auto"  disabled v-model="project.frequency_id">
                                     <option v-for="i in 30" :key="i" :value="i">{{ i }}</option>
                                 </select>
-                                <span class="text-muted small me-2">Per</span>
+                                <span class="text-muted small">Per</span>
                                 <select class="form-select form-select-sm w-auto" disabled v-model="project.per">
                                     <option value="week">Week</option>
                                     <option value="month">Month</option>
@@ -101,7 +109,7 @@
                                     <option value="year">Year</option>
                                 </select>
                             </div>
-                            <span class="fw-bold">Tasks ({{ project.total_tasks }})</span> 
+                            <span class="fw-bold small">Tasks ({{ project.total_tasks }})</span> 
                         </div>
                         <div class="task-list-container">
                             <!-- Dynamic Task List -->
@@ -131,50 +139,61 @@
 
         <!-- One Time Projects Section -->
         <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-folder-fill text-success fs-3 me-2"></i>
-                    <h4 class="card-title fw-bold mb-0">One Time Projects</h4>
+            <div class="card-body p-3 p-md-4">
+                <div class="d-flex flex-column flex-md-row align-items-md-center mb-3 gap-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-folder-fill text-success fs-3 me-2"></i>
+                        <h4 class="card-title fw-bold mb-0 fs-5 fs-md-4">One Time Projects</h4>
+                    </div>
                     <button
-                        class="btn btn-success ms-auto d-flex align-items-center py-2 px-3 rounded-pill"
+                        class="btn btn-success ms-md-auto d-flex align-items-center py-2 px-3 rounded-pill"
                         @click="openModal('one-time')"
                     >
-                        <i class="bi bi-plus me-2 fw-bold fs-5"></i> ADD A NEW ONE-TIME PROJECT
+                        <i class="bi bi-plus me-1 fw-bold fs-5"></i> NEW ONE-TIME PROJECT
                     </button>
                 </div>
 
                 <!-- One Time Project Cards (Dynamic) -->
                 <div v-for="project in oneTimeProjects" :key="project.id" class="project-item p-3 mb-3 border rounded">
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2 gap-lg-3">
                         <span class="project-title fw-bold text-dark flex-grow-1">{{ project.name }}</span>
-                        <button class="btn btn-outline-secondary btn-sm me-2">0 Notes</button>
                         
-                        <span class="text-muted small me-2">Area Type:</span>
-                        <span class="fw-bold me-3">Special Areas</span>
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-2 mt-lg-0">
+                            <button class="btn btn-outline-secondary btn-sm">0 Notes</button>
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted small me-1">Area:</span>
+                                <span class="fw-bold small">Special</span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted small me-1">Freq:</span>
+                                <span class="fw-bold small">1 time</span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted small me-1">Tasks:</span>
+                                <span class="fw-bold small">{{ project.total_tasks }}</span>
+                            </div>
+                        </div>
                         
-                        <span class="text-muted small me-2">Frequency:</span>
-                        <span class="fw-bold me-3">1 time</span>
-                        
-                        <span class="text-muted small me-2">Tasks:</span>
-                        <span class="fw-bold me-3">{{ project.total_tasks }}</span>
-                        
-                        <button class="btn btn-link text-decoration-none text-info show-details me-2" @click="toggleProjectDetails(project.id)">
-                            {{ expandedProjects[project.id] ? 'HIDE PROJECT DETAILS' : 'SHOW PROJECT DETAILS' }}
+                        <button class="btn btn-link text-decoration-none text-info show-details p-0 mt-2 mt-lg-0 ms-lg-auto" @click="toggleProjectDetails(project.id)">
+                            {{ expandedProjects[project.id] ? 'HIDE DETAILS' : 'SHOW DETAILS' }}
                         </button>
                     </div>
 
                     <!-- One Time Project Details Section (Dynamic Expanded) -->
                     <div v-if="expandedProjects[project.id]" class="project-details mt-3 pt-3 border-top">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex align-items-center">
-                                <span class="text-muted small me-2">Frequency</span>
-                                <select class="form-select form-select-sm w-auto me-2" disabled>
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
+                            <div class="d-flex align-items-center flex-wrap gap-2">
+                                <span class="text-muted small">Frequency</span>
+                                <select class="form-select form-select-sm w-auto" disabled>
                                     <option :value="project.frequency_id" selected>{{ project.frequency_id }}</option>
                                 </select>
-                                <span class="text-muted small me-2">Per</span>
+                                <span class="text-muted small">Per</span>
                                 <input type="text" class="form-control form-control-sm w-auto" value="Time" disabled>
                             </div>
-                            <span class="fw-bold">Tasks ({{ project.total_tasks }})</span> 
+                            <span class="fw-bold small">Tasks ({{ project.total_tasks }})</span> 
                         </div>
                         <div class="task-list-container">
                             <!-- Dynamic Task List -->

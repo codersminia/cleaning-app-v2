@@ -4,22 +4,10 @@
     <div class="bg-light pb-4 mb-4">
       <div class="container-fluid">
         <div class="row align-items-center">
-          <!-- Go Back Button -->
-          <div class="col-md-3">
-            <!-- <button class="btn btn-outline-secondary btn-sm">
-              <span class="text-info">←</span> Go Back
-            </button> -->
-          </div>
           <!-- Center Title -->
-          <div class="col-md-6 text-center">
-            <h4 class="fw-bold" style="font-size: 2.5rem; letter-spacing: 0.05em;">PRICE CALCULATOR</h4>
-            <p class="text-muted mb-0">Calculate your costs before finishing</p>
-          </div>
-          <!-- Next Step Button -->
-          <div class="col-md-3 text-end">
-            <!-- <button class="btn btn-outline-secondary btn-sm">
-              Im done here <span class="text-info">→</span>
-            </button> -->
+          <div class="col-12 text-center py-3">
+            <h4 class="fw-bold fs-3 fs-md-1" style="letter-spacing: 0.05em;">PRICE CALCULATOR</h4>
+            <p class="text-muted mb-0 small">Calculate your costs before finishing</p>
           </div>
         </div>
       </div>
@@ -82,36 +70,26 @@
             <!-- Collapsible Content -->
             <div class="payroll-content p-4 border">
               <p class="text-muted mb-4">Ex: Payroll tax and Work Comp costs that factor into your payroll hourly rate</p>
-              <!-- Three Input Fields Row -->
-              <div class="row mb-4">
+              <!-- Input Fields -->
+              <div class="row mb-4 gy-3">
                 <!-- Payroll Taxes -->
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                   <label class="form-label fw-bold text-uppercase" style="font-size: 0.85rem;">Payroll Taxes</label>
                   <div class="input-group">
                     <input type="number" class="form-control" placeholder="0.00" v-model="payrollTaxes">
                     <span class="input-group-text">%</span>
-                    <button class="btn btn-link text-teal pl-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 5V19M5 12H19" stroke="#17a2b8" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                    </button>
                   </div>
                 </div>
                 <!-- Insurance -->
-                <div class="col-md-4" style="padding-left: 0px;">
+                <div class="col-12 col-md-4">
                   <label class="form-label fw-bold text-uppercase" style="font-size: 0.85rem;">Insurance</label>
                   <div class="input-group">
                     <input type="number" class="form-control" placeholder="0.00" v-model="insurance">
                     <span class="input-group-text">%</span>
-                    <button class="btn btn-link text-teal pl-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 5V19M5 12H19" stroke="#17a2b8" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                    </button>
                   </div>
                 </div>
                 <!-- Overhead -->
-                <div class="col-md-4" style="padding-left: 0px;">
+                <div class="col-12 col-md-4">
                   <label class="form-label fw-bold text-uppercase" style="font-size: 0.85rem;">Overhead</label>
                   <div class="input-group">
                     <input type="number" class="form-control" placeholder="0.00" v-model="overhead">
@@ -131,46 +109,28 @@
             </div>
         </div>
         <div class="labor-section bg-light py-4" v-if="selectedOption == '1' && showJanitorialSection">
-            <div class="row align-items-center">
-              <!-- Expand All Toggle -->
-              <div class="col-md-3">
-                <div class="d-flex align-items-center gap-2">
-                  <!-- <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="expandAll">
-                  </div> -->
-                  <!-- <label class="form-check-label" for="expandAll">
-                    Expand all
-                  </label> -->
-                </div>
-              </div>
-              <!-- Title Section -->
-              <div class="col-md-6 text-center">
-                <div class="d-flex justify-content-center align-items-center gap-3">
-                  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="12" r="6" stroke="#17a2b8" stroke-width="2"/>
-                    <path d="M8 32C8 25.37 13.37 20 20 20C26.63 20 32 25.37 32 32" stroke="#17a2b8" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-                  <div>
-                    <h4 class="mb-0 fw-bold text-dark">{{ janitorialSectionLabel }}</h4>
-                  </div>
-                  <button class="btn btn-link p-0" @click="payrollExpanded = !payrollExpanded" style="background: none; border: none; cursor: pointer;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="5" r="2" fill="#6c757d"/>
-                    <circle cx="12" cy="12" r="2" fill="#6c757d"/>
-                    <circle cx="12" cy="19" r="2" fill="#6c757d"/>
+            <div class="container-fluid">
+              <div class="row align-items-center gy-3">
+                <!-- Title Section -->
+                <div class="col-12 col-md-8 text-center text-md-start">
+                  <div class="d-flex justify-content-center justify-content-md-start align-items-center gap-3">
+                    <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="d-none d-sm-block">
+                      <circle cx="20" cy="12" r="6" stroke="#17a2b8" stroke-width="2"/>
+                      <path d="M8 32C8 25.37 13.37 20 20 20C26.63 20 32 25.37 32 32" stroke="#17a2b8" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                </button>
+                    <h4 class="mb-0 fw-bold text-dark fs-5 fs-md-4">{{ janitorialSectionLabel }}</h4>
+                    <button class="btn btn-link p-0" @click="payrollExpanded = !payrollExpanded">
+                      <i class="bi bi-three-dots-vertical text-muted"></i>
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <!-- Add New Button -->
-              <div class="col-md-3 text-end">
-                <button class="btn btn-teal text-white px-4 py-2 fw-bold" @click="openLaborCostModal">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; display: inline;">
-                    <circle cx="12" cy="12" r="6" stroke="white" stroke-width="2"/>
-                    <path d="M8 32C8 25.37 13.37 20 20 20C26.63 20 32 25.37 32 32" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-                  ADD A NEW LABOR COST
-                </button>
+                <!-- Add New Button -->
+                <div class="col-12 col-md-4 text-center text-md-end">
+                  <button class="btn btn-teal text-white w-100 w-md-auto px-4 py-2 fw-bold" @click="openLaborCostModal">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    ADD NEW LABOR COST
+                  </button>
+                </div>
               </div>
             </div>
         </div>
@@ -186,35 +146,36 @@
           <div v-for="(cost, index) in laborCosts" :key="cost.id" class="mb-4">
             
             <!-- Collapsed View Header -->
-            <div v-if="!cost.isExpanded" class="labor-cost-card bg-white p-4 rounded border-0 shadow-sm">
-              <div class="row justify-content-around align-items-center g-0">
-                <div class="col-md-2 pe-4 border-end">
-                  <label class="text-uppercase small text-muted fw-bold" style="font-size: 0.75rem;">Labor Cost {{ index + 1 }}</label>
-                  <h5 class="fw-bold mt-2 mb-0">{{ cost.labor || 'Unspecified' }}</h5>
+            <div v-if="!cost.isExpanded" class="labor-cost-card bg-white p-3 p-md-4 rounded border-0 shadow-sm mx-2">
+              <div class="row align-items-center gy-3 gy-md-0">
+                <div class="col-12 col-md-3 border-md-end">
+                  <label class="text-uppercase small text-muted fw-bold d-block mb-1" style="font-size: 0.7rem;">Labor Cost {{ index + 1 }}</label>
+                  <h5 class="fw-bold mb-0 fs-6">{{ cost.labor || 'Unspecified' }}</h5>
                 </div>
-                <!-- Dynamic Summary Fields (Collapsed) -->
-                <div class="col-md-2 px-4 border-end">
-                  <label class="text-uppercase small text-muted fw-bold" style="font-size: 0.75rem;">Cost Per Clean</label>
-                  <p class="fw-bold mb-0" style="font-size: 1.25rem;">${{ getCostPerClean(cost).toFixed(2) }}</p>
+                <!-- Summary Fields -->
+                <div class="col-4 col-md-2 text-center border-md-end px-2">
+                  <label class="text-uppercase extra-small text-muted fw-bold d-block mb-1">Per Clean</label>
+                  <p class="fw-bold mb-0 small">${{ getCostPerClean(cost).toFixed(2) }}</p>
                 </div>
-                <div class="col-md-2 px-4 border-end">
-                  <label class="text-uppercase small text-muted fw-bold" style="font-size: 0.75rem;">Annual Cost</label>
-                  <p class="fw-bold mb-0" style="font-size: 1.25rem;">${{ getAnnualCost(cost).toFixed(2) }}</p>
+                <div class="col-4 col-md-2 text-center border-md-end px-2">
+                  <label class="text-uppercase extra-small text-muted fw-bold d-block mb-1">Annual</label>
+                  <p class="fw-bold mb-0 small">${{ getAnnualCost(cost).toFixed(2) }}</p>
                 </div>
-                <div class="col-md-2 px-4 border-end">
-                  <label class="text-uppercase small text-muted fw-bold" style="font-size: 0.75rem;">Monthly</label>
-                  <p class="fw-bold mb-0" style="font-size: 1.25rem;">${{ getMonthlyCost(cost).toFixed(2) }}</p>
+                <div class="col-4 col-md-2 text-center border-md-end px-2">
+                  <label class="text-uppercase extra-small text-muted fw-bold d-block mb-1">Monthly</label>
+                  <p class="fw-bold mb-0 small">${{ getMonthlyCost(cost).toFixed(2) }}</p>
                 </div>
                 
-                <div class="col-md-2 d-flex justify-content-around align-items-center">
-                  <a href="#" class="text-teal text-decoration-none fw-bold small" @click.prevent="cost.isExpanded = true">SHOW DETAILS</a>
-                  <button class="btn btn-sm btn-teal text-white rounded-circle" style="width: 20px; height: 20px;" @click="cost.isExpanded = true">
-                    <i class="bi bi-chevron-down"></i> <!-- Or your SVG -->
-                  </button>
-                  <!-- Delete Button -->
-                  <button class="btn btn-link p-0 text-danger" @click="laborCosts.splice(index, 1)">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                  </button>
+                <div class="col-12 col-md-3 d-flex justify-content-between justify-content-md-around align-items-center mt-3 mt-md-0">
+                  <button class="btn btn-link text-teal text-decoration-none fw-bold extra-small p-0" @click.prevent="cost.isExpanded = true">DETAILS</button>
+                  <div class="d-flex gap-3">
+                    <button class="btn btn-sm btn-teal text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;" @click="cost.isExpanded = true">
+                      <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <button class="btn btn-link p-0 text-danger" @click="laborCosts.splice(index, 1)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -230,40 +191,38 @@
               </div>
 
               <!-- Inputs Row -->
-              <div class="row mb-4 pb-4 border-bottom">
-                <div class="col-md-2">
+              <div class="row mb-4 pb-4 border-bottom gy-3">
+                <div class="col-6 col-md-2">
                   <label class="form-label fw-bold text-teal small">Labor</label>
-                  <select class="form-control form-select" v-model="cost.labor">
+                  <select class="form-control form-select form-select-sm" v-model="cost.labor">
                     <option value="custodians">Custodians</option>
                     <option value="cleaners">Cleaners</option>
                     <option value="supervisors">Supervisors</option>
                   </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-6 col-md-2">
                   <label class="form-label fw-bold small">Staff</label>
-                  <input type="number" class="form-control text-center" v-model.number="cost.staff">
+                  <input type="number" class="form-control form-control-sm text-center" v-model.number="cost.staff">
                 </div>
-                <div class="col-md-2">
+                <div class="col-6 col-md-2">
                   <label class="form-label fw-bold small">Rate ($/hr)</label>
-                  <input type="number" class="form-control" v-model.number="cost.rateOfPay">
+                  <input type="number" class="form-control form-control-sm" v-model.number="cost.rateOfPay">
                 </div>
-                <div class="col-md-2">
+                <div class="col-6 col-md-2">
                   <label class="form-label fw-bold small">Hours</label>
-                  <input type="number" class="form-control" v-model.number="cost.hours">
+                  <input type="number" class="form-control form-control-sm" v-model.number="cost.hours">
                 </div>
                 
-                <!-- Dynamic Frequency 1-30 -->
-                <div class="col-md-2">
+                <div class="col-6 col-md-2">
                   <label class="form-label fw-bold small">Freq</label>
-                  <select class="form-control form-select" v-model.number="cost.frequency">
+                  <select class="form-control form-select form-select-sm" v-model.number="cost.frequency">
                     <option v-for="n in 30" :key="n" :value="n">{{ n }}</option>
                   </select>
                 </div>
 
-                <!-- Dynamic Per (Week/Month/etc) -->
-                <div class="col-md-2">
+                <div class="col-6 col-md-2">
                   <label class="form-label fw-bold small">Per</label>
-                  <select class="form-control form-select" v-model="cost.per">
+                  <select class="form-control form-select form-select-sm" v-model="cost.per">
                     <option value="Week">Week</option>
                     <option value="Month">Month</option>
                     <option value="Quarter">Quarter</option>
@@ -273,18 +232,18 @@
               </div>
 
               <!-- Expanded Blue Summary Box -->
-              <div class="row bg-info bg-opacity-10 p-4 rounded mb-4">
-                <div class="col-md-4">
-                  <label class="text-uppercase fw-bold text-teal small">Your Labor Cost Per Clean</label>
-                  <div class="bg-white p-3 rounded mt-2 fw-bold fs-5">${{ getCostPerClean(cost).toFixed(2) }}</div>
+              <div class="row bg-info bg-opacity-10 p-3 p-md-4 rounded mb-4 gy-4">
+                <div class="col-12 col-md-4">
+                  <label class="text-uppercase fw-bold text-teal extra-small d-block mb-1">Labor Cost Per Clean</label>
+                  <div class="bg-white p-3 rounded fw-bold fs-5">${{ getCostPerClean(cost).toFixed(2) }}</div>
                 </div>
-                <div class="col-md-4">
-                  <label class="text-uppercase fw-bold text-teal small">Your Annual Labor Cost</label>
-                  <div class="bg-white p-3 rounded mt-2 fw-bold fs-5">${{ getAnnualCost(cost).toFixed(2) }}</div>
+                <div class="col-12 col-md-4">
+                  <label class="text-uppercase fw-bold text-teal extra-small d-block mb-1">Annual Labor Cost</label>
+                  <div class="bg-white p-3 rounded fw-bold fs-5">${{ getAnnualCost(cost).toFixed(2) }}</div>
                 </div>
-                <div class="col-md-4">
-                  <label class="text-uppercase fw-bold text-teal small">Your Monthly Labor Cost</label>
-                  <div class="bg-white p-3 rounded mt-2 fw-bold fs-5">${{ getMonthlyCost(cost).toFixed(2) }}</div>
+                <div class="col-12 col-md-4">
+                  <label class="text-uppercase fw-bold text-teal extra-small d-block mb-1">Monthly Labor Cost</label>
+                  <div class="bg-white p-3 rounded fw-bold fs-5">${{ getMonthlyCost(cost).toFixed(2) }}</div>
                 </div>
               </div>
 
@@ -298,102 +257,93 @@
 
         </div>
         <!-- Pricing Summary Section -->
-        <div class="mt-5 mb-5" v-if="selectedOption == '1' && showJanitorialSection">
-          <div class="row g-0" style="background-color: #a8dfe1;">
+        <div class="mt-4 mt-md-5 mb-5 mx-2" v-if="selectedOption == '1' && showJanitorialSection">
+          <div class="row g-0 rounded shadow-sm overflow-hidden" style="background-color: #a8dfe1;">
             
             <!-- Left Section - Total Price Card -->
-            <div class="col-md-5">
-              <div class="p-5 rounded-start">
-                <h4 class="fw-bold mb-2" style="color: #17a2b8;">
+            <div class="col-12 col-md-5">
+              <div class="p-4 p-md-5">
+                <h4 class="fw-bold mb-2 fs-5 fs-md-4" style="color: #17a2b8;">
                   Total of Price for All<br>Labor Costs
                 </h4>
-                <p class="text-muted mb-4">All labor costs added above combined into one monthly price</p>
+                <p class="text-muted mb-4 small">All labor costs combined into one monthly price</p>
                 
                 <!-- Building Sq Ft Section -->
                 <div class="mb-4">
-                  <div class="d-flex align-items-center gap-2 mb-3">
-                    <!-- Icon -->
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M3 9V21H21V9M3 9L12 3L21 9M9 13H15V21H9V13Z" stroke="#17a2b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <label class="fw-bold text-dark">Building Sq Ft.</label>
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-building fs-5 text-info"></i>
+                    <label class="fw-bold text-dark small">Building Sq Ft.</label>
                   </div>
-                  <input type="number" disabled class="form-control border-0 border-bottom text-center fw-bold" placeholder="0" v-model="buildingSqFt">
+                  <input type="number" disabled class="form-control border-0 border-bottom text-center fw-bold bg-transparent" placeholder="0" v-model="buildingSqFt">
                 </div>
                 
-                <!-- Per Sq Ft Section (Read Only Calculation) -->
+                <!-- Per Sq Ft Section -->
                 <div class="mb-4">
-                  <label class="fw-bold mb-2 d-block" style="color: #17a2b8;">$ Per Sq Ft</label>
-                  <!-- Display calculated per sq ft -->
-                  <div aria-disabled="true" class="bg-white p-2 fw-bold text-center rounded">
+                  <label class="fw-bold mb-2 d-block small" style="color: #17a2b8;">$ Per Sq Ft</label>
+                  <div class="bg-white p-2 fw-bold text-center rounded small">
                     ${{ calculatedPerSqFt }}
                   </div>
                 </div>
                 
                 <!-- Sales Tax Toggle -->
-                <div class="d-flex align-items-center gap-3 mb-4">
-                  <label class="mb-0 text-dark">Add Sales Tax to your services?</label>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="salesTax" v-model="addSalesTax">
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-2">
+                  <label class="mb-0 text-dark small">Add Sales Tax?</label>
+                  <div class="form-check form-switch p-0 m-0">
+                    <input class="form-check-input" type="checkbox" id="salesTax" v-model="addSalesTax" style="margin-left: 0;">
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Right Section - Summary Details -->
-            <div class="col-md-7">
-              <div class="p-5 rounded-end border-start bg-white h-100">
+            <div class="col-12 col-md-7">
+              <div class="p-4 p-md-5 border-md-start bg-white h-100">
                 
                 <!-- Cleaning Labor Costs Summary -->
-                <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-4">
                   <div>
-                    <h6 class="fw-bold mb-1">Cleaning Labor Costs ({{ laborCosts.length }})</h6>
-                    <p class="text-muted small mb-0">{{ laborCosts.length }} labor cost(s) added</p>
+                    <h6 class="fw-bold mb-1 fs-6">Labor Costs ({{ laborCosts.length }})</h6>
+                    <p class="text-muted extra-small mb-0">{{ laborCosts.length }} cost(s) added</p>
                   </div>
-                  <span class="fw-bold" style="font-size: 1.25rem;">${{ totalMonthlyLaborCost.toFixed(2) }}</span>
+                  <span class="fw-bold fs-5">${{ totalMonthlyLaborCost.toFixed(2) }}</span>
                 </div>
 
                 <!-- Additional Expenses Section -->
-                <div class="mb-4 mt-4">
-                  <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="mb-4">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                      <h6 class="fw-bold mb-1">Additional Expenses ({{ additionalExpenses.length }})</h6>
-                      <p class="text-muted small mb-0">{{ additionalExpenses.length }} additional expense(s) added</p>
+                      <h6 class="fw-bold mb-1 fs-6">Additional Expenses ({{ additionalExpenses.length }})</h6>
+                      <p class="text-muted extra-small mb-0">Up to 5 expenses</p>
                     </div>
-                    <span class="fw-bold" style="font-size: 1.25rem;">${{ totalAdditionalExpenses.toFixed(2) }}</span>
+                    <span class="fw-bold fs-5">${{ totalAdditionalExpenses.toFixed(2) }}</span>
                   </div>
 
                   <!-- List of Added Expenses -->
-                  <div v-for="(expense, index) in additionalExpenses" :key="expense.id" class="row g-2 mb-2 align-items-center">
-                    <div class="col-auto ps-3" style="border-left: 4px solid #17a2b8;"></div>
-                    <div class="col">
-                      <span class="fw-bold text-muted">{{ expense.name }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <span class="fw-bold">${{ expense.cost.toFixed(2) }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <!-- Remove Button -->
-                      <button class="btn btn-sm text-danger" @click="removeExpense(index)">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  <div v-for="(expense, index) in additionalExpenses" :key="expense.id" class="d-flex align-items-center justify-content-between mb-2 py-1 border-start border-4 border-info ps-3">
+                    <span class="fw-bold text-muted small">{{ expense.name }}</span>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="fw-bold small">${{ expense.cost.toFixed(2) }}</span>
+                      <button class="btn btn-link p-0 text-danger" @click="removeExpense(index)">
+                        <i class="bi bi-x-circle"></i>
                       </button>
                     </div>
                   </div>
 
-                  <!-- Add Expense Inputs (Show if < 5) -->
-                  <div class="row g-2 mb-2 mt-3" v-if="additionalExpenses.length < 5">
-                    <div class="col-auto ps-3" style="border-left: 4px solid #ccc;"></div>
-                    <div class="col">
-                      <input type="text" class="form-control border-0 border-bottom" placeholder="Expense Name" v-model="newExpenseName">
-                    </div>
-                    <div class="col-auto">
-                      <input type="number" class="form-control border-0 border-bottom" placeholder="0.00" v-model="newExpenseCost" style="max-width: 100px;">
-                    </div>
-                    <div class="col-auto">
-                      <button class="btn text-white fw-bold px-3 btn-sm" style="background-color: #17a2b8;" @click="addExpense">ADD</button>
+                  <!-- Add Expense Inputs -->
+                  <div class="mt-3" v-if="additionalExpenses.length < 5">
+                    <div class="row g-2 align-items-end">
+                      <div class="col-5">
+                        <input type="text" class="form-control form-control-sm border-0 border-bottom" placeholder="Name" v-model="newExpenseName">
+                      </div>
+                      <div class="col-3">
+                        <input type="number" class="form-control form-control-sm border-0 border-bottom" placeholder="$ 0" v-model="newExpenseCost">
+                      </div>
+                      <div class="col-4">
+                        <button class="btn btn-info btn-sm text-white w-100 extra-small fw-bold py-1" @click="addExpense">ADD</button>
+                      </div>
                     </div>
                   </div>
-                  <div v-else class="text-muted small text-center fst-italic">
+                  <div v-else class="text-muted extra-small text-center fst-italic mt-2">
                     Max 5 expenses reached.
                   </div>
                 </div>
@@ -408,30 +358,24 @@
 
                 <!-- Add Your Profit Margin -->
                 <div class="mb-4 pb-4 border-bottom">
-                  <h6 class="fw-bold mb-3">Add Your Profit Margin</h6>
-                  <p class="text-muted small mb-3">(Margin cannot be equal to or greater than 100%)</p>
+                  <h6 class="fw-bold mb-2 fs-6">Add Profit Margin</h6>
+                  <p class="text-muted extra-small mb-3">(Cannot be ≥ 100%)</p>
                   
-                  <div class="row align-items-center g-3">
+                  <div class="d-flex flex-wrap align-items-center gap-3">
                     <!-- Percentage Input -->
-                    <div class="col-auto">
-                      <div class="input-group">
-                        <input type="number" class="form-control text-center fw-bold border-0 border-bottom" placeholder="0" v-model="marginPercent" @input="updateMarginFromPercent" style="max-width: 80px;">
-                        <span class="input-group-text bg-white border-0 border-bottom">%</span>
-                      </div>
+                    <div class="input-group input-group-sm" style="width: 100px;">
+                      <input type="number" class="form-control text-center fw-bold" placeholder="0" v-model="marginPercent" @input="updateMarginFromPercent">
+                      <span class="input-group-text bg-light border-0 px-2">%</span>
                     </div>
-                    <div class="col-auto">
-                      <span class="fw-bold text-muted">or</span>
-                    </div>
+                    <span class="fw-bold text-muted extra-small">OR</span>
                     <!-- Dollar Input -->
-                    <div class="col-auto">
-                      <div class="input-group">
-                        <span class="input-group-text bg-white border-0 border-bottom">$</span>
-                        <input type="number" class="form-control text-center fw-bold border-0 border-bottom" placeholder="0" v-model="marginDollar" @input="updateMarginFromDollar" style="max-width: 100px;">
-                      </div>
+                    <div class="input-group input-group-sm" style="width: 120px;">
+                      <span class="input-group-text bg-light border-0 px-2">$</span>
+                      <input type="number" class="form-control text-center fw-bold" placeholder="0" v-model="marginDollar" @input="updateMarginFromDollar">
                     </div>
-                    <!-- Resulting Profit Display -->
-                    <div class="col-auto ms-auto">
-                      <span class="fw-bold text-success" style="font-size: 1.1rem;">+ ${{ (parseFloat(marginDollar) || 0).toFixed(2) }}</span>
+                    <!-- Resulting Profit -->
+                    <div class="ms-auto">
+                      <span class="fw-bold text-success fs-5">+ ${{ (parseFloat(marginDollar) || 0).toFixed(2) }}</span>
                     </div>
                   </div>
                 </div>
@@ -451,11 +395,11 @@
                 </div>
 
                 <!-- Charge to Client -->
-                <div class="p-3 d-flex justify-content-between align-items-center rounded" style="background-color: #d4f1f3;">
-                  <h6 class="fw-bold text-uppercase mb-0" style="color: #17a2b8;">Charge to Client (Monthly)</h6>
+                <div class="p-3 d-flex flex-column flex-sm-row justify-content-between align-items-center rounded gap-2" style="background-color: #d4f1f3;">
+                  <h6 class="fw-bold text-uppercase mb-0 small" style="color: #17a2b8;">Charge to Client (Monthly)</h6>
                   <div class="d-flex align-items-center gap-2">
-                    <span class="fw-bold" style="font-size: 1.1rem;">=</span>
-                    <span class="fw-bold" style="font-size: 1.5rem; color: #17a2b8;">${{ finalMonthlyCharge.toFixed(2) }}</span>
+                    <span class="fw-bold fs-5">=</span>
+                    <span class="fw-bold fs-3" style="color: #17a2b8;">${{ finalMonthlyCharge.toFixed(2) }}</span>
                   </div>
                 </div>
               </div>
@@ -464,64 +408,58 @@
         </div>
 
         <!-- RECURRING PROJECTS SECTION -->
-        <div class="mt-5" v-if="selectedOption == '1' && recurringProjects.length > 0 && showRecurringSection">
+        <div class="mt-4 mt-md-5" v-if="selectedOption == '1' && recurringProjects.length > 0 && showRecurringSection">
           
           <!-- Header -->
           <div class="text-center mb-4">
             <div class="d-flex justify-content-center align-items-center gap-2">
               <i class="bi bi-arrow-repeat text-teal fs-3"></i> 
+              <h4 class="fw-bold mb-0 fs-5 fs-md-4">Recurring Projects</h4>
             </div>
-            <h4 class="fw-bold">Recurring Projects</h4>
           </div>
 
           <div v-for="(project, index) in recurringProjects" :key="project.id" class="mb-4">
             
-            <!-- COLLAPSED VIEW (Matches your Screenshot) -->
-            <div v-if="!project.isExpanded" class="labor-cost-card bg-white shadow-sm border-0 p-4 d-flex align-items-center justify-content-between">
-              
-              <!-- Left: Title -->
-              <div class="d-flex flex-column" style="min-width: 250px;">
-                <label class="text-uppercase small text-muted fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">RECURRING PROJECT</label>
-                <h5 class="fw-bold mb-0 text-dark">{{ project.name }}</h5>
-              </div>
-
-              <!-- Middle: Stats with Slashes -->
-              <div class="d-flex align-items-center bg-light rounded py-2 px-4 flex-grow-1 justify-content-center mx-4">
-                
-                <!-- Per Sq Ft -->
-                <div class="text-center px-3">
-                  <label class="text-uppercase text-muted fw-bold d-block" style="font-size: 0.65rem;">PER SQ FT</label>
-                  <span class="fw-bold text-dark">${{ getProjectPerSqFt(project) }}</span>
+            <!-- COLLAPSED VIEW -->
+            <div v-if="!project.isExpanded" class="labor-cost-card bg-white shadow-sm border-0 p-3 p-md-4 mx-2">
+              <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+                <!-- Left: Title -->
+                <div class="d-flex flex-column">
+                  <label class="text-uppercase extra-small text-muted fw-bold mb-1" style="letter-spacing: 0.5px;">RECURRING PROJECT</label>
+                  <h5 class="fw-bold mb-0 text-dark fs-6">{{ project.name }}</h5>
                 </div>
 
-                <!-- Slash Separator -->
-                <div class="text-muted fw-light fs-4 mx-2">/</div>
-
-                <!-- Cost Per Clean -->
-                <div class="text-center px-3">
-                  <label class="text-uppercase text-muted fw-bold d-block" style="font-size: 0.65rem;">COST PER CLEAN</label>
-                  <span class="fw-bold text-dark">${{ getProjectLaborCost(project).toFixed(2) }}</span>
+                <!-- Middle: Stats -->
+                <div class="d-flex flex-wrap align-items-center bg-light rounded py-2 px-3 flex-grow-1 justify-content-around mx-0 mx-lg-4">
+                  <!-- Per Sq Ft -->
+                  <div class="text-center px-2 py-1">
+                    <label class="text-uppercase text-muted fw-bold d-block extra-small">PER SQ FT</label>
+                    <span class="fw-bold text-dark small">${{ getProjectPerSqFt(project) }}</span>
+                  </div>
+                  <!-- Divider (Hidden on mobile) -->
+                  <div class="text-muted fw-light fs-4 d-none d-md-block">/</div>
+                  <!-- Cost Per Clean -->
+                  <div class="text-center px-2 py-1">
+                    <label class="text-uppercase text-muted fw-bold d-block extra-small">PER CLEAN</label>
+                    <span class="fw-bold text-dark small">${{ getProjectLaborCost(project).toFixed(2) }}</span>
+                  </div>
+                  <!-- Divider (Hidden on mobile) -->
+                  <div class="text-muted fw-light fs-4 d-none d-md-block">/</div>
+                  <!-- Monthly Total -->
+                  <div class="text-center px-2 py-1">
+                    <label class="text-uppercase text-muted fw-bold d-block extra-small">MONTHLY</label>
+                    <span class="fw-bold text-dark small">${{ getProjectGrandTotal(project).toFixed(2) }}</span>
+                  </div>
                 </div>
 
-                <!-- Slash Separator -->
-                <div class="text-muted fw-light fs-4 mx-2">/</div>
-
-                <!-- Monthly Total -->
-                <div class="text-center px-3">
-                  <label class="text-uppercase text-muted fw-bold d-block" style="font-size: 0.65rem;">MONTHLY</label>
-                  <span class="fw-bold text-dark">${{ getProjectGrandTotal(project).toFixed(2) }}</span>
+                <!-- Right: Button -->
+                <div class="text-center text-lg-end pt-2 pt-lg-0">
+                  <button class="btn btn-link text-teal fw-bold extra-small p-0 align-items-center gap-2" @click="project.isExpanded = true">
+                    DETAILS 
+                    <i class="bi bi-chevron-down ms-1"></i>
+                  </button>
                 </div>
-
               </div>
-
-              <!-- Right: Button -->
-              <div>
-                <button class="btn btn-white text-teal fw-bold small d-flex align-items-center gap-2 border-0 shadow-none" @click="project.isExpanded = true">
-                  SHOW PROJECT DETAILS 
-                  <i class="bi bi-arrow-down-circle-fill fs-5 text-teal"></i>
-                </button>
-              </div>
-
             </div>
 
             <!-- EXPANDED VIEW (Kept exactly as previously built) -->
@@ -529,152 +467,159 @@
               
               <!-- 1. Header & Info Bar -->
               <div class="p-4 border-bottom">
-                <label class="text-uppercase small text-muted fw-bold" style="font-size: 0.7rem;">RECURRING PROJECT</label>
-                <h4 class="fw-bold mb-3">{{ project.name }}</h4>
+                <label class="text-uppercase extra-small text-muted fw-bold" style="letter-spacing: 0.5px;">RECURRING PROJECT</label>
+                <h4 class="fw-bold mb-3 fs-5">{{ project.name }}</h4>
                 
-                <div class="bg-light p-3 rounded d-flex justify-content-between align-items-center">
-                  <div>
+                <div class="bg-light p-3 rounded d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                  <div class="d-flex align-items-center">
                     <i class="bi bi-clock text-muted me-2"></i>
-                    <span class="small text-muted fw-bold text-uppercase d-block" style="font-size: 0.7rem;">Frequency</span>
-                    <span class="fw-bold">{{ project.frequency }} times per {{ project.per }}</span>
+                    <div>
+                      <span class="extra-small text-muted fw-bold text-uppercase d-block">Frequency</span>
+                      <span class="fw-bold small">{{ project.frequency }}x / {{ project.per }}</span>
+                    </div>
                   </div>
-                  <div class="text-center">
-                    <i class="bi bi-building text-teal mb-1 d-block"></i>
-                    <small class="text-muted d-block mb-1">Areas included</small>
-                    <span class="badge bg-white text-dark border rounded-pill px-3 py-2">{{ project.areaNames }}</span>
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-building text-teal me-2"></i>
+                    <div>
+                      <span class="extra-small text-muted fw-bold text-uppercase d-block">Areas included</span>
+                      <span class="fw-bold small">{{ project.areaNames }}</span>
+                    </div>
                   </div>
-                  <div><!-- Spacer --></div>
                 </div>
               </div>
 
               <!-- 2. Inputs -->
               <div class="p-4 border-bottom">
-                <div class="row g-4">
-                  <div class="col-md-3">
-                    <label class="fw-bold text-teal mb-2"><i class="bi bi-people-fill me-1"></i> Labor</label>
-                    <select class="form-select border-bottom border-0 rounded-0 ps-0 bg-transparent" style="border-color: #333 !important;">
+                <div class="row g-3">
+                  <div class="col-6 col-md-3">
+                    <label class="fw-bold text-teal extra-small mb-1">Labor</label>
+                    <select class="form-select border-bottom border-0 rounded-0 ps-0 bg-transparent form-select-sm" style="border-color: #333 !important;">
                       <option>Custodians</option>
                       <option value="cleaners">Cleaners</option>
-                    <option value="supervisors">Supervisors</option>
+                      <option value="supervisors">Supervisors</option>
                     </select>
                   </div>
-                  <div class="col-md-3">
-                    <label class="fw-bold text-muted mb-2"><i class="bi bi-person me-1"></i> Staff</label>
-                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold" v-model="project.staff">
+                  <div class="col-6 col-md-3">
+                    <label class="fw-bold text-muted extra-small mb-1">Staff</label>
+                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold form-control-sm" v-model="project.staff">
                   </div>
-                  <div class="col-md-3">
-                    <label class="fw-bold text-teal mb-2"><i class="bi bi-currency-dollar me-1"></i> Rate of Pay</label>
-                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold" v-model="project.rateOfPay">
+                  <div class="col-6 col-md-3">
+                    <label class="fw-bold text-teal extra-small mb-1">Rate ($/hr)</label>
+                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold form-control-sm" v-model="project.rateOfPay">
                   </div>
-                  <div class="col-md-3">
-                    <label class="fw-bold text-muted mb-2"><i class="bi bi-clock me-1"></i> Hours</label>
-                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold" v-model="project.hours">
+                  <div class="col-6 col-md-3">
+                    <label class="fw-bold text-muted extra-small mb-1">Hours</label>
+                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold form-control-sm" v-model="project.hours">
                   </div>
                 </div>
               </div>
 
-              <!-- 3. Result Strip (Cost Per Clean AND Monthly) -->
-              <div class="bg-light p-4 d-flex justify-content-end align-items-center gap-4">
-                <div class="d-flex align-items-center">
-                  <span class="fw-bold text-uppercase me-3 small text-muted">Your Labor Cost Per Clean</span>
-                  <div class="bg-white px-3 py-2 rounded shadow-sm fw-bold border">${{ getProjectLaborCost(project).toFixed(2) }}</div>
+              <!-- 3. Result Strip -->
+              <div class="bg-light p-3 p-md-4 d-flex flex-column flex-md-row justify-content-end align-items-md-center gap-3">
+                <div class="d-flex align-items-center justify-content-between justify-content-md-end w-100">
+                  <span class="fw-bold text-uppercase me-2 extra-small text-muted">Cost Per Clean</span>
+                  <div class="bg-white px-2 py-1 rounded shadow-sm fw-bold border small">${{ getProjectLaborCost(project).toFixed(2) }}</div>
                 </div>
-                <div class="d-flex align-items-center">
-                  <span class="fw-bold text-uppercase me-3 small text-muted">Your Monthly Labor Cost</span>
-                  <div class="bg-white px-3 py-2 rounded shadow-sm fw-bold border">${{ getProjectMonthlyLaborCost(project).toFixed(2) }}</div>
+                <div class="d-flex align-items-center justify-content-between justify-content-md-end w-100">
+                  <span class="fw-bold text-uppercase me-2 extra-small text-muted">Monthly Labor</span>
+                  <div class="bg-white px-2 py-1 rounded shadow-sm fw-bold border small">${{ getProjectMonthlyLaborCost(project).toFixed(2) }}</div>
                 </div>
               </div>
 
-              <!-- 4. SUMMARY SECTION (Specific to This Project) -->
-              <div class="p-5" style="background-color: #eafcfd;">
-                <h4 class="fw-bold text-teal mb-1">Price for This Recurring Project</h4>
-                <p class="text-muted mb-4">For this recurring project only</p>
+              <!-- 4. SUMMARY SECTION -->
+              <div class="p-4 p-md-5" style="background-color: #eafcfd;">
+                <h4 class="fw-bold text-info mb-1 fs-5 fs-md-4">Price for This Project</h4>
+                <p class="text-muted mb-4 small">For this recurring project only</p>
 
-                <div class="row">
+                <div class="row gy-4">
                   <!-- Left Col -->
-                  <div class="col-md-5 border-end">
+                  <div class="col-12 col-md-5 border-md-end">
                     <div class="mb-4 text-center">
-                      <label class="fw-bold text-dark"><i class="bi bi-rulers text-teal me-2"></i>Project Sq Ft.</label>
+                      <label class="fw-bold text-dark small mb-2"><i class="bi bi-rulers text-info me-2"></i>Project Sq Ft.</label>
                       <input type="number" disabled class="form-control border-0 border-bottom bg-transparent text-center fw-bold fs-5" placeholder="0" v-model="project.sqFt">
                     </div>
 
-                    <div class="d-flex align-items-center justify-content-center gap-3 mb-5">
-                      <label class="fw-bold text-teal">$ Per Sq Ft</label>
-                      <div aria-disabled="true" class="bg-white px-3 py-2 rounded border fw-bold">{{ getProjectPerSqFt(project) }}</div>
+                    <div class="d-flex align-items-center justify-content-center gap-3 mb-4">
+                      <label class="fw-bold text-info small">$ Per Sq Ft</label>
+                      <div class="bg-white px-3 py-1 rounded border fw-bold small">{{ getProjectPerSqFt(project) }}</div>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-center gap-2">
-                      <small>Add Sales Tax?</small>
-                      <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" v-model="project.addSalesTax">
+                      <small class="extra-small">Add Sales Tax?</small>
+                      <div class="form-check form-switch m-0 p-0">
+                          <input class="form-check-input" type="checkbox" v-model="project.addSalesTax" style="margin-left: 0;">
                       </div>
                     </div>
                   </div>
 
                   <!-- Right Col (Calculations) -->
-                  <div class="col-md-7 ps-4">
+                  <div class="col-12 col-md-7 ps-md-4">
                     <div class="d-flex justify-content-between mb-2">
-                      <span class="fw-bold">All Labor Costs for this Project</span>
-                      <span class="fw-bold">${{ getProjectMonthlyLaborCost(project).toFixed(2) }}</span>
+                      <span class="fw-bold small">Project Labor Costs</span>
+                      <span class="fw-bold small">${{ getProjectMonthlyLaborCost(project).toFixed(2) }}</span>
                     </div>
 
                     <!-- Expenses -->
                     <div class="mb-3">
                       <div class="d-flex justify-content-between">
-                        <span class="fw-bold">Additional Expenses ({{ project.expenses.length }})</span>
-                        <span class="fw-bold">${{ (getProjectSubTotal(project) - getProjectMonthlyLaborCost(project)).toFixed(2) }}</span>
+                        <span class="fw-bold small">Expenses ({{ project.expenses.length }})</span>
+                        <span class="fw-bold small">${{ (getProjectSubTotal(project) - getProjectMonthlyLaborCost(project)).toFixed(2) }}</span>
                       </div>
                       <!-- List -->
-                      <div v-for="(exp, i) in project.expenses" :key="i" class="d-flex justify-content-between small text-muted mt-1 ps-3 border-start border-3 border-info">
+                      <div v-for="(exp, i) in project.expenses" :key="i" class="d-flex justify-content-between extra-small text-muted mt-2 ps-3 border-start border-3 border-info">
                         <span>{{ exp.name }}</span>
-                        <span>${{ exp.cost.toFixed(2) }} 
-                          <button class="btn btn-sm text-danger" @click="removeProjectExpense(project, i)">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                      </button>
-                          <!-- <i class="bi bi-x text-danger cursor-pointer" @click="removeProjectExpense(project, i)"></i> -->
-                        </span>
+                        <div class="d-flex align-items-center gap-2">
+                          <span>${{ exp.cost.toFixed(2) }}</span>
+                          <button class="btn btn-link p-0 text-danger" @click="removeProjectExpense(project, i)">
+                            <i class="bi bi-trash small"></i>
+                          </button>
+                        </div>
                       </div>
                       <!-- Inputs -->
-                      <div class="row g-2 mt-2">
-                        <div class="col-5"><input class="form-control form-control-sm border-0 border-bottom bg-transparent" placeholder="Expense Name" v-model="project.newExpenseName"></div>
-                        <div class="col-3"><input class="form-control form-control-sm border-0 border-bottom bg-transparent" placeholder="$ 0" type="number" v-model="project.newExpenseCost"></div>
-                        <div class="col-4"><button class="btn btn-sm btn-teal text-white w-100" @click="addProjectExpense(project)">ADD EXPENSE</button></div>
+                      <div class="mt-3">
+                        <div class="row g-2 align-items-end">
+                          <div class="col-5"><input class="form-control form-control-sm border-0 border-bottom bg-transparent" placeholder="Name" v-model="project.newExpenseName"></div>
+                          <div class="col-3"><input class="form-control form-control-sm border-0 border-bottom bg-transparent" placeholder="$ 0" type="number" v-model="project.newExpenseCost"></div>
+                          <div class="col-4"><button class="btn btn-info btn-sm text-white w-100 extra-small py-1" @click="addProjectExpense(project)">ADD</button></div>
+                        </div>
                       </div>
                     </div>
 
                     <div class="d-flex justify-content-between mb-3 pt-2 border-top border-dark">
-                      <span class="fw-bold">This Recurring Project Cost Subtotal</span>
-                      <span class="fw-bold fs-5">${{ getProjectSubTotal(project).toFixed(2) }}</span>
+                      <span class="fw-bold small">Subtotal</span>
+                      <span class="fw-bold">${{ getProjectSubTotal(project).toFixed(2) }}</span>
                     </div>
 
                     <!-- Profit -->
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                      <span class="fw-bold">Add Your Profit Margin</span>
-                      <div class="d-flex gap-2 align-items-center">
-                        <div class="input-group input-group-sm" style="width: 80px;"><input class="form-control fw-bold" v-model="project.marginPercent" @input="updateProjectMarginPercent(project)"><span class="input-group-text border-0 bg-transparent">%</span></div>
-                        <span class="text-muted small">or</span>
-                        <div class="input-group input-group-sm" style="width: 100px;"><span class="input-group-text border-0 bg-transparent">$</span><input class="form-control fw-bold" v-model="project.marginDollar" @input="updateProjectMarginDollar(project)"></div>
+                    <div class="mb-3">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold small">Profit Margin</span>
+                        <span class="fw-bold text-success small">+ ${{ (parseFloat(project.marginDollar)||0).toFixed(2) }}</span>
                       </div>
-                      <span class="fw-bold">${{ (parseFloat(project.marginDollar)||0).toFixed(2) }}</span>
+                      <div class="d-flex gap-2 align-items-center">
+                        <div class="input-group input-group-sm" style="width: 80px;"><input class="form-control fw-bold" v-model="project.marginPercent" @input="updateProjectMarginPercent(project)"><span class="input-group-text border-0 bg-light px-1">%</span></div>
+                        <span class="text-muted extra-small">OR</span>
+                        <div class="input-group input-group-sm" style="width: 100px;"><span class="input-group-text border-0 bg-light px-1">$</span><input class="form-control fw-bold" v-model="project.marginDollar" @input="updateProjectMarginDollar(project)"></div>
+                      </div>
                     </div>
 
                     <!-- Tax -->
                     <div class="d-flex align-items-center justify-content-between mb-3" v-if="project.addSalesTax">
-                      <span class="fw-bold text-muted">Sales Tax</span>
-                      <div class="input-group input-group-sm" style="width: 100px;"><input class="form-control fw-bold" v-model="project.salesTaxPercent"><span class="input-group-text border-0 bg-transparent">%</span></div>
-                      <span class="fw-bold text-danger">+ ${{ ((getProjectSubTotal(project) + parseFloat(project.marginDollar||0)) * (project.salesTaxPercent/100)).toFixed(2) }}</span>
-                    </div>
-
-                    <!-- Monthly Charge for This Project -->
-                    <div class="bg-white p-3 rounded d-flex justify-content-between align-items-center mt-3">
-                      <span class="fw-bold text-teal">MONTHLY CHARGE TO CLIENT FOR THIS PROJECT</span>
+                      <span class="fw-bold text-muted small">Sales Tax</span>
                       <div class="d-flex align-items-center gap-2">
-                        <span class="text-teal fs-5">=</span>
-                        <span class="text-teal fw-bold fs-5">$</span>
-                        <span class="text-teal fw-bold fs-4 border-bottom border-teal px-2">{{ getProjectGrandTotal(project).toFixed(2) }}</span>
+                        <div class="input-group input-group-sm" style="width: 80px;"><input class="form-control fw-bold" v-model="project.salesTaxPercent"><span class="input-group-text border-0 bg-light px-1">%</span></div>
+                        <span class="fw-bold text-danger small">+ ${{ ((getProjectSubTotal(project) + parseFloat(project.marginDollar||0)) * (project.salesTaxPercent/100)).toFixed(2) }}</span>
                       </div>
                     </div>
 
+                    <!-- Monthly Charge -->
+                    <div class="bg-white p-3 rounded d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3 gap-2">
+                      <span class="fw-bold text-info small text-center text-sm-start">MONTHLY CHARGE (THIS PROJECT)</span>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="text-info fs-5">=</span>
+                        <span class="text-info fw-bold fs-4">${{ getProjectGrandTotal(project).toFixed(2) }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -688,27 +633,27 @@
             </div>
           </div>
 
-          <!-- 5. RECURRING PROJECTS GLOBAL SUMMARY (Screenshot 3) -->
-          <div class="mt-5 mb-5">
-            <div class="row g-0" style="background-color: #a8dfe1;">
+          <!-- 5. RECURRING PROJECTS GLOBAL SUMMARY -->
+          <div class="mt-4 mt-md-5 mb-5 mx-2">
+            <div class="row g-0 rounded shadow-sm overflow-hidden" style="background-color: #a8dfe1;">
               <!-- Left Section -->
-              <div class="col-md-5 p-5">
-                <h4 class="fw-bold mb-2" style="color: #17a2b8;">Total Price for All <br> Recurring Projects</h4>
-                <p class="text-muted mb-4">All recurring projects added above combined into one monthly price</p>
+              <div class="col-12 col-md-5 p-4 p-md-5">
+                <h4 class="fw-bold mb-2 fs-5 fs-md-4" style="color: #17a2b8;">Total Price for All <br> Recurring Projects</h4>
+                <p class="text-muted mb-4 small">Combined monthly price for all recurring projects</p>
               </div>
               <!-- Right Section -->
-              <div class="col-md-7 p-5 rounded-end border-start bg-white">
+              <div class="col-12 col-md-7 p-4 p-md-5 border-md-start bg-white h-100">
                 <div class="d-flex justify-content-between align-items-start mb-4">
                   <div>
-                    <h6 class="fw-bold mb-1">All Recurring Projects ({{ recurringProjectCount }})</h6>
-                    <p class="text-muted small mb-0">{{ recurringProjectCount }} recurring projects added</p>
+                    <h6 class="fw-bold mb-1 fs-6">All Recurring Projects ({{ recurringProjectCount }})</h6>
+                    <p class="text-muted extra-small mb-0">Total of {{ recurringProjectCount }} projects</p>
                   </div>
                 </div>
                 <!-- Grand Total Charge -->
-                <div class="p-3 d-flex justify-content-between align-items-center" style="background-color: #d4f1f3;">
-                  <h6 class="fw-bold text-uppercase mb-0" style="color: #17a2b8;">CHARGE TO CLIENT (MONTHLY)</h6>
+                <div class="p-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 rounded" style="background-color: #d4f1f3;">
+                  <h6 class="fw-bold text-uppercase mb-0 small" style="color: #17a2b8;">CHARGE TO CLIENT (MONTHLY)</h6>
                   <div class="d-flex align-items-center gap-2">
-                    <span class="fw-bold" style="font-size: 1.3rem; color: #17a2b8;">= ${{ totalRecurringGlobalCharge.toFixed(2) }}</span>
+                    <span class="fw-bold fs-3" style="color: #17a2b8;">= ${{ totalRecurringGlobalCharge.toFixed(2) }}</span>
                   </div>
                 </div>
               </div>
@@ -716,44 +661,34 @@
           </div>
         </div>
 
-        <!-- COMBINED TOTAL CARD (Janitorial + Recurring Projects) -->
-        <div class="container mt-5 mb-5" v-if="selectedOption == '1' && showCombinedTotalCard">
-          <div class="d-flex align-items-center rounded shadow-sm text-white position-relative overflow-hidden" style="background-color: #5c6b7f; min-height: 120px;">
+        <!-- COMBINED TOTAL CARD -->
+        <div class="container-fluid mt-5 mb-5 px-3 px-md-4" v-if="selectedOption == '1' && showCombinedTotalCard">
+          <div class="row g-0 rounded shadow-sm text-white position-relative overflow-hidden" style="background-color: #5c6b7f; min-height: 120px;">
             
-            <!-- Decorative slants (Optional css polish to match image background style) -->
             <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(105deg, rgba(255,255,255,0.05) 20%, transparent 20%); pointer-events: none;"></div>
 
-            <!-- Icons Section -->
-            <div class="ps-5 pe-4 py-4 d-flex align-items-center gap-3 position-relative">
-              <!-- Person Icon -->
-              <svg data-v-0bd23656="" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle data-v-0bd23656="" cx="20" cy="12" r="6" stroke="#17a2b8" stroke-width="2"></circle><path data-v-0bd23656="" d="M8 32C8 25.37 13.37 20 20 20C26.63 20 32 25.37 32 32" stroke="#17a2b8" stroke-width="2" stroke-linecap="round" style="background-color:white;"></path></svg>
-              
-              <!-- Plus Icon (Teal Circle) -->
-              <div class="rounded-circle bg-teal d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; background-color: #20c997;">
-                +
+            <!-- Icons + Text Section -->
+            <div class="col-12 col-lg-8 p-4 d-flex flex-column flex-sm-row align-items-center gap-3 position-relative">
+              <div class="d-flex align-items-center gap-2">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="bg-light rounded-circle p-1">
+                  <circle cx="20" cy="12" r="6" stroke="#17a2b8" stroke-width="2"></circle>
+                  <path d="M8 32C8 25.37 13.37 20 20 20C26.63 20 32 25.37 32 32" stroke="#17a2b8" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+                <div class="rounded-circle bg-info d-flex align-items-center justify-content-center fw-bold" style="width: 24px; height: 24px;">+</div>
+                <i class="bi bi-arrow-repeat fs-2 text-info"></i>
               </div>
-              
-              <!-- Folder/Recurring Icon -->
-              <!-- <div class="position-relative">
-
-              </div> -->
+              <div class="text-center text-sm-start mt-2 mt-sm-0">
+                <p class="mb-0 fs-6" style="line-height: 1.4;">
+                  Combine <span class="fw-bold text-info">{{ janitorialSectionLabel }}</span> with <span class="fw-bold text-info">Recurring Projects</span> for <br class="d-none d-md-block">
+                  a total monthly cost
+                </p>
+              </div>
             </div>
-
-            <!-- Text Section -->
-            <div class="flex-grow-1 px-3 position-relative">
-              <p class="mb-0" style="font-size: 1.1rem; line-height: 1.4;">
-                Combine <span class="fw-bold">{{ janitorialSectionLabel }} Expenses</span> with <span class="fw-bold">Recurring Projects</span> to give me <br>
-                a monthly cost to charge Client
-              </p>
-            </div>
-
-            <!-- Vertical Divider -->
-            <div style="width: 1px; height: 70px; background-color: rgba(255,255,255,0.2); margin-right: 2rem;"></div>
 
             <!-- Price Section -->
-            <div class="pe-5 text-end position-relative">
-              <span class="d-block text-light mb-1" style="font-size: 0.9rem; opacity: 0.9;">Monthly Charge to Client</span>
-              <span class="fw-bold" style="font-size: 2.5rem; letter-spacing: 1px;">${{ combinedMonthlyGrandTotal.toFixed(2) }}</span>
+            <div class="col-12 col-lg-4 p-4 text-center text-lg-end bg-dark bg-opacity-10 position-relative d-flex flex-column justify-content-center overflow-hidden border-top border-lg-top-0 border-lg-start border-white border-opacity-10">
+              <span class="d-block text-info mb-1 small fw-bold text-uppercase">Monthly Charge to Client</span>
+              <span class="fw-bold fs-2 fs-md-1">${{ combinedMonthlyGrandTotal.toFixed(2) }}</span>
             </div>
           </div>
         </div>
@@ -766,58 +701,52 @@
           <div class="text-center mb-4">
             <div class="d-flex justify-content-center align-items-center gap-2">
               <i class="bi bi-folder text-teal fs-3"></i>
+              <h4 class="fw-bold mb-0 fs-5 fs-md-4">One-Time Projects</h4>
             </div>
-            <h4 class="fw-bold">One-Time Projects</h4>
           </div>
 
           <div v-for="(project, index) in oneTimeProjects" :key="project.id" class="mb-4">
             
-            <!-- COLLAPSED VIEW (Matches your Screenshot) -->
-            <div v-if="!project.isExpanded" class="labor-cost-card bg-white shadow-sm border-0 p-4 d-flex align-items-center justify-content-between">
-              
-              <!-- Left: Title -->
-              <div class="d-flex flex-column" style="min-width: 250px;">
-                <label class="text-uppercase small text-muted fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">ONE-TIME PROJECT</label>
-                <h5 class="fw-bold mb-0 text-dark">{{ project.name }}</h5>
-              </div>
-
-              <!-- Middle: Stats with Slashes -->
-              <div class="d-flex align-items-center bg-light rounded py-2 px-4 flex-grow-1 justify-content-center mx-4">
-                
-                <!-- Per Sq Ft -->
-                <div class="text-center px-3">
-                  <label class="text-uppercase text-muted fw-bold d-block" style="font-size: 0.65rem;">PER SQ FT</label>
-                  <span class="fw-bold text-dark">${{ getProjectPerSqFt(project) }}</span>
+            <!-- COLLAPSED VIEW -->
+            <div v-if="!project.isExpanded" class="labor-cost-card bg-white shadow-sm border-0 p-3 p-md-4 mx-2">
+              <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+                <!-- Left: Title -->
+                <div class="d-flex flex-column">
+                  <label class="text-uppercase extra-small text-muted fw-bold mb-1" style="letter-spacing: 0.5px;">ONE-TIME PROJECT</label>
+                  <h5 class="fw-bold mb-0 text-dark fs-6">{{ project.name }}</h5>
                 </div>
 
-                <!-- Slash Separator -->
-                <div class="text-muted fw-light fs-4 mx-2">/</div>
-
-                <!-- Cost Per Clean -->
-                <div class="text-center px-3">
-                  <label class="text-uppercase text-muted fw-bold d-block" style="font-size: 0.65rem;">COST PER CLEAN</label>
-                  <span class="fw-bold text-dark">${{ getProjectLaborCost(project).toFixed(2) }}</span>
+                <!-- Middle: Stats -->
+                <div class="d-flex flex-wrap align-items-center bg-light rounded py-2 px-3 flex-grow-1 justify-content-around mx-0 mx-lg-4">
+                  <!-- Per Sq Ft -->
+                  <div class="text-center px-2 py-1">
+                    <label class="text-uppercase text-muted fw-bold d-block extra-small">PER SQ FT</label>
+                    <span class="fw-bold text-dark small">${{ getProjectPerSqFt(project) }}</span>
+                  </div>
+                  <!-- Divider (Hidden on mobile) -->
+                  <div class="text-muted fw-light fs-4 d-none d-md-block">/</div>
+                  <!-- Cost Per Clean -->
+                  <div class="text-center px-2 py-1">
+                    <label class="text-uppercase text-muted fw-bold d-block extra-small">LABOR COST</label>
+                    <span class="fw-bold text-dark small">${{ getProjectLaborCost(project).toFixed(2) }}</span>
+                  </div>
+                  <!-- Divider (Hidden on mobile) -->
+                  <div class="text-muted fw-light fs-4 d-none d-md-block">/</div>
+                  <!-- Total -->
+                  <div class="text-center px-2 py-1">
+                    <label class="text-uppercase text-muted fw-bold d-block extra-small">TOTAL</label>
+                    <span class="fw-bold text-dark small">${{ getProjectGrandTotal(project).toFixed(2) }}</span>
+                  </div>
                 </div>
 
-                <!-- Slash Separator -->
-                <div class="text-muted fw-light fs-4 mx-2">/</div>
-
-                <!-- One-Time Total -->
-                <div class="text-center px-3">
-                  <label class="text-uppercase text-muted fw-bold d-block" style="font-size: 0.65rem;">ONE-TIME</label>
-                  <span class="fw-bold text-dark">${{ getProjectGrandTotal(project).toFixed(2) }}</span>
+                <!-- Right: Button -->
+                <div class="text-center text-lg-end pt-2 pt-lg-0">
+                  <button class="btn btn-link text-teal fw-bold extra-small p-0 align-items-center gap-2" @click="project.isExpanded = true">
+                    DETAILS 
+                    <i class="bi bi-chevron-down ms-1"></i>
+                  </button>
                 </div>
-
               </div>
-
-              <!-- Right: Button -->
-              <div>
-                <button class="btn btn-white text-teal fw-bold small d-flex align-items-center gap-2 border-0 shadow-none" @click="project.isExpanded = true">
-                  SHOW PROJECT DETAILS 
-                  <i class="bi bi-arrow-down-circle-fill fs-5 text-teal"></i>
-                </button>
-              </div>
-
             </div>
 
             <!-- EXPANDED VIEW (Kept exactly as previously built) -->
@@ -825,152 +754,155 @@
               
               <!-- 1. Header & Info Bar -->
               <div class="p-4 border-bottom">
-                <label class="text-uppercase small text-muted fw-bold" style="font-size: 0.7rem;">ONE-TIME PROJECT</label>
-                <h4 class="fw-bold mb-3">{{ project.name }}</h4>
+                <label class="text-uppercase extra-small text-muted fw-bold" style="letter-spacing: 0.5px;">ONE-TIME PROJECT</label>
+                <h4 class="fw-bold mb-3 fs-5">{{ project.name }}</h4>
                 
-                <div class="bg-light p-3 rounded d-flex justify-content-between align-items-center">
-                  <div>
+                <div class="bg-light p-3 rounded d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                  <div class="d-flex align-items-center">
                     <i class="bi bi-clock text-muted me-2"></i>
-                    <span class="small text-muted fw-bold text-uppercase d-block" style="font-size: 0.7rem;">Frequency</span>
-                    <span class="fw-bold">1 Time</span>
+                    <div>
+                      <span class="extra-small text-muted fw-bold text-uppercase d-block">Frequency</span>
+                      <span class="fw-bold small">1 Time</span>
+                    </div>
                   </div>
-                  <div class="text-center">
-                    <i class="bi bi-building text-teal mb-1 d-block"></i>
-                    <small class="text-muted d-block mb-1">Areas included in this project</small>
-                    <span class="badge bg-white text-dark border rounded-pill px-3 py-2">{{ project.areaNames }}</span>
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-building text-teal me-2"></i>
+                    <div>
+                      <span class="extra-small text-muted fw-bold text-uppercase d-block">Areas included</span>
+                      <span class="fw-bold small">{{ project.areaNames }}</span>
+                    </div>
                   </div>
-                  <div><!-- Spacer for alignment --></div>
                 </div>
               </div>
 
               <!-- 2. Inputs Section -->
               <div class="p-4 border-bottom">
-                <div class="row g-4">
-                  <div class="col-md-3">
-                    <label class="fw-bold text-teal mb-2"><i class="bi bi-people-fill me-1"></i> Labor</label>
-                    <select class="form-select border-bottom border-0 rounded-0 ps-0 bg-transparent" style="border-color: #333 !important;">
+                <div class="row g-3">
+                  <div class="col-6 col-md-3">
+                    <label class="fw-bold text-teal extra-small mb-1">Labor</label>
+                    <select class="form-select border-bottom border-0 rounded-0 ps-0 bg-transparent form-select-sm" style="border-color: #333 !important;">
                       <option>Custodians</option>
                       <option value="cleaners">Cleaners</option>
                       <option value="supervisors">Supervisors</option>
                     </select>
                   </div>
-                  <div class="col-md-3">
-                    <label class="fw-bold text-muted mb-2"><i class="bi bi-person me-1"></i> Staff</label>
-                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold" v-model="project.staff">
+                  <div class="col-6 col-md-3">
+                    <label class="fw-bold text-muted extra-small mb-1">Staff</label>
+                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold form-control-sm" v-model="project.staff">
                   </div>
-                  <div class="col-md-3">
-                    <label class="fw-bold text-teal mb-2"><i class="bi bi-currency-dollar me-1"></i> Rate of Pay</label>
-                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold" v-model="project.rateOfPay">
+                  <div class="col-6 col-md-3">
+                    <label class="fw-bold text-teal extra-small mb-1">Rate ($/hr)</label>
+                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold form-control-sm" v-model="project.rateOfPay">
                   </div>
-                  <div class="col-md-3">
-                    <label class="fw-bold text-muted mb-2"><i class="bi bi-clock me-1"></i> Hours</label>
-                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold" v-model="project.hours">
+                  <div class="col-6 col-md-3">
+                    <label class="fw-bold text-muted extra-small mb-1">Hours</label>
+                    <input type="number" class="form-control border-bottom border-0 rounded-0 ps-0 bg-transparent text-center fw-bold form-control-sm" v-model="project.hours">
                   </div>
                 </div>
-                
-                <!-- <button class="btn btn-light text-teal fw-bold mt-3 rounded-pill small px-4">ADD NEW PROJECT COST</button> -->
               </div>
 
               <!-- 3. Result Strip -->
-              <div class="bg-light p-4 d-flex justify-content-end align-items-center">
-                <span class="fw-bold text-uppercase me-3 small" style="letter-spacing: 1px;">Your One Time Labor Cost</span>
-                <div class="bg-white px-4 py-2 rounded shadow-sm fw-bold border">
+              <div class="bg-light p-3 p-md-4 d-flex justify-content-end align-items-center">
+                <span class="fw-bold text-uppercase me-3 extra-small text-muted">Your One Time Labor Cost</span>
+                <div class="bg-white px-3 py-1 rounded shadow-sm fw-bold border small">
                   ${{ getProjectLaborCost(project).toFixed(2) }}
                 </div>
               </div>
 
-              <!-- 4. SUMMARY SECTION (The Blue Box) -->
-              <div class="p-5" style="background-color: #eafcfd;">
-                <h4 class="fw-bold text-teal mb-1">Price for This One-Time Project</h4>
-                <p class="text-muted mb-4">For this one-time project only</p>
+              <!-- 4. SUMMARY SECTION -->
+              <div class="p-4 p-md-5" style="background-color: #eafcfd;">
+                <h4 class="fw-bold text-info mb-1 fs-5 fs-md-4">Price for This One-Time Project</h4>
+                <p class="text-muted mb-4 small">For this one-time project only</p>
 
-                <div class="row">
+                <div class="row gy-4">
                   <!-- Left Col -->
-                  <div class="col-md-5 border-end">
+                  <div class="col-12 col-md-5 border-md-end">
                     <div class="mb-4 text-center">
-                      <label class="fw-bold text-dark"><i class="bi bi-rulers text-teal me-2"></i>Project Sq Ft.</label>
+                      <label class="fw-bold text-dark small mb-2"><i class="bi bi-rulers text-info me-2"></i>Project Sq Ft.</label>
                       <input type="number" disabled class="form-control border-0 border-bottom bg-transparent text-center fw-bold fs-5" placeholder="0" v-model="project.sqFt">
-                      <small class="text-muted">0 / 8</small>
                     </div>
 
-                    <div class="d-flex align-items-center justify-content-center gap-3 mb-5">
-                      <label class="fw-bold text-teal">$ Per Sq Ft</label>
-                      <div aria-disabled="true" class="bg-white px-3 py-2 rounded border fw-bold">{{ getProjectPerSqFt(project) }}</div>
+                    <div class="d-flex align-items-center justify-content-center gap-3 mb-4">
+                      <label class="fw-bold text-info small">$ Per Sq Ft</label>
+                      <div class="bg-white px-3 py-1 rounded border fw-bold small">{{ getProjectPerSqFt(project) }}</div>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-center gap-2">
-                      <small>Add Sales Tax to your services?</small>
-                      <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" v-model="project.addSalesTax">
+                      <small class="extra-small">Add Sales Tax?</small>
+                      <div class="form-check form-switch m-0 p-0">
+                          <input class="form-check-input" type="checkbox" v-model="project.addSalesTax" style="margin-left: 0;">
                       </div>
                     </div>
                   </div>
 
                   <!-- Right Col (Calculations) -->
-                  <div class="col-md-7 ps-4">
+                  <div class="col-12 col-md-7 ps-md-4">
                     <!-- Labor Line -->
                     <div class="d-flex justify-content-between mb-2">
-                      <span class="fw-bold">All Labor Costs for this One Time Project</span>
-                      <span class="fw-bold">${{ getProjectLaborCost(project).toFixed(2) }}</span>
+                      <span class="fw-bold small">Project Labor Costs</span>
+                      <span class="fw-bold small">${{ getProjectLaborCost(project).toFixed(2) }}</span>
                     </div>
 
                     <!-- Expenses -->
                     <div class="mb-3">
                       <div class="d-flex justify-content-between">
-                        <span class="fw-bold">Additional Expenses ({{ project.expenses.length }})</span>
-                        <span class="fw-bold">${{ (getProjectSubTotal(project) - getProjectLaborCost(project)).toFixed(2) }}</span>
+                        <span class="fw-bold small">Expenses ({{ project.expenses.length }})</span>
+                        <span class="fw-bold small">${{ (getProjectSubTotal(project) - getProjectLaborCost(project)).toFixed(2) }}</span>
                       </div>
                       <!-- Expense List -->
-                      <div v-for="(exp, i) in project.expenses" :key="i" class="d-flex justify-content-between small text-muted mt-1 ps-3 border-start border-3 border-info">
+                      <div v-for="(exp, i) in project.expenses" :key="i" class="d-flex justify-content-between extra-small text-muted mt-2 ps-3 border-start border-3 border-info">
                         <span>{{ exp.name }}</span>
-                        <span>${{ exp.cost.toFixed(2) }} 
-                          <button class="btn btn-sm text-danger"@click="removeProjectExpense(project, i)">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                      </button>
-                      <!-- <i class="bi bi-x text-danger cursor-pointer" @click="removeProjectExpense(project, i)"></i> -->
-                    </span>
+                        <div class="d-flex align-items-center gap-2">
+                          <span>${{ exp.cost.toFixed(2) }}</span>
+                          <button class="btn btn-link p-0 text-danger" @click="removeProjectExpense(project, i)">
+                            <i class="bi bi-trash small"></i>
+                          </button>
+                        </div>
                       </div>
                       <!-- Add Expense Inputs -->
-                      <div class="row g-2 mt-2">
-                        <div class="col-5"><input class="form-control form-control-sm border-0 border-bottom bg-transparent" placeholder="Expense Name" v-model="project.newExpenseName"></div>
-                        <div class="col-3"><input class="form-control form-control-sm border-0 border-bottom bg-transparent" placeholder="$ 0" type="number" v-model="project.newExpenseCost"></div>
-                        <div class="col-4"><button class="btn btn-sm btn-teal text-white w-100" @click="addProjectExpense(project)">ADD EXPENSE</button></div>
+                      <div class="mt-3">
+                        <div class="row g-2 align-items-end">
+                          <div class="col-5"><input class="form-control form-control-sm border-0 border-bottom bg-transparent" placeholder="Name" v-model="project.newExpenseName"></div>
+                          <div class="col-3"><input class="form-control form-control-sm border-0 border-bottom bg-transparent" placeholder="$ 0" type="number" v-model="project.newExpenseCost"></div>
+                          <div class="col-4"><button class="btn btn-info btn-sm text-white w-100 extra-small py-1" @click="addProjectExpense(project)">ADD</button></div>
+                        </div>
                       </div>
                     </div>
 
                     <div class="d-flex justify-content-between mb-3 pt-2 border-top border-dark">
-                      <span class="fw-bold">This One-Time Project Cost Subtotal</span>
-                      <span class="fw-bold fs-5">${{ getProjectSubTotal(project).toFixed(2) }}</span>
+                      <span class="fw-bold small">Subtotal</span>
+                      <span class="fw-bold">${{ getProjectSubTotal(project).toFixed(2) }}</span>
                     </div>
 
                     <!-- Profit -->
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                      <span class="fw-bold">Add Your Profit Margin</span>
-                      <div class="d-flex gap-2 align-items-center">
-                        <div class="input-group input-group-sm" style="width: 80px;"><input class="form-control fw-bold" v-model="project.marginPercent" @input="updateProjectMarginPercent(project)"><span class="input-group-text border-0 bg-transparent">%</span></div>
-                        <span class="text-muted small">or</span>
-                        <div class="input-group input-group-sm" style="width: 100px;"><span class="input-group-text border-0 bg-transparent">$</span><input class="form-control fw-bold" v-model="project.marginDollar" @input="updateProjectMarginDollar(project)"></div>
+                    <div class="mb-3">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold small">Profit Margin</span>
+                        <span class="fw-bold text-success small">+ ${{ (parseFloat(project.marginDollar)||0).toFixed(2) }}</span>
                       </div>
-                      <span class="fw-bold">${{ (parseFloat(project.marginDollar)||0).toFixed(2) }}</span>
+                      <div class="d-flex gap-2 align-items-center">
+                        <div class="input-group input-group-sm" style="width: 80px;"><input class="form-control fw-bold" v-model="project.marginPercent" @input="updateProjectMarginPercent(project)"><span class="input-group-text border-0 bg-light px-1">%</span></div>
+                        <span class="text-muted extra-small">OR</span>
+                        <div class="input-group input-group-sm" style="width: 100px;"><span class="input-group-text border-0 bg-light px-1">$</span><input class="form-control fw-bold" v-model="project.marginDollar" @input="updateProjectMarginDollar(project)"></div>
+                      </div>
                     </div>
 
-                    <!-- Tax Input (Visible if Toggled) -->
+                    <!-- Tax -->
                     <div class="d-flex align-items-center justify-content-between mb-3" v-if="project.addSalesTax">
-                      <span class="fw-bold text-muted">Sales Tax</span>
-                      <div class="input-group input-group-sm" style="width: 100px;"><input class="form-control fw-bold" v-model="project.salesTaxPercent"><span class="input-group-text border-0 bg-transparent">%</span></div>
-                      <span class="fw-bold text-danger">+ ${{ ((getProjectSubTotal(project) + parseFloat(project.marginDollar||0)) * (project.salesTaxPercent/100)).toFixed(2) }}</span>
+                      <span class="fw-bold text-muted small">Sales Tax</span>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="input-group input-group-sm" style="width: 80px;"><input class="form-control fw-bold" v-model="project.salesTaxPercent"><span class="input-group-text border-0 bg-light px-1">%</span></div>
+                        <span class="fw-bold text-danger small">+ ${{ ((getProjectSubTotal(project) + parseFloat(project.marginDollar||0)) * (project.salesTaxPercent/100)).toFixed(2) }}</span>
+                      </div>
                     </div>
 
                     <!-- Grand Total -->
-                    <div class="bg-white p-3 rounded d-flex justify-content-between align-items-center mt-3">
-                      <span class="fw-bold text-teal">GRAND TOTAL</span>
+                    <div class="bg-white p-3 rounded d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3 gap-2">
+                      <span class="fw-bold text-info small text-center text-sm-start">GRAND TOTAL (THIS PROJECT)</span>
                       <div class="d-flex align-items-center gap-2">
-                        <span class="text-teal fs-5">=</span>
-                        <span class="text-teal fw-bold fs-5">$</span>
-                        <span class="text-teal fw-bold fs-4 border-bottom border-teal px-2">{{ getProjectGrandTotal(project).toFixed(2) }}</span>
+                        <span class="text-info fs-3" style="color: #17a2b8;">= ${{ getProjectGrandTotal(project).toFixed(2) }}</span>
                       </div>
                     </div>
-
                   </div>
                 </div>
               </div>
@@ -1888,6 +1820,31 @@ export default {
 .price-calculator-container {
   min-height: 100vh;
   background-color: #f8f9fa;
+}
+
+.extra-small {
+  font-size: 0.65rem !important;
+}
+
+.fs-7 {
+  font-size: 0.75rem !important;
+}
+
+.border-md-start {
+  border-left: none;
+}
+
+.border-md-end {
+  border-right: none;
+}
+
+@media (min-width: 768px) {
+  .border-md-start {
+    border-left: 1px solid #dee2e6 !important;
+  }
+  .border-md-end {
+    border-right: 1px solid #dee2e6 !important;
+  }
 }
 
 /* Bootstrap card styling for option cards */

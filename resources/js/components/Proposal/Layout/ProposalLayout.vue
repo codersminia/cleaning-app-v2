@@ -1,17 +1,17 @@
 <template>
-  <div class="min-vh-100 bg-light">
-    <!-- Back Button (Currently Commented Out based on your code) -->
-    <div class="ps-4 pt-3 pb-2">
+  <div class="min-vh-100 bg-light pb-5">
+    <!-- Back Button -->
+    <div class="ps-3 ps-md-4 pt-3 pb-2">
       <!-- <a href="/proposals" class="text-muted text-decoration-none small fw-semibold">
         <i class="bi bi-chevron-left"></i> BACK TO PROPOSALS
       </a> -->
     </div>
 
     <!-- Prospect Info / Loader -->
-    <div class="prospect-card p-4 mx-4 mb-3" v-if="prospect">
-      <h5 class="fw-bold text-dark mb-2">Prospect: {{ prospect.company_name }}</h5>
+    <div class="prospect-card p-3 p-md-4 mx-3 mx-md-4 mb-3" v-if="prospect">
+      <h5 class="fw-bold text-dark mb-2 fs-6 fs-md-5">Prospect: {{ prospect.company_name }}</h5>
       <p class="text-muted small mb-0">
-        Location:
+        <span class="fw-bold">Location:</span>
         {{ [prospect.address, prospect.unit_number, prospect.city, prospect.state, prospect.zip]
           .filter(Boolean)
           .join(', ') }}
@@ -19,34 +19,37 @@
     </div>
     
     <!-- Skeleton Loader while fetching -->
-    <div v-else class="prospect-card p-4 mx-4 mb-3 placeholder-glow">
+    <div v-else class="prospect-card p-3 p-md-4 mx-3 mx-md-4 mb-3 placeholder-glow">
       <h5 class="placeholder w-50"></h5>
       <p class="placeholder w-75"></p>
     </div>
 
-    <!-- Stepper -->
-    <!-- Only show stepper if steps are calculated -->
-    <div class="stepper-container mx-4 mb-4" v-if="steps.length > 0">
-      <router-link
-        v-for="(step, index) in steps"
-        :key="index"
-        :to="{ name: step.name, params: { id: proposalId } }"
-        class="stepper-step text-decoration-none"
-        :class="{
-          active: $route.name == step.name,
-          first: index == 0,
-          last: index == steps.length - 1
-        }"
-      >
-        <div class="step-content">
-          <span class="step-number">{{ index + 1 }}.</span>
-          <span class="step-label">{{ step.label }}</span>
-        </div>
-      </router-link>
+    <!-- Stepper (Scrollable on Mobile) -->
+    <div class="stepper-wrapper mb-4">
+      <div class="stepper-container px-3 px-md-4" v-if="steps.length > 0">
+        <router-link
+          v-for="(step, index) in steps"
+          :key="index"
+          :to="{ name: step.name, params: { id: proposalId } }"
+          class="stepper-step text-decoration-none"
+          :class="{
+            active: $route.name == step.name,
+            first: index == 0,
+            last: index == steps.length - 1
+          }"
+          :ref="el => { if ($route.name == step.name) activeStepRef = el }"
+        >
+          <div class="step-content">
+            <span class="step-number">{{ index + 1 }}</span>
+            <span class="step-label d-none d-md-inline">{{ step.label }}</span>
+            <span class="step-label d-inline d-md-none">{{ step.label.split(' ')[0] }}</span>
+          </div>
+        </router-link>
+      </div>
     </div>
 
     <!-- Main content -->
-    <div class="p-4">
+    <div class="p-3 p-md-4">
       <!-- Show loader if data is still fetching to prevent flash of wrong content -->
       <div v-if="loading" class="d-flex justify-content-center py-5">
         <div class="spinner-border text-info" role="status"></div>
@@ -57,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -77,7 +80,7 @@ const allSteps = [
   { label: 'Finalize Proposal', name: 'proposal.finalize' },
 ]
 
-// The Dynamic List (starts empty)
+const activeStepRef = ref(null)
 const steps = ref([])
 
 const fetchData = async () => {
@@ -86,13 +89,18 @@ const fetchData = async () => {
     const response = await axios.get(`/api/proposals/${proposalId}/data-for-tasks`)
     
     prospect.value = response.data.prospect
-    proposal.value = response.data.proposal // Ensure your Controller sends this!
+    proposal.value = response.data.proposal 
 
-    // 2. Calculate which steps to show
     calculateSteps()
     
-    // 3. Finish loading
     loading.value = false
+
+    // Scroll active step into view on mobile
+    setTimeout(() => {
+      if (activeStepRef.value && activeStepRef.value.$el) {
+        activeStepRef.value.$el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+      }
+    }, 100)
 
   } catch (error) {
     console.error('Error fetching data:', error)
@@ -149,69 +157,143 @@ onMounted(fetchData)
 .prospect-card {
   background: linear-gradient(135deg, #d4f1f4 0%, #b8e6ea 100%);
   border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Progress Stepper - Enhanced Design */
+/* Stepper - Scrollable Wrapper */
+.stepper-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+
+.stepper-wrapper::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
+}
+
 .stepper-container {
   display: flex;
+  min-width: 100%;
+  width: max-content;
   gap: 0;
   position: relative;
-  height: 70px;
+  height: 45px;
+}
+
+@media (min-width: 768px) {
+  .stepper-container {
+    height: 55px;
+    width: 100%;
+  }
 }
 
 .stepper-step {
   flex: 1;
-  background: #5a6c7d;
-  color: white;
+  min-width: 100px;
+  background: #e9ecef;
+  color: #6c757d;
   display: flex;
   align-items: center;
+  justify-content: center;
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
-  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%, 30px 50%);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%, 15px 50%);
+  padding: 0 10px 0 20px;
+  border: none;
+  outline: none;
+}
+
+@media (min-width: 768px) {
+  .stepper-step {
+    clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 50%, calc(100% - 25px) 100%, 0 100%, 25px 50%);
+    padding: 0 15px 0 35px;
+    min-width: 150px;
+  }
 }
 
 .stepper-step.first {
-  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 50%, calc(100% - 30px) 100%, 0 100%);
-  padding-left: 30px;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%);
+  padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .stepper-step.first {
+    clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 50%, calc(100% - 25px) 100%, 0 100%);
+    padding-left: 25px;
+  }
 }
 
 .stepper-step.last {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 30px 50%);
-  padding-right: 30px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 15px 50%);
+  padding-right: 15px;
+}
+
+@media (min-width: 768px) {
+  .stepper-step.last {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 25px 50%);
+    padding-right: 25px;
+  }
 }
 
 .stepper-step:not(.first) {
-  margin-left: -30px;
+  margin-left: -15px;
+}
+
+@media (min-width: 768px) {
+  .stepper-step:not(.first) {
+    margin-left: -25px;
+  }
 }
 
 .stepper-step.active {
   background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
-  position: relative;
+  color: white;
   z-index: 2;
+  box-shadow: 0 4px 10px rgba(23, 162, 184, 0.2);
+}
+
+.stepper-step.active:hover {
+  background: #138496;
 }
 
 .step-content {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 40px;
+  gap: 6px;
   position: relative;
   z-index: 1;
 }
 
+@media (min-width: 768px) {
+  .step-content {
+    gap: 10px;
+  }
+}
+
 .step-number {
-  background: rgba(255, 255, 255, 0.3);
-  color: white;
-  width: 32px;
-  height: 32px;
+  background: rgba(0, 0, 0, 0.1);
+  color: currentColor;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 10px;
   flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .step-number {
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+  }
 }
 
 .stepper-step.active .step-number {
@@ -221,7 +303,15 @@ onMounted(fetchData)
 
 .step-label {
   font-weight: 600;
-  font-size: 16px;
+  font-size: 11px;
   white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+@media (min-width: 768px) {
+  .step-label {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
 }
 </style>
